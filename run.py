@@ -71,10 +71,11 @@ class Constructor:
         self.args = args
         tokenizer = BertTokenizer.from_pretrained(args.pretrained_model, 
         model_max_length=args.max_seq_length)
-        self.train_set = MyDataset(args.dataset_file['train'], tokenizer)
-        self.validation_set = MyDataset(args.dataset_file['validation'], tokenizer)
-        self.test_set = MyDataset(args.dataset_file['test'], tokenizer)
+        self.train_set = MyDataset(args.dataset_file['train'], tokenizer, args.device)
+        self.validation_set = MyDataset(args.dataset_file['validation'], tokenizer, args.device)
+        self.test_set = MyDataset(args.dataset_file['test'], tokenizer, args.device)
         self.model = Model(args.pretrained_model)
+        self.model.to(args.device)
         self.__print_args()
 
     def __print_args(self):
@@ -92,24 +93,22 @@ class Constructor:
             logger.info('>>> {0}: {1}'.format(arg, getattr(self.args, arg)))
 
     def __train(self, criterion, optimizer: Optimizer, train_data_loader: DataLoader, 
-            val_data_loader: DataLoader=None, device=None):
+            val_data_loader: DataLoader=None):
         n_total, loss_total = 0, 0
         max_val_f1 = 0
         max_val_epoch = 0
         global_step = 0
-        num_classes = len(TAGS)
+        metrics = self.metrics
+        precision = metrics.get("precision")
+        recall = metrics.get("recall")
+        micro_f1 = metrics.get("micro_f1")
         for epoch in range(self.args.num_epoch):
             logger.info('>' * 100)
             logger.info('> epoch: {}'.format(epoch))
-            precision = MulticlassPrecision(num_classes, average='macro').to(device)
-            recall = MulticlassRecall(num_classes, average='macro').to(device)
-            micro_f1 = MulticlassF1Score(num_classes, average='macro').to(device)
             self.model.train()
             logger.removeHandler(stdout_handler)
-            self.model.to(device)
             with tqdm(enumerate(train_data_loader), f'epoch: {epoch}', len(train_data_loader)) as t:
                 for _, batch in t:
-                    batch = {k: v.to(device) for k, v in batch.items()}
                     global_step += 1
                     optimizer.zero_grad()
                     targets = batch.pop("labels")
@@ -124,15 +123,14 @@ class Constructor:
                     l = len(outputs)
                     n_total += l
                     loss_total += loss.item() * l
-                    inf = {
-                        "steps": global_step,
-                        "loss": loss_total / n_total,
-                        "precision": f"{precision.compute().item():.4f}",
-                        "recall": f"{recall.compute().item():.4f}",
-                        "micro_f1": f"{micro_f1.compute().item():.4f}"
-                    }
-                    t.set_postfix(**inf)
                     if global_step % self.args.logging_steps == 0:
+                        inf = {
+                            "steps": global_step,
+                            "loss": loss_total / n_total,
+                            "precision": f"{precision.compute().item():.4f}",
+                            "recall": f"{recall.compute().item():.4f}",
+                            "micro_f1": f"{micro_f1.compute().item():.4f}"
+                        }
                         logger.info(", ".join([f"{k}: {v}" for k, v in inf.items()]))
                         precision.reset()
                         recall.reset()
@@ -147,7 +145,7 @@ class Constructor:
                 if not os.path.exists('state_dict'):
                     os.mkdir('state_dict')
                 path = 'state_dict/{0}_{1}_{2}_val_pre_{3}_val_rec_{4}_val_f1_{5}.pt'.format(
-                    self.args.model_name, self.args.train_dataset, self.args.test_dataset, 
+                    self.args.model_name, args.train_file.split(".")[0], args.test_file.split(".")[0], 
                     round(val_pre, 4), round(val_rec, 4), round(val_f1, 4))
                 torch.save(self.model.state_dict(), path)
                 logger.info('>> saved: {}'.format(path))
@@ -159,14 +157,15 @@ class Constructor:
     
     def __evaluate(self, data_loader: DataLoader):
         self.model.eval()
-        num_classes = len(TAGS)
-        precision = MulticlassPrecision(num_classes, 'macro')
-        recall = MulticlassRecall(num_classes, 'macro')
-        micro_f1 = MulticlassPrecision(num_classes, 'macro')
+        metrics = self.metrics
+        precision = metrics.get("precision")
+        recall = metrics.get("recall")
+        micro_f1 = metrics.get("micro_f1")
         with torch.no_grad():
             for _, batch in enumerate(data_loader):
-                targets = batch['label']
+                targets = batch.pop("labels")
                 outputs = self.model(batch)
+                outputs = outputs.transpose(1, 2)
                 precision.update(outputs, targets)
                 recall.update(outputs, targets)
                 micro_f1.update(outputs, targets)
@@ -175,6 +174,16 @@ class Constructor:
         recall.reset()
         micro_f1.reset()
         return p , r, f1
+    
+    @property
+    def metrics(self):
+        num_classes = len(TAGS)
+        metrics = {
+            "precision": MulticlassPrecision(num_classes, average='macro').to(self.args.device),
+            "recall": MulticlassRecall(num_classes, average='macro').to(self.args.device),
+            "micro_f1": MulticlassF1Score(num_classes, average='macro').to(self.args.device)
+        }
+        return metrics
     
     def __reset_params(self):
         for child in self.model.children():
@@ -195,7 +204,8 @@ class Constructor:
         val_data_loader = DataLoader(dataset=self.validation_set, batch_size=self.args.batch_size, shuffle=True)
         test_data_loader = DataLoader(dataset=self.test_set, batch_size=self.args.batch_size, shuffle=False)
         self.__reset_params()
-        best_model_path = self.__train(criterion, optimizer, train_data_loader, val_data_loader, self.args.device)
+        best_model_path = self.__train(criterion, optimizer, train_data_loader, val_data_loader)
+        logger.info(">> load best model: {}", best_model_path)
         self.model.load_state_dict(torch.load(best_model_path))
         test_pre, test_rec, test_f1 = self.__evaluate(test_data_loader)
         logger.info(f'>> test_pre: {test_pre:.4f}, test_rec: {test_rec:.4f}, test_f1: {test_f1:.4f}')

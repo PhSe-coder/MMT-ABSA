@@ -6,7 +6,7 @@ from transformers.utils.generic import PaddingStrategy
 import torch
 
 class MyDataset(Dataset):
-    def __init__(self, filename, tokenizer: PreTrainedTokenizer):
+    def __init__(self, filename, tokenizer: PreTrainedTokenizer, device=None):
         data = []
         with open(filename, "r") as f:
             for line in f:
@@ -36,10 +36,10 @@ class MyDataset(Dataset):
                 try:
                     data.append(
                         {
-                            "input_ids": torch.as_tensor(input_ids), 
-                            "labels": torch.as_tensor([TAGS.index(label) for label in labels]), 
-                            "attention_mask": torch.as_tensor(res.attention_mask),
-                            "token_type_ids": torch.as_tensor(res.token_type_ids)
+                            "input_ids": torch.as_tensor(input_ids, device=device), 
+                            "labels": torch.as_tensor([TAGS.index(label) for label in labels], device=device), 
+                            "attention_mask": torch.as_tensor(res.attention_mask, device=device),
+                            "token_type_ids": torch.as_tensor(res.token_type_ids, device=device)
                         })
                 except KeyError as e:
                     print(e)

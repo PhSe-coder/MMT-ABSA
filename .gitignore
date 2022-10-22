@@ -2,6 +2,7 @@ construct_semeval_dataset/
 .vscode/
 split.py
 data/
+state_dict/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
