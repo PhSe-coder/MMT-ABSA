@@ -1,5 +1,5 @@
 import torch.nn as nn
-from transformers import BertModel, BertConfig, BertForTokenClassification
+from transformers import BertModel, BertConfig
 
 class Model(nn.Module):
     def __init__(self, pretrained_model: str):
@@ -11,7 +11,6 @@ class Model(nn.Module):
 
     
     def forward(self, batch):
-        batch = {k: v.to("cpu") for k, v in batch.items()}
         outputs = self.bert(**batch)
         sequence_output = outputs[0]
 

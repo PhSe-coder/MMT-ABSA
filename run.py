@@ -14,7 +14,7 @@ from dataset import MyDataset
 from model import Model
 from constants import TAGS
 
-from torchmetrics.classification import MulticlassPrecision, MulticlassRecall
+from torchmetrics.classification import MulticlassPrecision, MulticlassRecall, MulticlassF1Score
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 stdout_handler = logging.StreamHandler(sys.stdout)
@@ -92,7 +92,7 @@ class Constructor:
             logger.info('>>> {0}: {1}'.format(arg, getattr(self.args, arg)))
 
     def __train(self, criterion, optimizer: Optimizer, train_data_loader: DataLoader, 
-            val_data_loader: DataLoader=None):
+            val_data_loader: DataLoader=None, device=None):
         n_total, loss_total = 0, 0
         max_val_f1 = 0
         max_val_epoch = 0
@@ -101,13 +101,15 @@ class Constructor:
         for epoch in range(self.args.num_epoch):
             logger.info('>' * 100)
             logger.info('> epoch: {}'.format(epoch))
-            precision = MulticlassPrecision(num_classes, average='macro')
-            recall = MulticlassRecall(num_classes, average='macro')
-            micro_f1 = MulticlassPrecision(num_classes, average='macro')
+            precision = MulticlassPrecision(num_classes, average='macro').to(device)
+            recall = MulticlassRecall(num_classes, average='macro').to(device)
+            micro_f1 = MulticlassF1Score(num_classes, average='macro').to(device)
             self.model.train()
             logger.removeHandler(stdout_handler)
+            self.model.to(device)
             with tqdm(enumerate(train_data_loader), f'epoch: {epoch}', len(train_data_loader)) as t:
                 for _, batch in t:
+                    batch = {k: v.to(device) for k, v in batch.items()}
                     global_step += 1
                     optimizer.zero_grad()
                     targets = batch.pop("labels")
@@ -193,7 +195,7 @@ class Constructor:
         val_data_loader = DataLoader(dataset=self.validation_set, batch_size=self.args.batch_size, shuffle=True)
         test_data_loader = DataLoader(dataset=self.test_set, batch_size=self.args.batch_size, shuffle=False)
         self.__reset_params()
-        best_model_path = self.__train(criterion, optimizer, train_data_loader, val_data_loader)
+        best_model_path = self.__train(criterion, optimizer, train_data_loader, val_data_loader, self.args.device)
         self.model.load_state_dict(torch.load(best_model_path))
         test_pre, test_rec, test_f1 = self.__evaluate(test_data_loader)
         logger.info(f'>> test_pre: {test_pre:.4f}, test_rec: {test_rec:.4f}, test_f1: {test_f1:.4f}')

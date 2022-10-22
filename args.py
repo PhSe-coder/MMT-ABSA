@@ -51,6 +51,7 @@ class ModelArguments:
         metadata={"help": "initializer for customize parameters"})
     logging_steps: Optional[int] = field(default=10, metadata={"help": "Number of update steps between two logs"})
     patience: Optional[int] = field(default=5, metadata={"help": 'early stopping rounds'})
+    device: Optional[str] = field(default="cpu", metadata={"help": 'device for training'})
 
     def __post_init__(self):
         if self.train_file is None or self.validation_file is None:
