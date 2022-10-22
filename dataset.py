@@ -1,8 +1,9 @@
 from typing import List
 from torch.utils.data import Dataset
 from transformers.tokenization_utils import PreTrainedTokenizer
-from settings import TAGS
+from constants import TAGS
 from transformers.utils.generic import PaddingStrategy
+import torch
 
 class MyDataset(Dataset):
     def __init__(self, filename, tokenizer: PreTrainedTokenizer):
@@ -35,9 +36,10 @@ class MyDataset(Dataset):
                 try:
                     data.append(
                         {
-                            "input_ids": input_ids, 
-                            "label": [TAGS.index(label) for label in labels], 
-                            "attention_mask": res.attention_mask
+                            "input_ids": torch.as_tensor(input_ids), 
+                            "labels": torch.as_tensor([TAGS.index(label) for label in labels]), 
+                            "attention_mask": torch.as_tensor(res.attention_mask),
+                            "token_type_ids": torch.as_tensor(res.token_type_ids)
                         })
                 except KeyError as e:
                     print(e)

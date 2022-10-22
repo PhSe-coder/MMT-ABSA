@@ -34,23 +34,22 @@ class ModelArguments:
     )
     test_file: Optional[str] = field(
         default=None,
-        metadata={"help": "An optional input test data file to predict on (a txt file)."},
-    )
+        metadata={"help": "An optional input test data file to predict on (a txt file)."},)
     seed: Optional[int] = field(
         default=42,
-        metadata={"help": 'set seed for reproducibility'}),
+        metadata={"help": 'set seed for reproducibility'})
     batch_size: Optional[int] = field(
         default=16,
-        metadata={"help": 'training batch size'}),
-    num_epoch: Optional[int] = field(default=20, metadata={'help': 'try larger number for non-BERT models'}),
-    dropout: Optional[float] = field(default=0.1),
-    lr: Optional[float] = field(default=2e-5, metadata={"help": "learning rate"}),
-    l2reg: Optional[float] = field(default=0.01),
-    max_seq_len: Optional[int] = field(default=100),
-    optimizer: Optional[str] = field(default='adam'),
+        metadata={"help": 'training batch size'})
+    num_epoch: Optional[int] = field(default=20, metadata={'help': 'try larger number for non-BERT models'})
+    dropout: Optional[float] = field(default=0.1)
+    lr: Optional[float] = field(default=2e-5, metadata={"help": "learning rate"})
+    l2reg: Optional[float] = field(default=0.01)
+    max_seq_len: Optional[int] = field(default=100)
+    optimizer: Optional[str] = field(default='adam')
     initializer: Optional[str] = field(default='xavier_uniform_', 
-        metadata={"help": "initializer for customize parameters"}),
-    logging_steps: Optional[int] = field(default=10, metadata={"help": "Number of update steps between two logs"}),
+        metadata={"help": "initializer for customize parameters"})
+    logging_steps: Optional[int] = field(default=10, metadata={"help": "Number of update steps between two logs"})
     patience: Optional[int] = field(default=5, metadata={"help": 'early stopping rounds'})
 
     def __post_init__(self):

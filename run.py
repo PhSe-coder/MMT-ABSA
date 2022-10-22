@@ -2,21 +2,23 @@ import math
 import sys
 from time import localtime, strftime
 import torch
+import torch.nn as nn
+from torch.utils.data import DataLoader
+from torch.optim.optimizer import Optimizer
 import os
 import logging
-import torch.nn as nn
 from tqdm import tqdm
-from transformers import HfArgumentParser, BertTokenizer, BertModel, set_seed, TrainingArguments
-from torch.utils.data import DataLoader
+from transformers import HfArgumentParser, BertTokenizer, BertModel, set_seed
 from args import ModelArguments
 from dataset import MyDataset
 from model import Model
 from constants import TAGS
-from torch.optim.optimizer import Optimizer
-from torchmetrics.classification import MulticlassPrecision, MulticlassRecall, MulticlassF1Score
+
+from torchmetrics.classification import MulticlassPrecision, MulticlassRecall
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
-logger.addHandler(logging.StreamHandler(sys.stdout))
+stdout_handler = logging.StreamHandler(sys.stdout)
+logger.addHandler(stdout_handler)
 
 def parse_args():
     parser = HfArgumentParser(ModelArguments)
@@ -58,15 +60,17 @@ def init(args):
         "test": args.test_file
     }
     args.dataset_file = dataset_file
-
+    os.makedirs("logs", exist_ok=True)
     log_file = './logs/{}-{}-{}-{}.log'.format(
-        args.model_name, args.train_dataset, args.test_dataset, strftime("%y%m%d-%H%M", localtime()))
+        args.model_name, args.train_file.split(".")[0], args.validation_file.split(".")[0], 
+        strftime("%y%m%d-%H%M", localtime()))
     logger.addHandler(logging.FileHandler(log_file))
 
 class Constructor:
     def __init__(self, args):
         self.args = args
-        tokenizer = BertTokenizer.from_pretrained(args.pretrained_model, model_max_length=args.max_seq_length)
+        tokenizer = BertTokenizer.from_pretrained(args.pretrained_model, 
+        model_max_length=args.max_seq_length)
         self.train_set = MyDataset(args.dataset_file['train'], tokenizer)
         self.validation_set = MyDataset(args.dataset_file['validation'], tokenizer)
         self.test_set = MyDataset(args.dataset_file['test'], tokenizer)
@@ -89,6 +93,7 @@ class Constructor:
 
     def __train(self, criterion, optimizer: Optimizer, train_data_loader: DataLoader, 
             val_data_loader: DataLoader=None):
+        n_total, loss_total = 0, 0
         max_val_f1 = 0
         max_val_epoch = 0
         global_step = 0
@@ -96,35 +101,42 @@ class Constructor:
         for epoch in range(self.args.num_epoch):
             logger.info('>' * 100)
             logger.info('> epoch: {}'.format(epoch))
-            precision = MulticlassPrecision(num_classes, 'macro')
-            recall = MulticlassRecall(num_classes, 'macro')
-            micro_f1 = MulticlassPrecision(num_classes, 'macro')
+            precision = MulticlassPrecision(num_classes, average='macro')
+            recall = MulticlassRecall(num_classes, average='macro')
+            micro_f1 = MulticlassPrecision(num_classes, average='macro')
             self.model.train()
-            logger.removeHandler(logging.StreamHandler(sys.stdout))
-            for _, batch in tqdm(enumerate(train_data_loader)):
-                global_step += 1
-                optimizer.zero_grad()
-                outputs = self.model(batch)
-                targets = batch['label']
-                loss = criterion(outputs, targets)
-                loss.backward()
-                optimizer.step()
-                precision.update(outputs, targets)
-                recall.update(outputs, targets)
-                micro_f1.update(outputs, targets)
-                n_total += len(outputs)
-                loss_total += loss.item() * len(outputs)
-                if global_step % self.args.logging_steps == 0:
-                    train_loss = loss_total / n_total
-                    logger.info(f'loss: {train_loss:.4f}, \
-                                precision: {precision.compute().item():.4f}, \
-                                recall: {recall.compute().item():.4f}, \
-                                micro_f1: {micro_f1.compute().item():.4f}')
-                    precision.reset()
-                    recall.reset()
-                    micro_f1.reset()
+            logger.removeHandler(stdout_handler)
+            with tqdm(enumerate(train_data_loader), f'epoch: {epoch}', len(train_data_loader)) as t:
+                for _, batch in t:
+                    global_step += 1
+                    optimizer.zero_grad()
+                    targets = batch.pop("labels")
+                    outputs = self.model(batch)
+                    outputs = outputs.transpose(1, 2)
+                    loss = criterion(outputs, targets)
+                    loss.backward()
+                    optimizer.step()
+                    precision.update(outputs, targets)
+                    recall.update(outputs, targets)
+                    micro_f1.update(outputs, targets)
+                    l = len(outputs)
+                    n_total += l
+                    loss_total += loss.item() * l
+                    inf = {
+                        "steps": global_step,
+                        "loss": loss_total / n_total,
+                        "precision": f"{precision.compute().item():.4f}",
+                        "recall": f"{recall.compute().item():.4f}",
+                        "micro_f1": f"{micro_f1.compute().item():.4f}"
+                    }
+                    t.set_postfix(**inf)
+                    if global_step % self.args.logging_steps == 0:
+                        logger.info(", ".join([f"{k}: {v}" for k, v in inf.items()]))
+                        precision.reset()
+                        recall.reset()
+                        micro_f1.reset()
             val_pre, val_rec, val_f1 = self.__evaluate(val_data_loader)
-            logger.addHandler(logging.StreamHandler(sys.stdout))
+            logger.addHandler(stdout_handler)
             logger.info(f'> val_pre: {val_pre:.4f}, val_rec: {val_rec:.4f}, val_f1: {val_f1:.4f}')
 
             if val_f1 > max_val_f1:
@@ -175,7 +187,7 @@ class Constructor:
 
     def run(self):
         criterion = nn.CrossEntropyLoss()
-        _params = filter(lambda p: p.requires_grad, self.model.parametargsopters())
+        _params = filter(lambda p: p.requires_grad, self.model.parameters())
         optimizer = self.args.optimizer(_params, lr=self.args.lr, weight_decay=self.args.l2reg)
         train_data_loader = DataLoader(dataset=self.train_set, batch_size=self.args.batch_size, shuffle=True)
         val_data_loader = DataLoader(dataset=self.validation_set, batch_size=self.args.batch_size, shuffle=True)
@@ -189,7 +201,7 @@ class Constructor:
         
 
 if __name__ == '__main__':
-    args = parse_args()
+    args = parse_args()[0]
     init(args)
     c = Constructor(args)
     c.run()
