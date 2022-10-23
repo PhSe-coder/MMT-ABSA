@@ -1,0 +1,512 @@
+one bad thing is that it comes with a pitiful 32 mb compactflash card , and for most purposes , it is not enough .***O O O O O O O O O O T-NEG T-NEG T-NEG T-NEG O O O O O O O O O O O***CD JJ NN VBZ IN PRP VBZ IN DT JJ CD NN NN NN , CC IN JJS NNS , PRP VBZ RB JJ .
+usb 2.0 transfer is insanely fast .***T-POS T-POS T-POS O O O O***IN CD NN VBZ RB JJ .
+most of our emplyees use this model phone .***O O O O O O O O O***JJS IN PRP$ NNS VBP DT NN NN .
+i 'll have to borrow cd 's to rip from friends to even come close to filling the thing .***O O O O O O O O O O O O O O O O O O O O***PRP MD VB TO VB NNP POS TO VB IN NNS TO RB VB RB IN VBG DT NN .
+i ' ve now had the camera for two months and i ' m even more pleased with it .***O O O O O O T-POS O O O O O O O O O O O O O***PRP `` JJ RB VBD DT NN IN CD NNS CC PRP `` XX RB RBR JJ IN PRP .
++ / - sound quality was good but it was going to take some tweakings with settings to try to make it great .***O O O T-POS T-POS O O O O O O O O O O O O O O O O O O O***CC SYM HYPH NN NN VBD JJ CC PRP VBD VBG TO VB DT NNS IN NNS TO VB TO VB PRP JJ .
+this was an awesome player , before the video output no longer worked ( after about 3 weeks ) .***O O O O T-POS O O O T-NEG T-NEG O O O O O O O O O O***DT VBD DT JJ NN , IN DT NN NN RB RBR VBN -LRB- IN IN CD NNS -RRB- .
+it do n't get any better then the nikon 4300 .***O O O O O O O O O O O***PRP VBP RB VB RB RBR RB DT JJ CD .
+the t610 can also compose music , a feature which most wo n't use .***O O O O O O O O O O O O O O O***DT NNP MD RB VB NN , DT NN WDT RBS MD RB VB .
+i ' m amazed at the photo quality -- prints are indistinguishable from 35 mm prints .***O O O O O O T-POS T-POS O T-POS O O O O O O O***PRP `` NN JJ IN DT NN NN : NNS VBP JJ IN CD NNP NNS .
+this phone plays up to 4 tones at one time and it actually sounds like music .***O O O O O O O O O O O O O O O O O***DT NN VBZ IN TO CD NNS IN CD NN CC PRP RB VBZ IN NN .
+i did not managed to make creative nomad explorer to work .***O O O O O O O T-NEG T-NEG O O O***PRP VBD RB VBD TO VB JJ NN NN TO VB .
+2 it is easy enough for my grandmother to use .***O O O O O O O O O T-POS O***LS PRP VBZ JJ RB IN PRP$ NN TO VB .
+wow , dennis sure is great !***O O O O O O O***UH , NNP UH VBZ JJ .
+again , the ipod is a beautiful thing to look at and touch , player controls are less functional .***O O O O O O O O O O O O O O O O O O O O***RB , DT NNP VBZ DT JJ NN TO VB IN CC VB , NN NNS VBP RBR JJ .
+the picture quality is amazing and you can connect it to your tv and could make silent ASPECT#2s that way if you wanted to .***O T-POS T-POS O O O O O O O O O O O O O O O O O O O O O O***DT NN NN VBZ JJ CC PRP MD VB PRP IN PRP$ NN CC MD VB JJ NNP DT NN IN PRP VBD TO .
+while i had the phone , the positive features were : good sound quality and an excellent fm phone and earpiece .***O O O O O O O O O O O O T-POS T-POS O O O T-POS T-POS O T-POS O***IN PRP VBD DT NN , DT JJ NNS VBD : JJ JJ NN CC DT JJ NNP NN CC NN .
+the player is intuitive and outputs great sound quality .***O T-POS O O O O O T-POS T-POS O***DT NN VBZ JJ CC VBZ JJ JJ NN .
+if it had the same number of " ? " s then it would ask if you want to overwrite another song that just had the same number of " ? " s. . .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***IN PRP VBD DT JJ NN IN '' . '' VBZ RB PRP MD VB IN PRP VBP TO VB DT NN WDT RB VBD DT JJ NN IN '' . '' NNP . .
+pc cable is too expensive ... $ 50 for a usb cable ?***T-NEG T-NEG O O O O O O O O O O O***NNP NN VBZ RB JJ : $ CD IN DT NN NN .
+i discovered this weekend that itunes does not sell mp3 's in the mp3 format .***O O O O O O O O O O O O O O O O***PRP VBD DT NN IN NNP VBZ RB VB NN POS IN DT NN NN .
+considering the price and specs , this might be the best buy out there for a large memory mp3 player .***O O T-POS O T-POS O O O O O O O O O O O O T-POS T-POS T-POS O***VBG DT NN CC NNS , DT MD VB DT JJS NN RB RB IN DT JJ NN NN NN .
+bluetooth functionality would have made the phone even better .***O O O O O O O O O O***NNP NNP MD VB VBN DT NN RB RBR .
+they have a whole bunch of devices that all have the same - sounding name ( and they are long ) .***O O O O O O O O O O O O O O T-NEG O O O O O O O***PRP VBP DT JJ NN IN NNS WDT DT VBP DT RB HYPH VBG NN -LRB- CC PRP VBP RB -RRB- .
+3 . the ASPECT#1s come out hazy if your hands shake even for a moment during the entire process of taking a picture .***O O O O O O O O O O O O O O O O O O O O O O O O***LS . DT NNP VB RP NN IN PRP$ NNS VBP RB IN DT NN IN DT JJ NN IN VBG DT NN .
+and for those that are intrested the recharger works anywhere in the world ( and is quite small ) .***O O O O O O O T-POS O O O O O O O O O O O O***CC IN DT WDT VBP VBN DT NN VBZ RB IN DT NN -LRB- CC VBZ RB JJ -RRB- .
+it did not lock up my computer or require a reboot .***O O O O O O O O O O O O***PRP VBD RB VB RP PRP$ NN CC VBP DT NN .
+i am a nikon fan , and owned and used slr nikon fe , n50 and n90s for many many years .***O O O O O O O O O O O O O O O O O O O O O O***PRP VBP DT JJ NN , CC VBN CC VBD NNP NNP NNP , NN CC NNS IN JJ JJ NNS .
+i gave the zen 5 stars because it 's excellent for the class that it is in and it 's not really appropriate to rate it based on players in a different class .***O O O T-POS O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***PRP VBD DT NNP CD NNS IN PRP VBZ JJ IN DT NN WDT PRP VBZ IN CC PRP VBZ RB RB JJ TO VB PRP VBN IN NNS IN DT JJ NN .
+their customer service is very poor .***O T-NEG T-NEG O O O O***PRP$ NN NN VBZ RB JJ .
+the hot shoe flash attachment allowed me to buy and use a sophisticated flash unit :***O T-POS T-POS T-POS T-POS O O O O O O O O O O O***DT JJ NN NN NN VBD PRP TO VB CC VB DT JJ NN NN :
+i quickly discovered that the nomad was n't going to work for me .***O O O O O O O O O O O O O O***PRP RB VBD IN DT NN VBD RB VBG TO VB IN PRP .
+the eax mode that keeps the volume at the same level for any song will come in handy when i take my holiday plane rides .***O T-POS T-POS O O O O O O O O O O O O O O O O O O O O O O O***DT NNP NN WDT VBZ DT NN IN DT JJ NN IN DT NN MD VB RP JJ WRB PRP VBP PRP$ NN NN NNS .
+i am going to have to try an online download and see if that works .***O O O O O O O O O O O O O O O O***PRP VBP VBG TO VB TO VB DT JJ NN CC VB IN DT VBZ .
+print those coupons twice for two phones ?***O O O O O O O O***VB DT NNS RB IN CD NNS .
+bought two ad2600 's for christmas .***O O O O O O O***VBD CD NNP POS IN NNP .
+the g3 has a shoe which will take other powerful ( and expensive ) canon flashes that will allow bounce and reflected flash photography .***O O O O O O O O O O O O O O O O O O O O O O O O O***DT NNP VBZ DT NN WDT MD VB JJ JJ -LRB- CC JJ -RRB- NNP NNS WDT MD VB NN CC VBD NN NN .
+if it does , ill give up .***O O O O O O O O***IN PRP VBZ , RB VB RP .
+i needed something with more power , so i bought a nikon coolpix 4300 .***O O O O O O O O O O O O O O O***PRP VBD NN IN JJR NN , CC PRP VBD DT JJ NNP CD .
+now , even 1 star seems like i ' m giving creative the benefit of the doubt .***O O O O O O O O O O O O O O O O O O***RB , RB CD NN VBZ IN PRP '' NN VBG JJ DT NN IN DT NN .
+i am still trying to resolve the problem with the second one .***O O O O O O O O O O O O O***PRP VBP RB VBG TO VB DT NN IN DT JJ NN .
+picture on web site clearly has the play display pictured , yet false silver plate .***O O O O O O O O O O O O O O O O***NN IN NN NN RB VBZ DT NN NN VBN , CC JJ NN NN .
+after spending hours being transferred from one tech help person to another , i got fed up and have decided to return the phone .***O O O O O O O O O O O O O O O O O O O O O O O O O***IN VBG NNS VBG VBN IN CD NN NN NN IN DT , PRP VBD VBN RP CC VBP VBN TO VB DT NN .
+i love this player and am extremely happy with my decision .***O O O T-POS O O O O O O O O***PRP VBP DT NN CC VBP RB JJ IN PRP$ NN .
+if you 're seeking that elusive state of photographic euphoria that is free of buyer 's remorse and filled with cool , then travel to the world of the coolpix 4300 !***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***IN PRP VBP VBG IN JJ NN IN JJ NN WDT VBZ JJ IN NN POS NN CC VBN IN JJ , RB VB IN DT NN IN DT NNS CD .
+so when the quad bands start appearing i will be upgrading again .***O O O O O O O O O O O O O***RB WRB DT NN NNS VBP VBG PRP MD VB VBG RB .
+i like the default blue .***O O O O O O***PRP VBP DT NN NN .
+i used it lightly , and it lasted just over one year ( forgot to kill the power one day , and now it only plays dvds ) .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***PRP VBD PRP RB , CC PRP VBD RB IN CD NN -LRB- VBD TO VB DT NN CD NN , CC RB PRP RB VBZ NNP -RRB- .
+i have uploaded about 3,000 songs now with very minimal difficulty . ( it 's fast too ! )***O O O O O O O O O O O O O O O O O O O***PRP VBP VBN RB CD NNS RB IN RB JJ NN . -LRB- PRP VBZ JJ RB . -RRB-
+the trouble shooting section in the user 's manual , suggesting correct and secure connections , does n't help .***O O O O O O O O O O O O O O O O O O O O***DT NN VBG NN IN DT NN POS NN , VBG JJ CC JJ NNS , VBZ RB VB .
+for the money , get a better quality player .***O O O O O O O O O O***IN DT NN , VB DT JJR NN NN .
+when the previous versions of the zens were shipped with musicmatch , people had this problem because musicmatch creates both sets of tags , which seem to confuse the zen xtra .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***WRB DT JJ NNS IN DT NNS VBD VBN IN NN , NNS VBD DT NN IN NN VBZ DT NNS IN NNS , WDT VBP TO VB DT NNP NNP .
+this has so many capabilities that you 'll always have room for new technologies as they evolve .***O O O O O O O O O O O O O O O O O O***DT VBZ RB JJ NNS IN PRP MD RB VB NN IN JJ NNS IN PRP VBP .
+mixed bag i guess but the price was right .***O O O O O O T-POS O O O***JJ NN PRP VBP CC DT NN VBD JJ .
+4 mp gives you room for the future gaining experience ; cost offsets over time from wanting more in a camera , 3x optical and the fact that it carries nikon 's quality reputation behind it make the whole package prove itself worthwile at the price .***T-POS T-POS O O O O O O O O O O O O O O O O O O O O T-POS T-POS O O O O O O O O O O O O O O O O O O O O O O O***CD NNP VBZ PRP NN IN DT JJ NN NN , NN NNS IN NN IN VBG RBR IN DT NN , CD JJ CC DT NN IN PRP VBZ NNP POS NN NN IN PRP VBP DT JJ NN VB PRP VBP IN DT NN .
+i think this is it 's biggest flaw .***O O O O O O O O O***PRP VBP DT VBZ PRP VBZ JJS NN .
+do n't buy this thing .***O O O O O O***VB RB VB DT NN .
+i have been ripping songs into it for the past few weeks , and the ease of use is wonderful .***O O O O O O O O O O O O O O O O O T-POS O O O***PRP VBP VBN VBG NNS IN PRP IN DT JJ JJ NNS , CC DT NN IN NN VBZ JJ .
+every time nomad thinks the file is corrupt the os freezes .***O O O O O O O O O O T-NEG O***DT NN NN VBZ DT NN VBZ JJ DT NNP NNS .
+for three months , i ' ve researched the internet and magazines , queried various sales personnel , and took hands - on in - store test drives .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***IN CD NNS , PRP `` NNP VBD DT NN CC NNS , VBD JJ NNS NNS , CC VBD NNS HYPH RP IN HYPH NN NN NNS .
+- the top that covered the battery kept poping off without much of a touch near the bottom latch .***O O T-NEG O O O T-NEG O O O O O O O O O O O O O***: DT NN WDT VBD DT NN VBD VBG RP IN JJ IN DT NN IN DT JJ NN .
+installed software .***O O O***VBN NN .
+the player 's mechanics are also flawed .***O O O T-NEG O O O O***DT NN POS NNS VBP RB VBN .
+i have the software working fine now and the mp3 player is fantastic .***O O O T-POS O O O O O T-POS T-POS O O O***PRP VBP DT NN VBG RB RB CC DT NN NN VBZ JJ .
+i really have no complaints over this unit .***O O O O O O O O O***PRP RB VBP DT NNS IN DT NN .
+quite simply , the firmware and / or the os that control this thing is not ready for prime time .***O O O O T-NEG O O O O T-NEG O O O O O O O O O O O***RB RB , DT NN CC SYM CC DT NN WDT NN DT NN VBZ RB JJ IN JJ NN .
+one word of caution with regards to using the nomad with itunes .***O O O O O O O O O O O O O***CD NN IN NN IN NNS IN VBG DT NN IN NNS .
+i would say that this is not a major issue , but it can be slightly annoying if you care about these things .***O O O O O O O O O O O O O O O O O O O O O O O O***PRP MD VB IN DT VBZ RB DT JJ NN , CC PRP MD VB RB JJ IN PRP VBP IN DT NNS .
+i ' ve figured out most of its features on my own already ( because i have used digital cameras before , so i know things like symbols ) .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***PRP `` JJ VBD RP JJS IN PRP$ NNS IN PRP$ JJ RB -LRB- IN PRP VBP VBN JJ NNS RB , RB PRP VBP NNS IN NNS -RRB- .
+i ' ve picked up a few accessories that i found to be useful .***O O O O O O O O O O O O O O O***PRP `` NNP VBD RP DT JJ NNS WDT PRP VBD TO VB JJ .
+had there been strange noises , or obvious defects , i would have accepted a replacement , but this is clearly from a defective and inferior operating system and i for one do not intend on waiting for patches .***O O O O O O O O O O O O O O O O O O O O O O O O O O T-NEG T-NEG O O O O O O O O O O O O***VBD RB VBN JJ NNS , CC JJ NNS , PRP MD VB VBN DT NN , CC DT VBZ RB IN DT JJ CC JJ NN NN CC PRP IN CD VBP RB VB IN VBG IN NNS .
+i have several tv shows on dvd so they are divided by episode .***O O O O O O O O O O O O O O***PRP VBP JJ NN NNS IN NNP IN PRP VBP VBN IN NN .
+but who cares ?***O O O O***CC WP VBZ .
++ takes sharp 5mp photo 's , has great features and relatively easy to use .***O O O O O O O O O O O O O O O O***CC VBZ JJ JJ NN POS , VBZ JJ NNS CC RB JJ TO VB .
+the software runs smooth , it 's nice to look at , it 's very organized , easy to follow and makes things very simple .***O T-POS O O O O O O O T-POS T-POS O O O O O O O O T-POS O O O O O O***DT NN VBZ RB , PRP VBZ JJ TO VB IN , PRP VBZ RB JJ , JJ TO VB CC VBZ NNS RB JJ .
+- the unit is easy to use and intuitive .***O O O O O O T-POS O O O***: DT NN VBZ JJ TO VB CC JJ .
+this is the third apex dvd i bought .***O O O O O O O O O***DT VBZ DT JJ NNP NNP PRP VBD .
+i will never use all the " whistles and bells " this machine is capable of .***O O O O O O O O O O O O O O O O O***PRP MD RB VB PDT DT `` NNS CC VBZ `` DT NN VBZ JJ IN .
+it happened to me once .***O O O O O O***PRP VBD IN PRP RB .
+so now i ' ve got to call their customer " service " ( of course , no 800 number ) to send the thing back .***O O O O O O O O O O O O O O O O O O O O O O O O O O O***RB RB PRP `` JJ VBD TO VB PRP$ NN `` NN '' -LRB- IN NN , DT CD NN -RRB- TO VB DT NN RB .
+as a whole , the dvd player has a sleek design and works fine .***O O O O O T-POS T-POS O O O T-POS O T-POS O O***IN DT NN , DT NN NN VBZ DT JJ NN CC VBZ RB .
+i ' ve bought the very expensive sanyo 5500 / vm4500 -- which i love -- and i ' m okay with my services .***O O O O O O O O O O O O O O O O O O O O O O O O O***PRP `` NNP VBD DT RB JJ NN NNP SYM NNP : WDT PRP VBP : CC PRP `` NN UH IN PRP$ NNS .
+but for now this will do .***O O O O O O O***CC IN RB DT MD VB .
+this is my second creative labs mp3 player , and it is definitely a fine product .***O O O O O O T-POS T-POS O O O O O O O O O***DT VBZ PRP$ JJ JJ NNS NN NN , CC PRP VBZ RB DT JJ NN .
+but the earbuds suck !***O O T-NEG O O***CC DT NNS VBP .
+otherwise , this player is awesome !***O O O T-POS O O O***RB , DT NN VBZ JJ .
+( did i mention you can actually change the battery ? hello ? apple ? are you listening ? )***O O O O O O O O O O O O O O O O O O O O***-LRB- VBD PRP VB PRP MD RB VB DT NN . UH . NNP . VBP PRP VBG . -RRB-
+it only took me about 10 seconds to transfer a 200 mb file .***O O O O O O O O O O O O O O***PRP RB VBD PRP RB CD NNS TO VB DT CD NN NN .
+negative points :***O O O***JJ NNS :
+also , i downloaded the latest firmware upgrade and software updates .***O O O O O O O O O O O O***RB , PRP VBD DT JJS JJ NN CC NN NNS .
+the included leather pouch is a big plus : it actually protects the unit well , something a lot of ' carrying cases ' fail to do with other audio devices .***O O T-POS T-POS O O O O O O O O O O O O O O O O O O O O O O O O O O O O***DT JJ NN JJ VBZ DT JJ NN : PRP RB VBZ DT NN RB , NN DT NN IN `` VBG NNS POS VBP TO VB IN JJ JJ NNS .
+i ' ve had it for about 2 weeks and it 's the best player i ' ve seen , and used , ever .***O O O O O O O O O O O O O O T-POS O O O O O O O O O O***PRP `` NNP VBD PRP IN RB CD NNS CC PRP VBZ DT JJS NN PRP `` JJ VBN , CC VBN , RB .
+i thought it was just the player , but then i started checking the discs to find that the apex 2600 is actually ruining my media .***O O O O O O T-NEG O O O O O O O O O O O O O O O O O O O O***PRP VBD PRP VBD RB DT NN , CC RB PRP VBD VBG DT NNS TO VB IN DT NN CD VBZ RB VBG PRP$ NNS .
+there have also been times that the unit has been turned off for some period of time , upon powering it up it starts on the " now playing " screen with a song or cd that i had been playing days before .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***EX VBP RB VBN NNS IN DT NN VBZ VBN VBN RP IN DT NN IN NN , IN VBG PRP RP PRP VBZ IN DT `` RB VBG '' NN IN DT NN CC NN WDT PRP VBD VBN VBG NNS RB .
+i would not give up this phone for the world .***O O O O O O O O O O O***PRP MD RB VB RP DT NN IN DT NN .
+i have n't quite figured this one out yet , but it is probably operator error .***O O O O O O O O O O O O O O O O O***PRP VBP RB RB VBN DT NN RP RB , CC PRP VBZ RB NN NN .
+and go from there ... if you chose one of the " all " options , then you do n't need to do anything until it 's done .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***CC VB IN RB : IN PRP VBD CD IN DT `` DT '' NNS , RB PRP VBP RB VB TO VB NN IN PRP VBZ VBN .
+a lot of my opinions are more relevant for those who are switching from film .***O O O O O O O O O O O O O O O O***DT NN IN PRP$ NNS VBP RBR JJ IN DT WP VBP VBG IN NN .
+3 . i wanted a camera that had a lot of built - in settings for different types of suroundings while giving me an option to use my photography skills although , i am an amateur with an interest in photography by turning on the manual settings .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***LS . PRP VBD DT NN WDT VBD DT NN IN VBN HYPH RP NNS IN JJ NNS IN NNS IN VBG PRP DT NN TO VB PRP$ NN NNS IN , PRP VBP DT NN IN DT NN IN NN IN VBG RP DT JJ NNS .
+people complain about the scroll wheel , but its not a big deal at all ( though it is just a little annoying at times ) .***O O O O O O O O O O O O O O O O O O O O O O O O O O O***NNS VBP IN DT NN NN , CC PRP$ RB DT JJ NN RB RB -LRB- IN PRP VBZ RB DT JJ JJ IN NNS -RRB- .
+the t610 has the most functionality hands down .***O O O O O O O O O***DT NNP VBZ DT JJS NN NNS RP .
+* removable battery***O O T-POS***NFP JJ NN
+i have not yet figured out how to make it snap quick pictures for action shots .***O O O O O O O O O O O O O O O O O***PRP VBP RB RB VBN RP WRB TO VB PRP VB JJ NNS IN NN NNS .
+anywhere i went in south africa this phone received full bar reception .***O O O O O O O O O O O T-POS O***RB PRP VBD IN NNP NNP DT NN VBD JJ NN NN .
+nokia will not cover phones bought from amazon .***O O O O O O O O O***NNP MD RB VB NNS VBN IN NNP .
+another benefit of this phone is that it is truly an international phone ; the 6610 is sold in almost everywhere in the world .***O O O O T-POS O O O O O O O O O O O O O O O O O O O O***DT NN IN DT NN VBZ IN PRP VBZ RB DT JJ NN : DT CD VBZ VBN IN RB RB IN DT NN .
+the software sucks .***O T-NEG O O***DT NN VBZ .
+the speakerphone :***O O O***DT NN :
+the zen serves as a back - up device as well as a player .***O O O O O T-POS T-POS T-POS T-POS O O O O O O***DT NNP VBZ IN DT RB HYPH RP NN RB RB IN DT NN .
+if you are looking for an outstanding camera that can take you from simple to complex , this is it .***O O O O O O O O O O O O O O O O O O O O O***IN PRP VBP VBG IN DT JJ NN WDT MD VB PRP IN JJ IN NN , DT VBZ PRP .
+somewhat disappointed that i could not " hook up " to my sony multi brand remote commander .***O O O O O O O O O O O O O O O O O O***RB JJ IN PRP MD RB `` VB RP '' IN PRP$ NNP JJ NN JJ NN .
+overall , i feel that it 's a decent buy , and am happy that i own it .***O O O O O O O O O O O O O O O O O O O***RB , PRP VBP IN PRP VBZ DT JJ NN , CC VBP JJ IN PRP VBP PRP .
+the downside though , may be a big one for you .***O O O O O O O O O O O O***DT NN RB , MD VB DT JJ NN IN PRP .
+in addition it comes with a sleek and powerful headset .***O O O O O O O O O T-POS O***IN NN PRP VBZ IN DT JJ CC JJ NN .
+the design and construction are excellent -- as is the legendary quality of the nikon ASPECT#3s .***O T-POS O T-POS O O O O O O O O O O O O O***DT NN CC NN VBP JJ : IN VBZ DT JJ NN IN DT NNP NNP .
+the phone has several color schemes you can choose from .***O O O O O O O O O O O***DT NN VBZ JJ NN NNS PRP MD VB IN .
+i have an apex ad600 for a few years now which still works great today .***O O O O O O O O O O O O O O O O***PRP VBP DT NN NN IN DT JJ NNS RB WDT RB VBZ RB NN .
+my jpeg pictures are viewable ( not so sharp and vivid ) on my 27 " screen but seem not as clear as when i view them on my 17 " monitor .***O T-NEG T-NEG O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***PRP$ NNP NNS VBP JJ -LRB- RB RB JJ CC JJ -RRB- IN PRP$ CD '' NN CC VBP RB RB JJ IN WRB PRP VBP PRP IN PRP$ CD '' NN .
+the unit works great with my cassette adapter for my car & is also easily worked without taking your eyes off the road !***O T-POS O O O O O O O O O O O O O O O O O O O O O O***DT NN VBZ JJ IN PRP$ NN NN IN PRP$ NN CC VBZ RB RB VBN IN VBG PRP$ NNS IN DT NN .
+saved me from having to buy an expensive optical cable , as i already had a coax cable .***O O O O O O O O O O O O O O O O O O O***VBD PRP IN VBG TO VB DT JJ JJ NN , IN PRP RB VBD DT NN NN .
+overall it is a great unit & hopefully creative labs or some other vendor will soon come out with some accessories for it .***O O O O O T-POS O O O O O O O O O O O O O O O O O O***JJ PRP VBZ DT JJ NN CC RB JJ NNS CC DT JJ NN MD RB VB RP IN DT NNS IN PRP .
+and we all know about the rush to market on new products .***O O O O O O O O O O O O O***CC PRP DT VBP IN DT NN IN NN IN JJ NNS .
+if t - mobile does not offer such a phone most likely i will get the t610 .***O O O O O O O O O O O O O O O O O O***IN NN HYPH NN VBZ RB VB PDT DT NN RBS RB PRP MD VB DT NN .
+i am still trying to resolve it four months later .***O O O O O O O O O O O***PRP VBP RB VBG TO VB PRP CD NNS RB .
+i uploaded the drivers and new software in 15 minutes - no crashes or problems .***O O O O O O T-POS O O O O O O O O O***PRP VBD DT NNS CC JJ NN IN CD NNS : DT NNS CC NNS .
+door broke after a month .***T-NEG O O O O O***NN VBD IN DT NN .
+size - extremely small and convenient will fit in your pocket and not bother you .***T-POS O O O O O O O O O O O O O O O***NN , RB JJ CC JJ MD VB IN PRP$ NN CC RB VB PRP .
+that would be a nice compromise between jpeg and raw .***O O O O O O O O O O O***DT MD VB DT JJ NN IN NNP CC NNP .
+ASPECT#1ing - i could not get my songs to completely transfer via usb 1.1 or 2.0 .***O O O O O O O O O O O O O O O O O***NN : PRP MD RB VB PRP$ NNS TO RB VB IN NN CD CC CD .
+once i actually got to an answering machine and left a message .***O O O O O O O O O O O O O***IN PRP RB VBD IN DT VBG NN CC VBD DT NN .
+what the photoshop plug - in gives you is reality , and then if you want fantasy , you can use photoshop to create it .***O O O O O O O O O O O O O O O O O O O O O O O O O O***WP DT NNP NN HYPH NN VBZ PRP VBZ NN , CC RB IN PRP VBP NN , PRP MD VB NNP TO VB PRP .
+well , within 45 days the video output quit working ( both rca & optic ) .***O O O O O O T-NEG T-NEG O O O O O O O O O***UH , IN CD NNS DT NN NN VBD VBG -LRB- DT NNP CC NNP -RRB- .
+there is n't need to get in details again , but just remember it rocks because : price , sound , ease of use , and features .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O***EX VBZ RB NN TO VB IN NNS RB , CC RB VB PRP VBZ IN : NN , NN , NN IN NN , CC NNS .
+you can change any of these , but need to be paying attention when the information is downloaded before you copy it .***O O O O O O O O O O O O O O O O O O O O O O O***PRP MD VB DT IN DT , CC VBP TO VB VBG NN WRB DT NN VBZ VBN IN PRP VBP PRP .
+well surely this is a product that i recommend someone in getting rather than any other mp3 player ( at that size and the price ) .***O O O O O T-POS O O O O O O O O O O O O O O O O O O O O O***UH RB DT VBZ DT NN WDT PRP VBP NN IN VBG RB IN DT JJ NN NN -LRB- IN DT NN CC DT NN -RRB- .
+when it came down to it , the price on this player is hard to beat .***O O O O O O O O T-POS O O O O O O O O***WRB PRP VBD RP IN PRP , DT NN IN DT NN VBZ JJ TO VB .
+( 28 not 30 because software itself takes space ) .***O O O O O O O O O O O***-LRB- CD RB CD IN NN PRP VBZ NN -RRB- .
+the canon g3 gives tons of control for photo buffs but still has an " auto " mode that makes it very easy for the novice to use .***O O O O O O T-POS O O O O O O O O O O T-POS O O O O O O O O O T-POS O***DT NNP NNP VBZ NNS IN NN IN NN NNS CC RB VBZ DT `` NN '' NN WDT VBZ PRP RB JJ IN DT NN TO VB .
+of course , i was hesitant given the price , but i ' ve been extremely impressed since receiving it , and bought a second one as a christmas present for my parents .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***RB RB , PRP VBD JJ VBN DT NN , CC PRP `` JJ VBN RB JJ IN VBG PRP , CC VBD DT JJ NN IN DT NNP NN IN PRP$ NNS .
+i ' ve yet to be dissappointed .***O O O O O O O O***PRP `` JJ RB TO VB VBN .
+finally , amazon 's free shipping is really getting good , it took only 3 working days for the player to reach me !***O O O O O T-POS O O O O O O O O O O O O O O O O O O***RB , NNP POS JJ NN VBZ RB VBG JJ , PRP VBD RB CD NN NNS IN DT NN TO VB PRP .
+i can recommend this phone to anyone , anytime .***O O O O T-POS O O O O O***PRP MD VB DT NN IN NN , RB .
+i bought the nomad when i went home on leave and it worked great for about a month .***O O O O O O O O O O O O O O O O O O O***PRP VBD DT NN WRB PRP VBD RB IN NN CC PRP VBD RB IN RB DT NN .
+like other reviewers , installation was hell .***O O O O T-NEG O O O***IN JJ NNS , NN VBD NN .
+this model does have the traditional key arrangement , it 's just that they are really close to one another , and have unconventional shapes , so it takes a big getting used to for someone like me with big hands .***O O O O O O T-NEG T-NEG O O O O O O O O O O O O O O O O T-NEG O O O O O O O O O O O O O O O O O***DT NN VBZ VB DT JJ JJ NN , PRP VBZ RB IN PRP VBP RB JJ IN CD DT , CC VBP JJ NNS , CC PRP VBZ DT JJ VBG VBN IN IN NN IN PRP IN JJ NNS .
+i am a soldier serving in baghdad right now .***O O O O O O O O O O***PRP VBP DT NN VBG IN NNP RB RB .
+the new organizer software that ships with the nomad zen xtra could n't be easier to use .***O O T-POS T-POS O O O O O O O O O O O O O O***DT JJ NN NN WDT VBZ IN DT NN NNP NNP MD RB VB JJR TO VB .
+i use it primarily in the provided protective case although i have dropped it about 3 feet from my desk ( by accident ) as well as have played it outdoors in - 30 fahrenheit weather ( by design ) and it has continued to work fine .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***PRP VBP PRP RB IN DT VBN JJ NN IN PRP VBP VBN PRP RB CD NNS IN PRP$ NN -LRB- IN NN -RRB- RB RB IN VBP VBN PRP RB IN : CD NN NN -LRB- IN NN -RRB- CC PRP VBZ VBN TO VB RB .
+i just bought one and returned it as defective for good reason .***O O O O O O O O O O O O O***PRP RB VBD CD CC VBD PRP IN JJ IN JJ NN .
+it comes equipped with lot of ASPECT#1s and polyphonic sweet tunes .***O O O O O O O O O O T-POS O***PRP VBZ VBN IN NN IN NNP CC VB JJ NNS .
+i wo n't go into the details here , as the online sites ( stevesdigicams , dpreviews ) go into great depth in their reviews , but i am very pleased with the features , the speed , the picture quality , the flexibility , the automation , and the functional conveniences this camera offers .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O T-POS O O T-POS O O T-POS T-POS O O T-POS O O T-POS O O O T-POS T-POS O O O O***PRP MD RB VB IN DT NNS RB , IN DT JJ NNS -LRB- NNS , NNS -RRB- VB IN JJ NN IN PRP$ NNS , CC PRP VBP RB JJ IN DT NNS , DT NN , DT NN NN , DT NN , DT NN , CC DT JJ NNS DT NN VBZ .
+bought the 30 gb xtra a couple of weeks ago , and so far it has been excellent .***O O O O O O O O O O O O O O O O O O O***VBD DT CD NNP NNP DT NN IN NNS RB , CC RB RB PRP VBZ VBN JJ .
+picture scrolling in b / w :***O O O O O O O***NN NNP IN NNP SYM NNP :
+yes , i recommend it over the competition .***O O O O O O O O O***UH , PRP VBP PRP IN DT NN .
+i am absolutely in awe of this camera , canon put enormous quality into the g3 .***O O O O O O O T-POS O O O O T-POS O O O O***PRP VBP RB IN NN IN DT NN , NNP VBD JJ NN IN DT NN .
+i ' ve only had it a week , but so far , everything about this camera is making me happy .***O O O O O O O O O O O O O O O O T-POS O O O O O***PRP `` XX RB VBD PRP DT NN , CC RB RB , NN IN DT NN VBZ VBG PRP JJ .
+these problems were consistent , and also not present on another dvd player .***O O O O O O O O O O O O O O***DT NNS VBD JJ , CC RB RB JJ IN DT NN NN .
+it sure does !***O O O O***PRP RB VBZ .
+one of the best cell phones i have ever used to - date .***O O O O T-POS T-POS O O O O O O O O***CD IN DT JJS NN NNS PRP VBP RB VBN IN HYPH NN .
+some dvd 's i rented would not play .***O T-NEG O O O O O T-NEG O***DT NNP POS PRP VBD MD RB VB .
+i have a large but not huge cd collection and have loaded everything i want to listen to on it and still have 13 gigabytes free .***O O O O O O O O O O O O O O O O O O O O O O O O O O O***PRP VBP DT JJ CC RB JJ NN NN CC VBP VBN NN PRP VBP TO VB IN IN PRP CC RB VB CD NNS JJ .
+compared to musicmatch , the software has a better filing system and easier to use .***O O O O O T-POS O O O T-POS T-POS O O O T-POS O***VBN TO NN , DT NN VBZ DT JJR NN NN CC JJR TO VB .
+if you are looking for a very simple point and shoot camera , this is probably not what you are looking for .***O O O O O O O O O O O O O O O O O O O O O O O***IN PRP VBP VBG IN DT RB JJ NN CC NN NN , DT VBZ RB RB WP PRP VBP VBG IN .
+do yourself a favor and save your money to get something of better quality , or at least works .***O O O O O O O O O O O O O O O O O O O O***VB PRP DT NN CC VB PRP$ NN TO VB NN IN JJR NN , CC IN JJS NNS .
+great ASPECT#1s , ASPECT#2s and white balance .***O O O O O T-POS T-POS O***JJ NNP , JJ CC JJ NN .
+find another phone , or buy this one in its manufacturer - unlocked form .***O O O O O O O O O O O O O O O***VB DT NN , CC VB DT NN IN PRP$ NN HYPH JJ NN .
+the scroll wheel is a big improvement over the ipod touchpad .***O T-POS T-POS O O O O O O O O O***DT NN NN VBZ DT JJ NN IN DT NNP NN .
+so i ' m screwed .***O O O O O O***CC PRP `` NNP VBD .
+hope i helped !***O O O O***NNP PRP VBD .
+1 . i do n't need the nomad at the office .***O O O O O O O O O O O O***LS . PRP VBP RB VB DT NN IN DT NN .
+with my sennheiser 497 headphones , the volume is loud enough at 12 ( max is 20 ) .***O O O O O O O T-POS O O O O O O O O O O O***IN PRP$ NN CD NNS , DT NN VBZ JJ RB IN CD -LRB- NNP VBZ CD -RRB- .
+who knows how many uses you 'll get out of it before it craps out , but it probably will .***O O O O O O O O O O O O O O O O O O O O O***WP VBZ WRB JJ VBZ PRP MD VB IN IN PRP IN PRP VBZ RB , CC PRP RB MD .
+i bought a digi - slave dsf-1s flash unit .***O O O O O O O O O O***PRP VBD DT NN HYPH NN NNP NN NN .
+accessing files by artist and album ( i mostly look things up by artist ) is easy and intuitive .***T-POS T-POS O O O O O O O O O O O O O O O O O O***VBG NNS IN NN CC NNP -LRB- PRP RB VBP NNS RP IN NN -RRB- VBZ JJ CC JJ .
+5 ) lack of good accessories - this is more of an oversight of creative 's marketing .***O O O O O T-NEG O O O O O O O O O O O O***LS -RRB- NN IN JJ NNS : DT VBZ JJR IN DT NN IN JJ POS NN .
+focusing on a display rack about 20 feet away in a brightly lit room during day time , ASPECT#1s produced by this camera were blurry and in a shade of orange .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***VBG IN DT NN NN RB CD NNS RB IN DT RB VBN NN IN NN NN , NNP VBN IN DT NN VBD JJ CC IN DT NN IN NN .
+whatever you do , do n't buy this product .***O O O O O O O O O O***WDT PRP VBP , VB RB VB DT NN .
++ screen was good , easy to read***O T-POS O O O O O T-POS***CC NN VBD JJ , JJ TO VB
+that 's the first thing to understand .***O O O O O O O O***DT VBZ DT JJ NN TO VB .
+- well - backlit keypad***O O O O T-POS***HYPH RB HYPH RP NN
+purchased the ad-2600 about a month ago and have had numerous problems with it .***O O O O O O O O O O O O O O O***VBN DT NNP RB DT NN RB CC VBP VBN JJ NNS IN PRP .
+learning how to use it will not take very long .***T-POS O O O O O O O O O O***VBG WRB TO VB PRP MD RB VB RB RB .
+it was always after it finished a process or something , so it did n't cause any file errors .***O O O O O O O O O O O O O O O O O O O O***PRP VBD RB IN PRP VBD DT NN CC NN , IN PRP VBD RB VB DT NN NNS .
+connecting the same outputs to a video card in my computer , there was sound but still no picture .***O O O O O O O O O O O O O O O O O O O O***VBG DT JJ NNS IN DT NN NN IN PRP$ NN , EX VBD JJ CC RB DT NN .
+it was not easy sharing one with my teen age kid .***O O O O O O O O O O O O***PRP VBD RB JJ VBG CD IN PRP$ NN NN NN .
+i ' ve compared and compared and compared .***O O O O O O O O O***PRP `` JJ VBN CC VBN CC VBN .
+usually i just skip to the next chapter to avoid it .***O O O O O O O O O O O O***RB PRP RB VBZ IN DT JJ NN TO VB PRP .
+this is not the same thing as a film camera .***O O O O O O O O O O O***DT VBZ RB DT JJ NN IN DT NN NN .
+i would have given a 3 to 5 star review in my first few weeks , depending on how mad i felt about the crummy software .***O O O O O O O O O O O O O O O O O O O O O O O O O O O***PRP MD VB VBN DT CD TO CD NN NN IN PRP$ JJ JJ NNS , VBG IN WRB JJ PRP VBD IN DT JJ NN .
+the reason i rated it a four is because of that darn diopter adjustment dial . its very small and hard to turn so you can ' t get an accurate adjustment ( for those of you who do n't know what a diopter adjustment is , it is to adjust the focus of the viewfinder to your eyesight . )***O O O O O O O O O O O O T-NEG T-NEG T-NEG O O O O O O O T-NEG O O O O O O O O T-NEG O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***DT NN PRP VBD PRP DT CD VBZ IN IN DT NNP NNP NN NN . PRP$ RB JJ CC JJ TO VB IN PRP MD '' NN VB DT JJ NN -LRB- IN DT IN PRP WP VBP RB VB WP DT NN NN VBZ , PRP VBZ TO VB DT NN IN DT NN IN PRP$ NN . -RRB-
+it lasted about 1 1/2 weeks .***O O O O O O O***PRP VBD RB CD CD NNS .
+one downside though is that autofocus does not work well when battery is low .***O O O O O T-NEG O O O O O O O O O***CD NN RB VBZ IN NNP VBZ RB VB RB WRB NN VBZ JJ .
+nice and small and excellent when it comes to downloading games , graphics and ringtones from www.crazycellphone.com***O O O O O O O O O T-POS T-POS O T-POS O T-POS O O***JJ CC JJ CC JJ WRB PRP VBZ IN JJ NNS , NNS CC NNS IN ADD
+in general it is easy to use and well laid out .***O O O O O O T-POS O O T-POS T-POS O***IN JJ PRP VBZ JJ TO VB CC RB VBN RP .
+there was neither picture nor sound .***O O O T-NEG O T-NEG O***EX VBD CC NN CC NN .
+therefore i m saying i m returning it right now , and i will see wat happens with my next zen xtra ( same replacement ) .***O O O O O O O O O O O O O O O O O O O O O O O O O O O***RB PRP VBP VBG PRP VBP VBG PRP RB RB , CC PRP MD VB NNP VBZ IN PRP$ JJ NNP NNP -LRB- JJ NN -RRB- .
+i also own an " apex ad 1201 " dvd player and have had no problems with it since i purchased it almost 1 1/2 years ago .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O***PRP RB VBP DT `` NNP NN CD `` NN NN CC VBP VBN DT NNS IN PRP IN PRP VBD PRP RB CD CD NNS RB .
+my dad also has an apex tv and it was another great value for the money .***O O O O O T-POS T-POS O O O O O T-POS O O O O***PRP$ NN RB VBZ DT NN NN CC PRP VBD DT JJ NN IN DT NN .
+i ' ve also had the nomad zen lock - up several times .***O O O O O O O O T-NEG T-NEG T-NEG O O O***PRP `` XX RB VBD DT NN NNP VB HYPH RP JJ NNS .
+the ipod is a one way only machine - from computer to player .***O O O O O O O O O O O O O O***DT NNP VBZ DT CD NN RB NN HYPH IN NN IN NN .
+it is small , unlike my canon slr , so it easily fits in my pocket .***O O O O O O O O O O O O O O O O O***PRP VBZ JJ , IN PRP$ NNP NNP , IN PRP RB VBZ IN PRP$ NN .
+after reading several other reviews this appears to be relatively common .***O O O O O O O O O O O O***IN VBG JJ JJ NNS DT VBZ TO VB RB JJ .
+when it arrives , you press the shutter release .***O O O O O O O O O O***WRB PRP VBZ , PRP VBP DT NN NN .
+after i had it a couple weeks , it got into a state where it could never find the device , no matter how often i rebooted my pc , reset the device , reloaded drivers , etc , etc . creative 's online support was no help at all .***O O O O O O O O O O O O O O O O O T-NEG O O O O O O O O O O O O O O O O O O O O O O O O O T-NEG T-NEG O O O O O O***IN PRP VBD PRP DT NN NNS , PRP VBD IN DT NN WRB PRP MD RB VB DT NN , RB RB WRB RB PRP VBD PRP$ NN , VB DT NN , VBN NNS , FW , FW . NNP POS JJ NN VBD DT NN RB RB .
+there is a clock , and date , which can get helpful .***O O O T-POS O O T-POS O O O O O O***EX VBZ DT NN , CC NN , WDT MD VB JJ .
+buyer beware ! sort your songs and adjust the titles accordingly ( maybe this applies to other players too , and not just the nomad , i do n't know ) .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***NN VBP . VB PRP$ NNS CC VBP DT NNS RB -LRB- RB DT VBZ IN JJ NNS RB , CC RB RB DT NN , PRP VBP RB VB -RRB- .
+i would recommend a larger compact - flash card , at least 128 mb .***O O O O O O O O O O O O O O O***PRP MD VB DT JJR JJ HYPH NN NN , IN JJS CD NN .
+so when it breaks , as it will , you will find yourself very disappointed and depressed at the loss of the nomad .***O O O O O O O O O O O O O O O O O O O O O O O O***RB WRB PRP VBZ , IN PRP MD , PRP MD VB PRP RB JJ CC JJ IN DT NN IN DT NN .
+the controls are somewhat harder to use than the ipod , but i have gotten use to them , and even at the beginning did not think would justify the huge difference in price .***O T-NEG O O O O T-NEG O O O O O O O O O O O O O O O O O O O O O O O O O O O O***DT NNS VBP RB JJR TO VB IN DT NNP , CC PRP VBP VBN NN IN PRP , CC RB IN DT NN VBD RB VB MD VB DT JJ NN IN NN .
+now heres the stuff you should know starting with the good things : the screen is really big and the blue light in the back is perfect , fast as hell in music transfer , controls are easy to use after mastering the scroll button , great sound and i ve heard many mp3 players , a ton of different equilizer type deals on here .***O O O O O O O O O O O O O O T-POS O O O O O O T-POS O O O O O O O O O O T-POS T-POS O T-POS O O O T-POS O O O O O O O T-POS O O O O O O O O O O O O T-POS O O O O O***RB VBZ DT NN PRP MD VB VBG IN DT JJ NNS : DT NN VBZ RB JJ CC DT JJ NN IN DT NN VBZ JJ , RB IN NN IN NN NN , NNS VBP JJ TO VB IN VBG DT NN NN , JJ NN CC PRP VB VBD JJ NN NNS , DT NN IN JJ NN NN NNS IN RB .
+overall it is the best camera on the market .***O O O O O T-POS O O O O***JJ PRP VBZ DT JJS NN IN DT NN .
+the player controls are too easy to hit accidentally .***O O O O O O O O O O***DT NN NNS VBP RB JJ TO VB RB .
+- no voice activated dialing ( what were they thinking***O O T-NEG T-NEG T-NEG O O O O O***: DT NN VBN NN -LRB- WP VBD PRP VBG
+the sound quality with jazz and pop music is equally superior .***O T-POS T-POS O O O O O O O O O***DT JJ NN IN NN CC NN NN VBZ RB JJ .
+it is a perfect phone in such a small and appealing package .***O O O O T-POS O O O O O O O O***PRP VBZ DT JJ NN IN PDT DT JJ CC JJ NN .
+the player itself has all sorts of problems .***O T-NEG O O O O O O O***DT NN PRP VBZ DT NNS IN NNS .
+my one recommendation to creative is to get some marketing people to work on the names of these things .***O O O O O O O O O O O O O O O O O O O O***PRP$ CD NN IN JJ VBZ TO VB DT NN NNS TO VB IN DT NNS IN DT NNS .
+you need your computer , however , if you want to add tracks to a playlist .***O O O O O O O O O O O O O O O O O***PRP VBP PRP$ NN , RB , IN PRP VBP TO VB NNS IN DT NN .
+if you have a lot of those , be prepared to convert to mp3 .***O O O O O O O O O O O O O O O***IN PRP VBP DT NN IN DT , VB VBN TO VB IN NN .
+the top did not fit well into the unit . ( felt defective )***O T-NEG O O T-NEG O O O O O O O O O***DT NN VBD RB VB RB IN DT NN . -LRB- VBN JJ -RRB-
+it has nt gone below the second notch ( i charge mine whenever i ' m at home and not using it ) , so the battery life seems fine ( so far ) .***O O O O O O O O O O O O O O O O O O O O O O O O O O T-POS T-POS O O O O O O O***PRP VBZ RB VBN IN DT JJ NN -LRB- PRP VBP PRP WRB PRP '' NN IN NN CC RB VBG PRP -RRB- , CC DT NN NN VBZ JJ -LRB- RB RB -RRB- .
+short of the eos range from canon or the d100s from nikon ( both slrs ) .***O O O O O O O O O O O O O O O O O***JJ IN DT NN NN IN NNP CC DT NNP IN NNP -LRB- CC NNP -RRB- .
+sound quality is wonderful , i really like the smart volume sound normalization .***T-POS T-POS O O O O O O O O T-POS T-POS T-POS O***JJ NN VBZ JJ , PRP RB VBP DT JJ NN NN NN .
+i ' ve have n't heard about a diagnos or fix for this .***O O O O O O O O O O O O O O***PRP `` JJ VBP RB VBN IN DT NN CC NN IN DT .
+as its 4mp , you might need bigger storage to store high quality images and recording movies ( you can record 3 minutes of video ) .***O O O O O O O O O O O O O O O O O O O O O O O O O O O***IN PRP$ NN , PRP MD VB JJR NN TO VB JJ NN NNS CC VBG NNS -LRB- PRP MD VB CD NNS IN NN -RRB- .
+the function lever - the one which switches between capture and view mode feels fragile .***O T-NEG T-NEG O O O O O O O O O O O O O***DT NN NN : DT NN WDT VBZ IN NN CC NN NNP VBZ JJ .
+2 . i did not want a very small camera as it seems to get lost in my hands and i was n't comfortable with that .***O O O O O O O O O O O O O O O O O O O O O O O O O O O***LS . PRP VBD RB VB DT RB JJ NN IN PRP VBZ TO VB VBN IN PRP$ NNS CC PRP VBD RB JJ IN DT .
+it could be a little bit bigger , but it 's easy to get used to .***O O O O O O O O O O O O O O O O O***PRP MD VB DT JJ NN JJR , CC PRP VBZ JJ TO VB VBN IN .
+this thing plays everything i feed it .***O O T-POS O O O O O***DT NN VBZ NN PRP VBP PRP .
+unless you are making posters , a g3 is more than good enough .***O O O O O O O O O O O O O O***IN PRP VBP VBG NNS , DT NN VBZ JJR IN JJ RB .
+i received this as a gift .***O O O O O O O***PRP VBD DT IN DT NN .
+the scroll button is overly sensitive at times ; not sensitive enough at others .***O T-NEG T-NEG O O O O O O O O O O O O***DT NN NN VBZ RB JJ IN NNS : RB JJ RB IN NNS .
+proven canon built quality and lens .***O O O T-POS O T-POS O***VBN NNP VBD NN CC NN .
+i agree with the positive reviews .***O O O O O O O***PRP VBP IN DT JJ NNS .
+i have n't messed with the firmware at all , the player worked perfect for me right out of the box .***O O O O O O O O O O O T-POS O O O O O O O O O O***PRP VBP RB VBN IN DT NN RB RB , DT NN VBD JJ IN PRP RB IN IN DT NN .
+simply not as friendly for functional as an ipod .***O O O O O O O O O O***RB RB RB JJ IN JJ IN DT NN .
+just point and shoot and the ASPECT#1s were great .***O O O O O O O O O O***RB NN CC NN CC DT NNP VBD JJ .
+but the sound is very good ( and loud ) and works well on my portable speakers .***O O T-POS O O O O O O O O O O O O O O O***CC DT NN VBZ RB JJ -LRB- CC JJ -RRB- CC VBZ RB IN PRP$ JJ NNS .
+i ' ve attempted to connect this unit to several different tvs , using a multitude of connection methods , and i still can ' t get a video signal from the machine .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O T-NEG T-NEG O O O O***PRP `` NNP VBD TO VB DT NN IN JJ JJ NNS , VBG DT NN IN NN NNS , CC PRP RB MD `` NN VB DT NN NN IN DT NN .
+just be aware of it .***O O O O O O***RB VB JJ IN PRP .
+not only is it the perfect size ( not too small , not too large ) , it also has all the features a high - tech phone user would want .***O O O O O O T-POS O O O O O O O O O O O O O O O T-POS O O O O O O O O O***RB RB VBZ PRP DT JJ NN -LRB- RB RB JJ , RB RB JJ -RRB- , PRP RB VBZ PDT DT NNS DT JJ HYPH NN NN NN MD VB .
+they sell an adapter unit to use with your car 's cassette deck .***O O O O O O O O O O O O O O***PRP VBP DT NN NN TO VB IN PRP$ NN POS NN NN .
+but this is * not documented * in the zen manual - neither the hard copy nor the cd version .***O O O O O O O O O T-NEG T-NEG O O O O O O O O O O***CC DT VBZ NFP RB VBN NFP IN DT NNP NNP : CC DT JJ NN CC DT NNP NN .
+before i " get used to it " , here are my first feelings :***O O O O O O O O O O O O O O O***IN PRP `` VBP JJ IN PRP '' , RB VBP PRP$ JJ NNS :
+this is rarely a problem with any kind of popular music , but can be troublesome with classical music where tracks are identified by tempi .***O O O O O O O O O O O O O O O O O O O O O O O O O O***DT VBZ RB DT NN IN DT NN IN JJ NN , CC MD VB JJ IN JJ NN WRB NNS VBP VBN IN NNP .
+they fall in love with the product .***O O O O O O O O***PRP VBP IN NN IN DT NN .
+or save time and just do it , you wo n't regret it .***O O O O O O O O O O O O O O***CC VB NN CC RB VB PRP , PRP MD RB VB PRP .
+* lens visible in optical viewfinder .***O O O O O T-NEG O***NFP NN JJ IN JJ NN .
+the panel seems like it will come off very easily as other people have said .***O T-NEG O O O O O O O O O O O O O O***DT NN VBZ IN PRP MD VB RP RB RB IN JJ NNS VBP VBD .
+after having bought and been disappointed in another brand of dvd player , i purchased the apex ad2600 from amazon and first of all i should say it was delivered much more quickly than i had expected .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***IN VBG VBN CC VBN VBN IN DT NN IN NN NN , PRP VBD DT NNP NNP IN NNP CC RB IN DT PRP MD VB PRP VBD VBN RB RBR RB IN PRP VBD VBN .
+you can stop playback by pressing 2 buttons , first the pause button , then the " next track " or " previous track " button .***O O O O O O O O O O O O O O O O O O O O O O O O O O O***PRP MD VB NN IN VBG CD NNS , RB DT NN NN , RB DT `` JJ NN '' CC `` JJ NN '' NN .
+lastly , the price is fantastic :***O O O T-POS O O O***RB , DT NN VBZ JJ :
+one good thing , it is 40 gb of disk space ( well , it is 38 gb in reality ) .***O O O O O O O O O O O O O O O O O O O O O O***CD JJ NN , PRP VBZ CD NN IN NN NN -LRB- UH , PRP VBZ CD NNP IN NN -RRB- .
+the macro works great for medical photographs and the auto mode is terrific for point and shoot .***O T-POS O O O O O O O T-POS T-POS O O O O O O O***DT JJ VBZ JJ IN JJ NNS CC DT NN NN VBZ JJ IN NN CC NN .
+i am going to have so much fun with this camera and when i learn more i will post a more accurate review .***O O O O O O O O O O O O O O O O O O O O O O O O***PRP VBP VBG TO VB RB JJ NN IN DT NN CC WRB PRP VBP JJR PRP MD VB DT RBR JJ NN .
+first of all , i bought this dvd as a christmas present for my girlfriend and i am somewhat disappointed .***O O O O O O O T-NEG O O O O O O O O O O O O O***RB IN DT , PRP VBD DT NN IN DT NNP NN IN PRP$ NN CC PRP VBP RB JJ .
+i bought this dvd player mainly because my old sharp dvd player could not play most of the dvds from the store that i rent from and i had to watch them using my pc 's dvd - rom player .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***PRP VBD DT NN NN RB IN PRP$ JJ JJ NN NN MD RB VB JJS IN DT NN IN DT NN WDT PRP VBP IN CC PRP VBD TO VB PRP VBG PRP$ NN POS NN HYPH NNP NN .
+be very careful when the battery is low and make sure to carry extra batteries .***O O O O O O O O O O O O O O O O***VB RB JJ WRB DT NN VBZ JJ CC VB JJ TO VB JJ NNS .
+i ordered 2 .***O O O O***PRP VBD CD .
+try to buy a tripod and that should solve some of those problems .***O O O O O O O O O O O O O O***VB TO VB DT NN CC DT MD VB DT IN DT NNS .
+they piggy - back on cingular 's service .***O O O O O O O O O***PRP NN HYPH RP IN NNP POS NN .
+i purchased a jukebox 3 from creative almost a year ago .***O O O O O O O O O O O O***PRP VBD DT NN CD IN JJ RB DT NN RB .
+does n't always register push - button movement .***O O O O O O O O O***VBZ RB RB VB NN HYPH NN NN .
+for more info on digital cameras , go to dpreviews .***O O O O O O O O O O O***IN JJR NN IN JJ NNS , VB IN NNS .
+i ' m not one who uses web browsing , so this phone easily met and surpassed my needs .***O O O O O O O O O O O O T-POS O O O O O O O***PRP `` CD RB CD WP VBZ NN NN , CC DT NN RB VBD CC VBD PRP$ NNS .
+canon have packed a lot in here and the ASPECT#1s and ASPECT#2s are easy to use and logically laid out .***O O O O O O O O O O O O O O O T-POS O O T-POS T-POS O***NNP VBP VBN DT NN RB RB CC DT NNP CC NNP VBP JJ TO VB CC RB VBD RP .
+ring tones only come with crazy songs and annoying rings , there is only one ring that sounds close to a regular ring .***T-NEG T-NEG O O O O O O O O O O O O O O O O O O O O O O***NNP NNS RB VBN IN JJ NNS CC JJ NNS , EX VBZ RB CD NN WDT VBZ RB IN DT JJ NN .
+this is my first digital camera , and i am very pleased with it .***O O O O O T-POS O O O O O O O O O***DT VBZ PRP$ JJ JJ NN , CC PRP VBP RB JJ IN PRP .
+just easily drag and drop files into the nomad explorer and from there you easily alter i d tags and sort your music according to your liking , by artist , song title , genre , etc .***O O O O O O O O T-POS T-POS O O O O O T-POS O O O O T-POS O O O O O O O O O O O O O O O O O***RB RB VB CC VB NNS IN DT NN NN CC IN RB PRP RB VBP PRP NN NNS CC VB PRP$ NN VBG IN PRP$ NN , IN NN , NNP NNP , NNP , FW .
+3 . that 's pretty much all the negatives the positive things truly outnumber the negatives , and the negatives are n't that bad .***O O O O O O O O O O O O O O O O O O O O O O O O O***LS . DT VBZ RB RB PDT DT NNS DT JJ NNS RB VBP DT NNS , CC DT NNS VBP RB RB JJ .
+my friend has an i - pod for about 2 years and the battery has so so messed up .***O O O O O O O O O O O O O O O O O O O O***PRP$ NN VBZ DT NNP HYPH NN IN RB CD NNS CC DT NN VBZ RB RB JJ RP .
+canon was an obvious choice , but i did not want to limit my decision , so started researching all brands that would take my microdrives .***O O O O O O O O O O O O O O O O O O O O O O O O O O O***NNP VBD DT JJ NN , CC PRP VBD RB VB TO VB PRP$ NN , RB VBD VBG DT NNS WDT MD VB PRP$ NNS .
+in other words , the zen is not a convenient data storage device ; only buy the capacity you need for your music collection ( see point 1 . for some sizing information ) .***O O O O O O O O O O T-NEG T-NEG T-NEG O O O O O O O O O O O O O O O O O O O O O O***IN JJ NNS , DT NN VBZ RB DT JJ NN NN NN : RB VB DT NN PRP VBP IN PRP$ NN NN -LRB- VB NN CD . IN DT NN NN -RRB- .
+you have to buy better ones .***O O O O O O O***PRP VBP TO VB JJR NNS .
+however , if anyone has participated in violent or extreme sports while using their zen , please share your experiences .***O O O O O O O O O O O O O O O O O O O O O***RB , IN NN VBZ VBN IN JJ CC JJ NNS IN VBG PRP$ NN , UH VB PRP$ NNS .
+also love waking up to music with attached speakers .***O O T-POS T-POS O O O O O O***RB VBP VBG IN IN NN IN VBN NNS .
+only con i can think of is no camera ... .***O O O O O O O O T-NEG O O***RB XX PRP MD VB IN VBZ DT NN NFP .
+so i pop - in my first dvd and start to watch .***O O O O O O O O O O O O O***RB PRP VBP : IN PRP$ JJ NN CC VB TO VB .
+it does n't have firewire , not a real complaint since most windows users do n't generally have firewire cards themselves .***O O O O T-NEG O O O O O O O O O O O O O O O O O***PRP VBZ RB VB NN , RB DT JJ NN IN JJS NNS NNS VBP RB RB VB NN NNS PRP .
+this is the second apex dvd player i ' ve had - and the last .***O O O O O O O O O O O O O O O O***DT VBZ DT JJ NNP NNP NN PRP `` JJ NN : CC DT JJ .
+yet they ' ve gotten rid of most of the languages that should be in the phone , including italian , german , and dutch .***O O O O O O O O O O O O O O O O O O O O O O O O O O***CC PRP `` JJ VBN JJ IN JJS IN DT NNS WDT MD VB IN DT NN , VBG JJ , JJ , CC JJ .
+this is a very nice phone , but there is no warranty on it .***O O O O O T-POS O O O O O T-NEG O O O***DT VBZ DT RB JJ NN , CC EX VBZ DT NN IN PRP .
+but for $ 49.99 go get one !***O O O O O O O O***CC IN $ CD VB VB CD .
+i have my mp3 's stored on my workstation .***O O O O O O O O O O***PRP VBP PRP$ NN POS VBN IN PRP$ NN .
+because of the large capacity of the nomad , owners can load hundreds of cds on to it .***O O O O O O O O O O O O O O O O O O O***IN IN DT JJ NN IN DT NN , NNS MD VB NNS IN NNS RP IN PRP .
+the g3 has a different type of battery charging system from the smaller canon cameras : the battery needs to be charged while in the camera , but the charging system also enables you to use the camera while plugged in without running down the battery .***O O O O O O O T-POS T-POS T-POS O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***DT NNP VBZ DT JJ NN IN NN VBG NN IN DT JJR NNP NNP : DT NN VBZ TO VB VBN IN IN DT NN , CC DT VBG NN RB VBZ PRP TO VB DT NN IN VBN RP IN VBG IN DT NN .
+ok so i donno about what other people said , how the player breaks and stuff , and the headfone jack , fortunately that did not happen to me .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***UH RB PRP VBP IN WP JJ NNS VBD , WRB DT NN VBZ CC NN , CC DT JJ NN , RB WDT VBD RB VB IN PRP .
+maybe it is my lack of experience , but i found shots with this camera very disappointing .***O O O O O O O O O O O T-NEG O O O O O O***RB PRP VBZ PRP$ NN IN NN , CC PRP VBD NNS IN DT NN RB JJ .
+the software you get with this camera is perfect .***O T-POS O O O O O O O O***DT NN PRP VBP IN DT NN VBZ JJ .
+3 it is very compact but the ASPECT#1s are so well designed that they 're still easy to use .***O O O O O O O O O O O O O O O O O O T-POS O***LS PRP VBZ RB JJ CC DT NNS VBP RB RB VBN IN PRP VBP RB JJ TO VB .
+same story as everybody else when trying to get service from apex - nothing .***O O O O O O O O O T-NEG O O O O O***JJ NN IN NN RB WRB VBG TO VB NN IN NN HYPH NN .
+bought this product about a month ago and have used it in a variety of situations .***O O O O O O O O O O O O O O O O O***VBD DT NN IN DT NN RB CC VBP VBN PRP IN DT NN IN NNS .
+if you have a question , they have the answer .***O O O O O O O O O O O***IN PRP VBP DT NN , PRP VBP DT NN .
+we got a 256 mb card , and have been hard - pressed to fill it over a weekend .***O O O O O O O O O O O O O O O O O O O O***PRP VBD DT CD NN NN , CC VBP VBN RB HYPH VBN TO VB PRP IN DT NN .
+i think the lack of the mp3 player being able to run without special software is also a downer , becuase it makes it more cumbersome for people less computer illiterate .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***PRP VBP DT NN IN DT NN NN VBG JJ TO VB IN JJ NN VBZ RB DT NN , NN PRP VBZ PRP RBR JJ IN NNS JJR NN JJ .
+amazon , do your customers a big favor , do n't carry this item , and give them refunds !***O O O O O O O O O O O O O O O O O O O O***NNP , VBP PRP$ NNS DT JJ NN , VB RB VB DT NN , CC VB PRP NNS .
+and with the 500 you save you could print the results for the life of the camera .***O O O O O O O O O O O O O O O O O O***CC IN DT CD PRP VBP PRP MD VB DT NNS IN DT NN IN DT NN .
+one also exhibited extremely slow speed when going to the menu .***O O O O O T-NEG O O O O O O***CD RB VBD RB JJ NN WRB VBG IN DT NN .
+amazon.com promptly refunded my money for the first one , because a replacement was not available ( thanks amazon.com !***O O O O O O O O O O O O O O O O O O O O***ADD RB VBD PRP$ NN IN DT JJ CD , IN DT NN VBD RB JJ -LRB- NNS ADD .
+so , i recomend it , but not for those that have any hearing troubles , or for those that like to talk a lot in crowded public places ( which is annoying , by the way . )***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***CC , PRP VBP PRP , CC RB IN DT WDT VBP DT NN NNS , CC IN DT WDT VBP TO VB DT NN IN VBN JJ NNS -LRB- WDT VBZ JJ , IN DT NN . -RRB-
+beats that sony f717 ; its archrival .***O O O O O O O O***VBZ IN NNP NNP : PRP$ NN .
+kind of bulky and the wheel is awkward , but i can deal with that .***O O O O O T-NEG O O O O O O O O O O***NN RB NN CC DT NN VBZ JJ , CC PRP MD VB IN DT .
+the eax sound enhancement feature did n't do enough for me and the custom eq was a limited 5 band eq .***O T-NEG T-NEG T-NEG T-NEG O O O O O O O O T-NEG T-NEG O O O O O O O***DT NNP NN NN NN VBD RB VB NN IN PRP CC DT NN NNP VBD DT JJ CD NN NNP .
+i think you get what you pay for stands true .***O O O O O O O O O O O***PRP VBP PRP VBP WP PRP VBP IN VBZ JJ .
+there 's a dent on the upper - back - right and lower - back - right corners ... not too obvious unless you 're up close .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O***EX VBZ DT NN IN DT JJ HYPH NN HYPH NN CC JJR HYPH RP HYPH JJ NNS : RB RB JJ IN PRP VBP RB RB .
+i ' ve been pleased with the picture quality and durability in snow , car , boat and wind .***O O O O O O O T-POS T-POS O T-POS O O O O O O O O O***PRP `` JJ VBN JJ IN DT NN NN CC NN IN NN , NN , NN CC NN .
+after investigating a multitude of player options , i asked for and received the 60 gb zen xtra for christmas .***O O O O O O O O O O O O O O O O O O O O O***IN VBG DT NN IN NN NNS , PRP VBD IN CC VBD DT CD NNP NNP NNP IN NNP .
+it works great .***O O O O***PRP VBZ JJ .
+every t - mobile plan comes with gsm data , meaning that instead of speeds of 56 kbps is around 9 kbps ( with those small size wap websites do you really think it makes a difference ) .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***DT NN HYPH NN NN VBZ IN NNP NNS , VBG IN RB IN NNS IN CD NNP VBZ RB CD NNS -LRB- IN DT JJ NN NN NNS VBP PRP RB VB PRP VBZ DT NN -RRB- .
+i was limited to 999 files in a playlist with archos ' os , now i can have as many as i want .***O O O O O O O O O O O O O O O O O O O O O O O O***PRP VBD VBN IN CD NNS IN DT NN IN NN POS NN , RB PRP MD VB RB JJ IN PRP VBP .
+the software , which comes with player is not good at all .***O T-NEG O O O O O O O O O O O***DT NN , WDT VBZ IN NN VBZ RB JJ RB RB .
+even viewed cds full of jpgs .***O O O O O T-POS O***RB VBD NNS JJ IN NN .
+i have ice age and it keeps telling me no disc .***O O O O O O O O O T-NEG T-NEG O***PRP VBP NN NN CC PRP VBZ VBG PRP DT NN .
+still , i was willing to overlook those things as this unit looks sleek and has a myriad of features !***O O O O O O O O O O O O T-POS O O O O O O T-POS O***RB , PRP VBD JJ TO VB DT NNS IN DT NN VBZ JJ CC VBZ DT NN IN NNS .
+if you shoot in lots of light and desire high quality , this will be your camera .***O O O O O O O O O O O O O O O O O O***IN PRP VBP IN NNS IN NN CC VB JJ NN , DT MD VB PRP$ NN .
+i hope it 's because it 's new and they are not out yet , but being without a remote is hard .***O O O O O O O O O O O O O O O O O O O T-NEG O O O***PRP VBP PRP VBZ IN PRP VBZ JJ CC PRP VBP RB RB RB , CC VBG IN DT NN VBZ JJ .
+the menu options appear one at a time , taking up the whole screen , and one has to scroll down one by one , or have memorized where they are in the menu order , to select them by using the number keypad .***O T-NEG T-NEG O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***DT NNP NNS VBP CD IN DT NN , VBG RP DT JJ NN , CC PRP VBZ TO VB RP CD IN CD , CC VBP VBN WRB PRP VBP IN DT NNP NN , TO VB PRP IN VBG DT NN NN .
+i took it to my father 's house to play a tom jones concert dvd and he loved the player so much i gave it to him .***O O O O O O O O O O O O O O O O O O O T-POS O O O O O O O O***PRP VBD PRP IN PRP$ NN POS NN TO VB DT NNP NNP NNP NNP CC PRP VBD DT NN RB RB PRP VBD PRP IN PRP .
+this camera was affordable , very easy to learn , and produces spectacular ASPECT#2s .***O O O O O O O O T-POS O O O O O O***DT NN VBD JJ , RB JJ TO VB , CC VBZ JJ NNP .
+with the ASPECT#1s , i really have n't taken a bad picture yet .***O O O O O O O O O O O O O O***IN DT NNP , PRP RB VBP RB VBN DT JJ NN RB .
+however , the ad-2600 does n't have this feature ( for now ) .***O O O O O O O O O O O O O O***RB , DT NNP VBZ RB VB DT NN -LRB- IN RB -RRB- .
+the headphone jack acts as a pseudo line out jack .***O O O O O O O O O O O***DT NNP NNP VBZ IN DT NN NN IN NN .
+you can also set a background wallpaper .***O O O O O O O O***PRP MD RB VB DT NN NN .
+service is great as far as i can tell , features work like a charm , ringtones are high quality if you buy them from t - mobile and aim is great .***T-POS O O O O O O O O O T-POS O O O O O T-POS O O O O O O O O O O O O T-POS O O O***NN VBZ JJ RB RB IN PRP MD VB , VBZ NN IN DT NN , NNS VBP JJ NN IN PRP VBP PRP IN NN HYPH NN CC NN VBZ JJ .
+from the other reviews i ' ve read , it sounds like that wo n't be the end of my troubles .***O O O O O O O O O O O O O O O O O O O O O O***IN DT JJ NNS PRP `` JJ NN , PRP VBZ IN DT MD RB VB DT NN IN PRP$ NNS .
+if you have any multi - disc box sets , you 'll notice that the artist 's name , album name , and genre will often change with every disc .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***IN PRP VBP DT JJ JJ JJ NN NNS , PRP MD VB IN DT NN POS NN , NNP NNP , CC NN MD RB VB IN DT NN .
+by the way , it looks nice also .***O O O O O T-POS O O O***IN DT NN , PRP VBZ JJ RB .
+and finally , get your pictures developed at a kodak picture maker machine even though it costs you a little extra - no one can beat kodak processing in terms of clarity and brightness .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***CC RB , VB PRP$ NNS VBN IN DT NN NN NN NN RB IN PRP VBZ PRP DT JJ JJ : DT NN MD VB NNP NN IN NNS IN NN CC NN .
+i ' ve registered this unit at www.apexdigialinc.com and listed the problem .***O O O O O O O O O O O O O***PRP `` JJ VBD DT NN IN ADD CC VBD DT NN .
+i currently own an olympus d-550 which takes wonderful outdoor pictures .***O O O O O O O O O O O O***PRP RB VBP DT NN NN WDT VBZ JJ JJ NNS .
+the day finally arrived when i was sure i 'd leave sprint .***O O O O O O O O O O O O O***DT NN RB VBD WRB PRP VBD JJ PRP MD VB NNP .
+great phone , i 'd buy another .***O T-POS O O O O O O***JJ NN , PRP MD VB DT .
+this camera is worth every penny , and i highly recommend it !***O T-POS O O O O O O O O O O O***DT NN VBZ JJ DT NN , CC PRP RB VBP PRP .
+do n't waste time looking at anything else , just buy this one .***O O O O O O O O O O O O O O***VB RB VB NN VBG IN NN RB , RB VB DT NN .
+the battery life is very good , i got about 90 minutes with the lcd turned on all the time , the first time around , and i have been using it with the lcd off every now and then , and have yet needed to recharge it .***O T-POS T-POS O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***DT NN NN VBZ RB JJ , PRP VBD RB CD NNS IN DT NN VBD RP PDT DT NN , DT JJ NN RB , CC PRP VBP VBN VBG PRP IN DT NN RP DT RB CC RB , CC VBP RB VBN TO VB PRP .
+however , the music and data are apparently not separated ; ipod reviewers complain about " white noise " in random feedback mode that comes from appointments / contacts created on the ipod during synchronization .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***RB , DT NN CC NNS VBP RB RB VBN : NNP NNPS VBP IN `` JJ NN '' IN JJ NN NN WDT VBZ IN NNS SYM NNS VBN IN DT NN IN NN .
+i probably would have liked to have a player in something other than silver / metallic ... like the battery adapters on their usb thumbdrive ( muvo nx ) mp3 player models .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***PRP RB MD VB VBN TO VB DT NN IN NN JJ IN NN SYM JJ NFP IN DT NN NNS IN PRP$ NN NN -LRB- JJ JJ -RRB- NN NN NNS .
+the scroll wheel is finicky ; it works most of the time but there is a learning curve for pressing it just right ; new users say they have 50 % - 75 % success rate ; some find it so frustrating that they just return the device .***O T-NEG T-NEG O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***DT NN NN VBZ JJ : PRP VBZ JJS IN DT NN CC EX VBZ DT VBG NN IN VBG PRP RB RB : JJ NNS VBP PRP VBP CD NN SYM CD NN NN NN : DT VBP PRP RB JJ IN PRP RB VBP DT NN .
+you will be sorry if you do .***O O O O O O O O***PRP MD VB JJ IN PRP VBP .
+i then installed the software manually instead , after having to click past about 5 windows of " please register with us so we can spam your inbox " .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***PRP RB VBD DT NN RB RB , IN VBG TO VB NN RB CD NNS IN `` UH VB IN PRP IN PRP MD VB PRP$ NN '' .
+i leave the adapter and uv filter on all the time .***O O O O O O O O O O O O***PRP VBP DT NN CC RB VB IN PDT DT NN .
+great phone , easy to use , excellent network , no regrets ! ! !***O T-POS O O O T-POS O O T-POS O O O O O O***JJ NN , JJ TO VB , JJ NN , DT NNS . . .
+the flash card memory is more expensive but is very light and compact .***O O O O O O O O O O O O O O***DT NN NN NN VBZ RBR JJ CC VBZ RB JJ CC JJ .
+i got it now , and i ' m diggin ' it .***O O O O O O O O O O O O O***PRP VBD PRP RB , CC PRP CC NN NN '' PRP .
+i end up unplugging it from the wall for a few hours and when i try again it will work fine.at least until this problem arises again .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O***PRP VBP RP VBG PRP IN DT NN IN DT JJ NNS CC WRB PRP VBP RB PRP MD VB NNP JJS IN DT NN VBZ RB .
+i bought this only to have it break within a month .***O O O O O O O O O O O O***PRP VBD DT RB TO VB PRP VB IN DT NN .
+1 . creative mediasource software is ok to rip , catalog & burn music if you are starting from scratch ; but i used musicmatch to rip my cds before i bought the zen ( 278 cds ; 3,400 tracks ; 12.5 gb of music all ripped at 128bps ) and guess what ?***O O O T-NEG T-NEG O O O T-POS O T-POS O T-POS O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***LS . JJ NNP NN VBZ JJ TO VB , NN CC NNP NN IN PRP VBP VBG IN NN : CC PRP VBD NN TO VB PRP$ NNS IN PRP VBD DT NN -LRB- CD NNS : CD NNS : CD VBN IN NN DT VBD IN CD -RRB- CC VB WP .
+i called creative and they said to send it in and they would decide if it in warranty .***O O O O O O O O O O O O O O O O O O O***PRP VBD JJ CC PRP VBD TO VB PRP RP CC PRP MD VB IN PRP IN NN .
+i spent a lot of time comparing different cameras , and i realized that there is not such thing as the best digital camera .***O O O O O O O O O O O O O O O O O O O O O O O O O***PRP VBD DT NN IN NN VBG JJ NNS , CC PRP VBD IN EX VBZ RB JJ NN IN DT JJS JJ NN .
+i ' ve been using a powershot s330 for nearly a year , and wanted to upgrade to a 4 or 5 megapixel camera with a longer zoom , more adjustability , a hot shoe for an external flash , and a remote control .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***PRP `` XX VBN VBG DT JJ NNP IN RB DT NN , CC VBD TO VB IN DT CD CC CD NNP NN IN DT JJR NN , JJR NN , DT JJ NN IN DT JJ NN , CC DT JJ NN .
+all in all this a great player that blows the i - pod away , with easy to use and understand features , software that is simple to understand and use , and a great sound ( which is all that matters in a mp3 player ) .***O O O O O O T-POS O O O O O O O O O O O T-POS O T-POS T-POS O T-POS O O O O O O O O O O O T-POS O O O O O O O O O O O O***DT IN PDT DT DT JJ NN WDT VBZ DT NNP HYPH NNP RB , IN JJ TO VB CC VB NNS , NN WDT VBZ JJ TO VB CC VB , CC DT JJ NN -LRB- WDT VBZ DT WDT VBZ IN DT NN NN -RRB- .
+thought i 'd weigh in here with my stats .***O O O O O O O O O O***VBD PRP MD VB RP RB IN PRP$ NNS .
+however , it does n't register instantly as a hard drive like other players .***O O O O O O O O O O O O O O O***RB , PRP VBZ RB VB RB IN DT JJ NN IN JJ NNS .
+the downside is that you might accidentally take pictures with the lens cap on , the camera wo n't fit in the small cases , and 28 mm filters are expensive and hard to find .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***DT NN VBZ IN PRP MD RB VB NNS IN DT NN NN RP , DT NN MD RB VB IN DT JJ NNS , CC CD NNP NNS VBP JJ CC JJ TO VB .
+i just got screwed out of fifty bucks .***O O O O O O O O O***PRP RB VBD VBN IN IN CD NNS .
+apparently , t - mobile is heavily back - logged and can ' t keep up with demands .***O O T-NEG T-NEG T-NEG O O O O O O O O O O O O O O***RB , NN HYPH NN VBZ RB RB HYPH JJ CC MD `` VB VB RP IN NNS .
+i could n't be happier with t - mobile either , i switched from cingular .***O O O O O O O O O O O O O O O O***PRP MD RB VB JJR IN NN HYPH NNP RB , PRP VBD IN NN .
+the grain was terrible .***O T-NEG O O O***DT NN VBD JJ .
+i was , however .***O O O O O***PRP VBD , RB .
+2 ) 4mp is about right for the target market of this camera ( semi - serious amateur photographer )***O O T-POS O O O O O O O O O O O O O O O O O***LS -RRB- NN VBZ RB JJ IN DT NN NN IN DT NN -LRB- JJ JJ JJ NN NN -RRB-
+eax on : 6 hours eax off : 8.5 hours***O O O O O O O O O O***VB IN : CD NNS VB IN : CD NNS
+depressing the scroll button ( for selecting ) is not always responsive .***O O T-NEG T-NEG O O O O O O O O O***VBG DT NN NN -LRB- IN NN -RRB- VBZ RB RB JJ .
+i bought the 2600 because it plays everything !***O O O O O O O O O***PRP VBD DT CD IN PRP VBZ NN .
+i am bored with the silver look .***O O O O O O T-NEG O***PRP VBP VBN IN DT NN NN .
+and have returned both .***O O O O O***CC VBP VBN DT .
+i ' ve compared this phone to others such as 6100 , siemens sl55 .***O O O O O O O O O O O O O O O***PRP `` JJ VBD DT NN IN NNS JJ IN CD , NNP NNP .
+but make sure to buy a tripod and separate flash unit at the same time : you 'll see the difference in your photos immediately .***O O O O O O O O O O O O O O O O O O O O O O O O O O***CC VB JJ TO VB DT NN CC JJ NN NN IN DT JJ NN : PRP MD VB DT NN IN PRP$ NNS RB .
+it 'll take 10 - 15 business days for them to decide form when they get it .***O O O O O O O O O O O O O O O O O O***PRP MD VB CD SYM CD NN NNS IN PRP TO VB NN WRB PRP VBP PRP .
+basic shipping was a bit slow , but that 's okay .***O O O O O O O O O O O O***JJ NN VBD DT NN JJ , CC DT VBZ JJ .
+the only downside i see is that it does n't look like you can manage playlists from the nomad , it has to be done from the computer .***O O O O O O O O O O O O O O O T-NEG O O O O O O O O O O O O O***DT JJ NN PRP VBP VBZ IN PRP VBZ RB VB IN PRP MD VB NNS IN DT NN , PRP VBZ TO VB VBN IN DT NN .
+which means that in trying to save a few hundred dollars , i 'll end up spending more than twice that .***O O O O O O O O O O O O O O O O O O O O O O***WDT VBZ IN IN VBG TO VB DT JJ CD NNS , PRP MD VB RP VBG JJR IN PDT DT .
+the picture is clear , bright and sharp and the sound is good .***O T-POS O O O O O O O O T-POS O O O***DT NN VBZ JJ , JJ CC JJ CC DT NN VBZ JJ .
+plusses are the easy to remove battery and the terrific sound produced by the nomad .***O O O O O O T-POS O O O T-POS O O O O O***NNS VBP DT JJ TO VB NN CC DT JJ NN VBN IN DT NN .
+the g2 was better in this respect .***O O O O O O O O***DT NNP VBD JJR IN DT NN .
+and the case , how did this ever make it out of quality control .***O O T-NEG O O O O O O O O O O O O***CC DT NN , WRB VBD DT RB VB PRP IN IN NN NN .
+however , it has failed to deliver on quality .***O O O O O O O O T-NEG O***RB , PRP VBZ VBN TO VB IN NN .
+that said , they are pretty sturdy machines and i would n't let this dissuade you from getting an mp3 with a lot of memory .***O O O O O O O O O O O O O O O O O O O O O O O O O O***DT VBD , PRP VBP RB JJ NNS CC PRP MD RB VB DT VB PRP IN VBG DT NN IN DT NN IN NN .
+therefore , if you wanted to travel abroad and pop in a local sim card , even if you unlock the phone , there is no way you can use the local wap browser or internet .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***RB , IN PRP VBD TO VB RB CC VB IN DT JJ NN NN , RB IN PRP VBP DT NN , EX VBZ DT NN PRP MD VB DT JJ NN NN CC NN .
+while light , it will not easily go in small handbags or pockets .***O O O O O O O O O O O O O O***IN NN , PRP MD RB RB VB IN JJ NNS CC NNS .
+if you have the money and need 40 gb , this is the player for you .***O O O O O O O O O O O O O O O O O***IN PRP VBP DT NN CC VB CD VBN , DT VBZ DT NN IN PRP .
+i have always known nokia to provide me with good games on their phones .***O O O O O O O O O O O O O O O***PRP VBP RB VBN NN TO VB PRP IN JJ NNS IN PRP$ NNS .
+( i would have appreciated having a firewire plug , however )***O O O O O O O O O O O O***-LRB- PRP MD VB VBN VBG DT NN NN , RB -RRB-
+if you want to listen to tunes while you travel , i 'd get a hard drive because you can put so much on the thing - including audio books .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***IN PRP VBP TO VB IN NNS IN PRP VBP , PRP MD VB DT JJ NN IN PRP MD VB RB RB IN DT NN : VBG JJ NNS .
+apex is the best cheap quality brand for dvd players .***T-POS O O O O T-POS T-POS O O O O***NNP VBZ DT RBS JJ NN NN IN NN NNS .
+anybody can explain that ?***O O O O O***NN MD VB DT .
+any disadvantages are easily outweighed by its advantages .***O O O O O O O O O***DT NNS VBP RB VBN IN PRP$ NNS .
+i guess you get what you pay for .***O O O O O O O O O***PRP VBP PRP VBP WP PRP VBP IN .
+i took the camera and just gave it to someone .***O O O O O O O O O O O***PRP VBD DT NN CC RB VBD PRP IN NN .
+added 2 - 24 .***O O O O O***VBN CD SYM CD .
+worse of all , they claim that it 's some kind of internal damage and refuse to cover the cost via warranty !***O O O O O O O O O O O O O O O O O O O O O O O***JJR IN DT , PRP VBP IN PRP VBZ DT NN IN JJ NN CC VBP TO VB DT NN IN NN .
+" when will my t - zones work ? " , csr :***O O O O O O O O O O O O O***`` WRB MD PRP$ NN HYPH NNS NN . '' , NN :
+( he had owned two apex dvd players , and was pleased with both of them . )***O O O O O T-POS T-POS T-POS O O O O O O O O O O***-LRB- PRP VBD VBN CD NNP NN NNS , CC VBD JJ IN DT IN PRP . -RRB-
+much cheaper than i - pod good looking player ( beautiful blue back - lit screen ) if you ' ve read about the player , some have complained about the lack of a viewing hole for the face when the case is on , but this is good because the face does n't get damaged / scratched fast transfer rate***O O O O O O O T-POS T-POS O O O T-POS T-POS T-POS T-POS O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***RB JJR IN PRP HYPH NNP JJ JJ NN -LRB- JJ JJ JJ HYPH JJ NN -RRB- IN PRP `` JJ VBD IN DT NN , DT VBP VBN IN DT NN IN DT VBG NN IN DT NN WRB DT NN VBZ IN , CC DT VBZ JJ IN DT NN VBZ RB VB VBN SYM VBN JJ NN NN
+different people have different needs , of course , but the t - mobile plans are priced very well for the minutes and services you receive .***O O O O O O O O O O O O O O O O O O O O O O O O O O O***JJ NNS VBP JJ NNS , IN NN , CC DT NN HYPH NN NNS VBP VBN RB RB IN DT NNS CC NNS PRP VBP .
+this also allows you to turn on the camera on without having to remove the lens cap .***O O O O O O O O O O O O O O O O O O***DT RB VBZ PRP TO VB RP DT NN RP IN VBG TO VB DT NN NN .
+the only thing i did experience was a problem of the player freezing while playing , which i was able to clear by opening it up and blowing it out with " canned air . "***O O O O O O O O O O O O T-NEG O O O O O O O O O O O O O O O O O O O O O O O***DT JJ NN PRP VBD NN VBD DT NN IN DT NN VBG IN VBG , WDT PRP VBD JJ TO VB IN VBG PRP RP CC VBG PRP RP IN `` JJ NN . ''
+this is probably one of the few dvd players at $ 40 that can play almost everything you throw at it .***O O O O O O O T-POS T-POS O O O O O T-POS O O O O O O O***DT VBZ RB CD IN DT JJ NN NNS IN $ CD WDT MD VB RB NN PRP VBP IN PRP .
+5 two different adapters -- ur - e 4 and ur - e 7 -- are required for some attachment lenses .***O O O O O O O O O O O O O O O O O O O O O O***CD CD JJ NNS : NNP HYPH NNP CD CC NNP HYPH NNP CD : VBP VBN IN DT NN NNS .
+5 ) this apex model 2600 will not work with my universal remote control .***O O O O O O O O O O O T-NEG T-NEG T-NEG O***LS -RRB- DT NN NN CD MD RB VB IN PRP$ JJ JJ NN .
+i think a $ 39 dissapointment is better then a $ 125 dissapointment !***O O O O O O O O O O O O O O***PRP VBP DT $ CD NN VBZ JJR RB DT $ CD NN .
+if your view in life is that you are going to pay $ x00 to get a device then it must be near ideal - ruggedly constructed , fault proof , good product support , easy to use software - then do yourself a favor and do n't buy yet .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***IN PRP$ NN IN NN VBZ IN PRP VBP VBG TO VB $ NN TO VB DT NN RB PRP MD VB IN NN HYPH RB VBN , NN NN , JJ NN NN , JJ TO VB NN : RB VB PRP DT NN CC VB RB VB RB .
+the pc - side software can be goofy and takes a little getting used to but it 's not as bad as some reviewers have indicated .***O T-NEG T-NEG T-NEG T-NEG O O O O O O O O O O O O O O O O O O O O O O***DT NN HYPH NN NN MD VB NNP CC VBZ DT JJ VBG VBN IN CC PRP VBZ RB RB JJ IN DT NNS VBP VBN .
+but , then again , the ringer can be so loud that i heard it ringing inside my office , when i was already out on the street .. .***O O O O O O T-POS O O O O O O O O O O O O O O O O O O O O O O O***CC , RB RB , DT NN MD VB RB JJ IN PRP VBD PRP VBG IN PRP$ NN , WRB PRP VBD RB IN IN DT NN NFP .
+based on the cameras features and about dozen online reviews , this one seemed like the best all round deal .***O O O O O O O O O O O O O O O O O O O O O***VBN IN DT NNP VBZ CC IN NN JJ NNS , DT NN VBD IN DT JJS DT JJ NN .
+this is a nice feature ( i.e. it 's early in the morning and you rather listen to " easy listening " rather than " heavy metal " - no problem .***O O O O T-POS O O O O O O O O O O O O O O O O O O O O O O O O O O O***DT VBZ DT JJ NN -LRB- FW PRP VBZ JJ IN DT NN CC PRP RB VBP IN `` JJ NN '' RB IN `` JJ NN '' : DT NN .
+sure , i adjusted the film speed to 400 .***O O O O O O O O O O***UH , PRP VBD DT NN NN IN CD .
+i have returned the g3 ( actually i tried two of them ) and have my g2 !***O O O O O O O O O O O O O O O O O O***PRP VBP VBN DT NNP -LRB- RB PRP VBD CD IN PRP -RRB- CC VB PRP$ NN .
+battery life is good , although i recommend two rechargebles , or a alkaline backup , for those emergency pics you have to have .***T-POS T-POS O O O O O O O O O O O O O O O O O O O O O O O***NN NN VBZ JJ , IN PRP VBP CD NNS , CC DT NN NN , IN DT NN NNS PRP VBP TO VB .
+do not buy this player .***O O O O O O***VB RB VB DT NN .
+buy this camera and savour it .***O O O O O O O***VB DT NN CC VB PRP .
+i just put it on " shuffle " , sit back , and enjoy the eclectic mix that almost 3,000 tunes offer !***O O O O O O O O O O O O O O O O O O O O O O O***PRP RB VBD PRP IN `` NN '' , VB RP , CC VB DT JJ NN IN RB CD NNS VBP .
+yes it is 56k speed , but the functionality is what you are paying for .***O O O O O O O O O O O O O O O O***UH PRP VBZ NNS NN , CC DT NN VBZ WP PRP VBP VBG IN .
+the built in fm radio is excellent for people traveling by public transport .***O O O T-POS T-POS O O O O O O O O O***DT VBN IN NNP NN VBZ JJ IN NNS VBG IN JJ NN .
+the sound quality is very good .***O T-POS T-POS O O O O***DT JJ NN VBZ RB JJ .
+they stop time .***O O O O***PRP VBP NN .
+the reason so many is that i am a contractor and all of my subs have these carriers and i can benifit from the mobile to mobile features that companies are now offering !***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***DT NN RB JJ VBZ IN PRP VBP DT NN CC DT IN PRP$ NNS VBP DT NNS CC PRP MD VB IN DT NN IN NN VBZ IN NNS VBP RB VBG .
+i ignored the instruction booklet ( as i do with any product ) and figured out how to organize separate playlists within minutes .***O O O O O O O O O O O O O O O O O O O O O O O O***PRP VBD DT NN NN -LRB- IN PRP VBP IN DT NN -RRB- CC VBD RP WRB TO VB JJ NNS IN NNS .
+i 'd like to see my old carrier do that !***O O O O O O O O O O O***PRP MD VB TO VB PRP$ JJ NN VBP DT .
+almost there .***O O O***RB RB .
+the hands - free speakerphone is quite powerful ( like the motorola phone , i used to own ) .***O O O O T-POS O O O O O O O O O O O O O O O***DT NNS HYPH JJ NN VBZ RB JJ -LRB- IN DT NNP NN , PRP VBD TO VB -RRB- .
+they decide that the owner was responsible for the damage and so even if it is returned within the warranty period , creative will charge you to fix it .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***PRP VBP IN DT NN VBD JJ IN DT NN CC RB RB IN PRP VBZ VBN IN DT NN NN , JJ MD VB PRP TO VB PRP .
+having my entire music collection is great when travelling ( both on plane and car trips ) and i do n't have to decide what to bring or copy onto the player -- it 's all there .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***VBG PRP$ JJ NN NN VBZ JJ WRB VBG -LRB- DT IN NN CC NN NNS -RRB- CC PRP VBP RB VB TO VB WP TO VB CC VB IN DT NN : PRP VBZ DT RB .
+the nomad zen could use a little sturdier construction like the archos jukeboxes or some kind of shock resistant case .***O O O O O O O O T-NEG O O O O O O O O O O O O***DT NN NNP MD VB DT JJ JJR NN IN DT JJ NNS CC DT NN IN NN JJ NN .
+if you 're looking for a small , compact , super resolution digital camera , you can end your search with the nikon 4300 !***O O O O O O O O O O O T-POS T-POS T-POS O O O O O O O O O O O***IN PRP VBP VBG IN DT JJ , JJ , JJ NN NNP NN , PRP MD VB PRP$ NN IN DT JJ CD .
+if you are planning to buy that player , do not !***O O O O O O O O O O O O***IN PRP VBP VBG TO VB DT NN , VB RB .
+creative is talking about updating it via firmware , however after following some while the descussion groups for nomad players , looks like creative represents mostly bug fixes in their firmware updates , not too much of new features .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***JJ VBZ VBG IN VBG PRP IN NNP , RB IN VBG DT IN DT NN NNS IN NN NNS , VBZ IN JJ NNS RB NN NNS IN PRP$ JJ NNS , RB RB JJ IN JJ NNS .
+and with usb 2.0 , transferring music to your player is incredibly easy .***O O O O O T-POS T-POS O O O O O O O***CC IN NN CD , VBG NN IN PRP$ NN VBZ RB JJ .
+sometimes when i get really lonely , i like to put on some kenny g and light some candles , and while this does n't help , i am a capitalist pig and like buying things too , nah mean ! ?***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***RB WRB PRP VBP RB JJ , PRP VBP TO VB RP DT NN NN CC VB DT NNS , CC IN DT VBZ RB VB , PRP VBP DT JJ NN CC IN VBG NNS RB , NNP VB . .
+but they do have this annoying habit of asking you if they ' ve answered all your questions , even if they did n't , to which they always seem to expect a " yes " answer from you .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***CC PRP VBP VB DT JJ NN IN VBG PRP IN PRP `` NNP VBD PDT PRP$ NNS , RB IN PRP VBD RB , TO WDT PRP RB VBP TO VB DT `` UH '' VB IN PRP .
+but if you ' ve used a slr 35 mm camera , the ASPECT#1s are very intuitive !***O O O O O O O O O O O O O O O O O O***CC IN PRP `` NNP VBD DT NNP CD NN NN , DT NNP VBP RB JJ .
+and i am hoping the static i heard when using eax was a blip ...***O O O O O O O O O O O O O O O***CC PRP VBP VBG DT NN PRP VBD WRB VBG NNP VBD DT NN .
+again , you can change this , but it 's harder to spot a minor variation in the title when you do n't have the title of the other disk in front of you .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***RB , PRP MD VB DT , CC PRP VBZ JJR TO VB DT JJ NN IN DT NN WRB PRP VBP RB VB DT NN IN DT JJ NN IN NN IN PRP .
+my cuzin got an ipod and i wo n't say it is an awful product , but i will say that for the price , apple could do better as far as storage and battery life goes .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***PRP$ NNP VBD DT NNP CC PRP MD RB VB PRP VBZ DT JJ NN , CC PRP MD VB DT IN DT NN , NN MD VB RBR RB RB IN NN CC NN NN VBZ .
+as i said , this is the last digital camera i 'll buy , and if you are in the market one , my advice is to buy the best thing you can afford and keep it forever .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***IN PRP VBD , DT VBZ DT JJ JJ NN PRP MD VB , CC IN PRP VBP IN DT NN CD , PRP$ NN VBZ TO VB DT JJS NN PRP MD VB CC VB PRP RB .
+i love the fact i can carry it in my shirt or pants pocket and forget about it .***O O O O O O O O O O O O O O O O O O O***PRP VBP DT NN PRP MD VB PRP IN PRP$ NN CC NNS NN CC VB IN PRP .
+i am using musicmatch to rip & catalog ( and if i choose , download ) music ;***O O O O O O O O O O O O O O O O O O***PRP VBP VBG NN TO NNP CC NNP -LRB- CC IN PRP VBP , JJ -RRB- NN :
+bait and switch .***O O O O***VB CC VB .
+no line out jack - as i said , there is none .***O T-NEG T-NEG T-NEG O O O O O O O O O***DT NN IN NN : IN PRP VBD , EX VBZ NN .
+but you do n't have to be .***O O O O O O O O***CC PRP VBP RB VB TO VB .
+having to copy / delete files would be time - consuming and is rendered a non - issue with 40 gb of storage .***O O O O O O O O O O O O O O O O O O O O O O O O***VBG TO VB SYM JJ NNS MD VB NN HYPH VBG CC VBZ VBN DT JJ JJ NN IN CD NNS IN NN .
+i have had the phone for 1 week , the signal quality has been great in the detroit area ( suburbs ) and in my recent road trip between detroit and northern kentucky ( cincinnati ) i experienced perfect signal and reception along i-75 , far superior to at & # 38 ; t 's which does not work along several long stretches on that same route .***O O O O O O O O O O T-POS T-POS O O O O O O O O O O O O O O O O O O O O O O O O O O O T-POS O T-POS O O O O O O O O O O O O O O O O O O O O O O O O O O***PRP VBP VBN DT NN IN CD NN , DT JJ NN VBZ VBN JJ IN DT NNP NN -LRB- NNP -RRB- CC IN PRP$ JJ NN NN IN NNP CC NNP NNP -LRB- NNP -RRB- PRP VBD JJ NN CC NN IN NNP , RB JJ IN IN CC $ CD : NNP POS WDT VBZ RB VB IN JJ JJ NNS IN DT JJ NN .
+the environmental audio , however , is almost completely useless and has made most of my songs sound worse than without it ( i encode my songs at 192 - 256 kbps without variable bit rates . )***O T-NEG T-NEG O O O O O O O O O O O O O O T-NEG O O O O O O O O O O O O O O O O O O O O***DT JJ NN , RB , VBZ RB RB JJ CC VBZ VBN JJS IN PRP$ NNS VBP JJR IN IN PRP -LRB- PRP VBP PRP$ NNS IN CD SYM CD NN IN JJ NN NNS . -RRB-
+the i / p button switches the tv display between interlace and progressive .***O O O O O O O O O O O O O O***DT NNP SYM NN NN VBZ DT NN NN IN NN CC NN .
+the ASPECT#1s on the phone are small , even for my small fingertips , but you get used to them rather quickly .***O O O O O O O O O O O O O O O O O O O O O O O***DT NNP IN DT NN VBP JJ , RB IN PRP$ JJ NNS , CC PRP VBP JJ IN PRP RB RB .
+i was worried that 4 megapixel photos would download more slowly , but there 's no difference in working with the files .***O O O O O O O O T-POS O O O O O O O O O O O O O O***PRP VBD JJ IN CD JJ NNS MD VB RBR RB , CC EX VBZ DT NN IN VBG IN DT NNS .
+red chair 's notmad explorer is great & recommended by about every reviewer to repleace the creative jukebox software .***O O O O O O O O O O O O O O O O O O O O***NNP NNP POS NNP NN VBZ JJ CC VBN IN RB DT NN TO VB DT JJ NN NN .
+the mms technology is very well integrated with this phone , which you will enjoy .***O T-POS T-POS O O O O O O O O O O O O O***DT NNP NN VBZ RB RB JJ IN DT NN , WDT PRP MD VB .
+when we tried to hook up the first one , it was broken - the motor would not eject discs or close the door .***O O O O O O O O O O O O O O O T-NEG O O T-NEG O O O O O O***WRB PRP VBD TO VB RP DT JJ CD , PRP VBD VBN : DT NN MD RB VB NNS CC VB DT NN .
+ok , i m writing yet another review , about a week from my previous one .***O O O O O O O O O O O O O O O O O***UH , PRP VBP VBG RB DT NN , RB DT NN IN PRP$ JJ NN .
+i ' ve had this player for several months and it ASPECT#1s most discs , but it would not recognize several discs that were clean and read on other players ( from friends season 2 ) .***O O O O O O O O O O O O O T-NEG O O O O O T-NEG O O O O O O O O O O O O O O O O O***PRP `` NNP VBD DT NN IN JJ NNS CC PRP VBP JJS NNS , CC PRP MD RB VB JJ NNS WDT VBD JJ CC VBN IN JJ NNS -LRB- IN NNS NN CD -RRB- .
+ok , everybody loves the fm radio in this , but you want a cell phone first , right ?***O O O O O O O O O O O O O O O O O O O O***UH , NN VBZ DT NNP NN IN DT , CC PRP VBP DT NN NN RB , JJ .
+get it , it 's woth every penny ! !***O O O O O O O O O O***VB PRP , PRP VBZ JJ DT NN . .
+it defaulted to unchangeable email .***O O O O O O***PRP VBD IN JJ NN .
+i researched , held , tested , and observed 3 different brands .***O O O O O O O O O O O O O***PRP VBD , VBN , VBN , CC VBD CD JJ NNS .
+if the casing of the player is this bad , i can ' t image that the hardware is of very good quality .***O O O O O O O O O O O O O O O O O O O O O O O O***IN DT NN IN DT NN VBZ DT JJ , PRP MD `` NN NN WDT DT NN VBZ IN RB JJ NN .
+when i first had it i kept finding myself having to look at the nomad to figure out where the skip button was .***O O O O O O O O O O O O O O O O O O O O O O O O***WRB PRP RB VBD PRP PRP VBD VBG PRP VBG TO VB IN DT NN TO VB RP WRB DT NNP NN VBD .
+the 6610 is still easier to use than the other two phones ( t610 , t720i ) .***O O O O O O O O O O O O O O O O O O***DT CD VBZ RB JJR TO VB IN DT JJ CD NNS -LRB- NNP , ADD -RRB- .
+have used it frequently and have had no problems .***O O O O O O O O O O***VBP VBN PRP RB CC VBP VBN DT NNS .
+but do not assume , as i did , that the g3 has the same ability as [ your current film camera ] to stop the moment you choose .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***CC VBP RB VB , IN PRP VBD , IN DT NNP VBZ DT JJ NN IN -LRB- PRP$ JJ NN NN -RRB- TO VB DT NN PRP VBP .
+i wanted something that is able to take high quality photos but not be so bulky that i would wind up leaving it at home all the time .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***PRP VBD NN WDT VBZ JJ TO VB JJ NN NNS CC RB VB RB JJ IN PRP MD VB RP VBG PRP IN NN PDT DT NN .
+i looked up the ipod , the dell jukebox , and the samsung napster player .***O O O O O O O O O O O O O O O O***PRP VBD RP DT NNP , DT NNP NNP , CC DT NN JJ NN .
+was it a full moon that night ?***O O O O O O O O***VBD PRP DT JJ NN DT NN .
+this camera is ideal for people who want more power , but do n't want to spend 1000s dollars on a camera .***O T-POS O O O O O O O O O O O O O O O O O O O O O***DT NN VBZ JJ IN NNS WP VBP JJR NN , CC VBP RB VB TO VB CD NNS IN DT NN .
+there are really easy directions for setup and fiddling around with the picture , zoom etc .***O O O O O O T-POS O T-POS O O O O O O O O***EX VBP RB JJ NNS IN NN CC VBG RB IN DT NN , NN FW .
+this junky is super duper rad . it be my fav c - phone and stuff .***O O O O O O O O O O O O O O O O O***DT NN VBZ JJ NN NN . PRP VBP PRP$ NN NN HYPH NN CC NN .
+i was surprised to find that not only could this dvd ASPECT#1er play mpeg2 format which allowed me to stack 2 movies on a dvd , but it also was able to play vob files which i created with smart ripper .***O O O O O O O O O O O O O T-POS T-POS O O O O O O O O O O O O O O O O O O T-POS T-POS O O O O O O O***PRP VBD JJ TO VB IN RB RB MD DT NNP NNP VB JJ NN WDT VBD PRP TO VB CD NNS IN DT NN , CC PRP RB VBD JJ TO VB NN NNS WDT PRP VBD IN JJ NN .
+however , using the lcd seems to eliminate this minor problem .***O O O O O O O O O O O O***RB , VBG DT NN VBZ TO VB DT JJ NN .
+it has all the features one would need in a cellphone .***O O O O T-POS O O O O O O O***PRP VBZ PDT DT NNS PRP MD VB IN DT NN .
+yes , the ipod looks in tune with the carefully articulated urban - hipster persona that s become popular as of late , but sure - as - hell is n't worth the $ 200 premium ( unless you are just dying to match your music player with that volkswagen beetle and urban outfitters wardrobe ) .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***UH , DT NNP VBZ IN NN IN DT RB VBN JJ HYPH NN NN WDT VBZ VBP JJ IN IN RB , CC JJ HYPH IN HYPH NN VBZ RB JJ DT $ CD NN -LRB- IN PRP VBP RB VBG TO VB PRP$ NN NN IN DT NN NNP CC JJ NNS NN -RRB- .
+i can only confirm what other customers have said - crap !***O O O O O O O O O O O O***PRP MD RB VB WP JJ NNS VBP VBN HYPH JJ .
+you discover this later when you 're listening to a song and it 's the wrong title , causing you to rename everything on your own .***O O O O O O O O O O O O O O O O O O O O O O O O O O O***PRP VBP DT RB WRB PRP VBP VBG IN DT NN CC PRP VBZ DT JJ NN , VBG PRP TO VB NN IN PRP$ JJ .
+the downside -***O O O***DT NN HYPH
+the possibilities with auto , manual , and the very helpful " scene " mode , which offers 11 optimized situational settings like portrait , landscape , beach / snow , sunset etc . , are endless .***O O O T-POS O T-POS O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***DT NNS IN NN , NN , CC DT RB JJ `` NN '' NN , WDT VBZ CD VBN JJ NNS IN NN , NN , NN SYM NN , NN FW . , VBP JJ .
+short warranty ( 3 months , so i got the extended warranty at best buy ) , occasional freeze up ( easily fixed by popping out battery ) , somewhat flimsy navigation wheel .***O T-NEG O O O O O O O O O O O O O O O O T-NEG T-NEG O O O O O O O O O O O T-NEG T-NEG O***NNP NNP -LRB- CD NNS , CC PRP VBD DT JJ NN IN JJS NN -RRB- , JJ NN RP -LRB- RB VBN IN VBG RP NN -RRB- , RB JJ NN NN .
+i love this camera .***O O O T-POS O***PRP VBP DT NN .
+it 's horrible .***O O O O***PRP VBZ JJ .
+so i do n't understand why it would not work with dvds that seem to have more features in them .***O O O O O O O O O O O O O O O O O O O O O***RB PRP VBP RB VB WRB PRP MD RB VB IN NNP WDT VBP TO VB JJR NNS IN PRP .
+it will not load any further songs on and customer service has no idea what to do .***O O O O O O O O O O O O O O O O O O***PRP MD RB VB DT JJ NNS IN CC NN NN VBZ DT NN WP TO VB .
+however , its 3x optical setting is acceptable for 70 % of the shots that i take .***O O O T-POS T-POS T-POS O O O O O O O O O O O O***RB , PRP$ CD JJ NN VBZ JJ IN CD NN IN DT NNS WDT PRP VBP .
+the battery life seems good , takes very lttle time to charge , it uploads mp3s quickly and there is no delay between songs .***O T-POS T-POS O O O O O O O O T-POS O O T-POS O O O O O O T-POS O O O***DT NN NN VBZ JJ , VBZ RB JJ NN TO VB , PRP VBZ NNP RB CC EX VBZ DT NN IN NNS .
+like i said , when the moment is gone , it is gone .***O O O O O O O O O O O O O O***IN PRP VBD , WRB DT NN VBZ VBN , PRP VBZ VBN .
+ASPECT#1s kind of stink and you ca nt download them you have to get the link cable to get additional games .***O O O O O O O O T-NEG O O O O O O O O O O O O O***NNP RB IN VBP CC PRP MD RB VB PRP PRP VBP TO VB DT NN NN TO VB JJ NNS .
+. ASPECT#1s taken indoor were n't so clear .***O O O O O O O O O***. NNP VBN JJ VBD RB RB JJ .
+it also has a stock tracking app built in ( also useless ) and a somewhat useful application which converts all types of metrics ( currency , length , area , etc ) .***O O O O T-POS T-POS T-POS O O O O O O O O O O T-NEG O O O O O O O O O O O O O O O O***PRP RB VBZ DT NN NN NN VBN IN -LRB- RB JJ -RRB- CC DT RB JJ NN WDT VBZ DT NNS IN NNS -LRB- NN , NN , NN , FW -RRB- .
+since batteries do run out on everything , this will also be a big money - saver since ipods , irivers , rca , dell , all have built - in batteries that need to be replaced by a technician ( apple charges 100 bones for the battery replacement ) .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O T-POS O O O***IN NNS VBP VB RP IN NN , DT MD RB VB DT JJ NN HYPH NN IN NNS , NNS , NNP , NNP , DT VBP VBN HYPH RP NNS WDT VBP TO VB VBN IN DT JJ -LRB- NN VBZ CD NNS IN DT NN NN -RRB- .
+the reason it does not get 5 stars***O O O O O O O O***DT NN PRP VBZ RB VB CD NNS
+unfortunately , this digital moment - capturing device called the g3 sometimes captures the moment after the one you wanted .***O O O O O O O O O O T-NEG O T-NEG O O O O O O O O***RB , DT JJ NN HYPH VBG NN VBN DT NNP RB VBZ DT NN IN DT NN PRP VBD .
+updating the unit 's firmware :***O O O O O O***VBG DT NN POS NN :
+yes the included ASPECT#1s suck but everyone replaces them anyway .***O O O O O O O O O O O***UH DT VBN JJS NN CC NN VBZ PRP RB .
+i bought this dvd player in november .***O O O O O O O O***PRP VBD DT NN NN IN NNP .
+in the auto mode it functions basically as a point and click , the ASPECT#2s are very easy to use and produce good results .***O O T-POS T-POS O O O O O O O O O O O O O O O T-POS O O O O O***IN DT NN NN PRP VBZ RB IN DT NN CC NN , DT NNP VBP RB JJ TO VB CC VB JJ NNS .
+i would suspect that there are similar problems with all of the other brands as this is somewhat new technology .***O O O O O O O O O O O O O O O O O O O O O***PRP MD VB IN EX VBP JJ NNS IN DT IN DT JJ NNS IN DT VBZ RB JJ NN .
+it helps avoid the problem of a color cast on the pictures , especially in mixed - light settings .***O O O O O O O O O O O O O O O O O O O O***PRP VBZ VB DT NN IN DT NN NN IN DT NNS , RB IN VBN HYPH NN NNS .
+6 . the zen nx battery requires the ac adapter to recharge ; it does not charge by usb cable ; this is not tragic , but usb recharging would be a convenient ( additional ) choice .***O O O O O O O O O O O T-NEG O O O O O O O O O O O O O O O T-NEG T-NEG O O O O O O O O O***CD . DT NNP NNP NN VBZ DT NNP NN TO VB : PRP VBZ RB VB IN NN NN : DT VBZ RB JJ , CC NN NN MD VB DT JJ -LRB- JJ -RRB- NN .
+there are a lot of cool websites with games and midi ringtones to download for free .***O O O O O O O O O O O O O O O O O***EX VBP DT NN IN JJ NNS IN NNS CC NN NNS TO VB IN JJ .
+but that 's a moot point now .***O O O O O O O O***CC DT VBZ DT JJ NN RB .
+have had the player since xmass and love it !***O O O T-POS O O O O O O***VBP VBN DT NN IN NN CC VB PRP .
+i followed their advice but that failed , too .***O O O O O O O O O O***PRP VBD PRP$ NN CC DT VBD , RB .
++ i had no problem using musicmatch software already on my computer to load songs and albums onto this unit***O O O O O O T-POS T-POS O O O O O O O O O O O O***CC PRP VBD DT NN VBG NN NN RB IN PRP$ NN TO VB NNS CC NNS IN DT NN
+pros : huge storage capacity for the price , easy to navigate , can modify existing playlists on the fly , has a removable battery***O O O T-POS T-POS O O O O O O T-POS O O O O T-POS O O O O O O O T-POS***NNS : JJ NN NN IN DT NN , JJ TO VB , MD VB VBG NNS IN DT NN , VBZ DT JJ NN
+i just purchased this player and i have to say that i love it .***O O O O T-POS O O O O O O O O O O***PRP RB VBD DT NN CC PRP VBP TO VB IN PRP VBP PRP .
+highly recommended !***O O O***RB JJ .
+there is usb , though .***O O O O O O***EX VBZ NN , RB .
+this is the third apex product i ' ve bought and they continue to impress for the price .***O O O O O O O O O O O O O O O O O T-POS O***DT VBZ DT JJ NNP NN PRP `` JJ VBN CC PRP VBP TO VB IN DT NN .
+reviews for sound quality are generally ( but not universally ) positive .***O O O O O O O O O O O O O***NNS IN JJ NN VBP RB -LRB- CC RB RB -RRB- JJ .
+it is transferes a song in about 2 seconds .***O O O O O O O O O O***PRP VBZ NNS DT NN IN RB CD NNS .
+pictures produced by the panasonic were excellent .***O O O O O O O O***NNS VBN IN DT NN VBD JJ .
+that was a mistake .***O O O O O***DT VBD DT NN .
+had this been my only dvd player , though , it would have been a real problem .***O O O O O O O O O O O O O O O O O O***VBD DT VBN PRP$ JJ NN NN , RB , PRP MD VB VBN DT JJ NN .
+cameras capture moments .***O O O O***NNP NNP NNS .
+a. the cddb downloads information for the cd that you insert such that you do not have to type in the track information such as album , artist , song title , etc .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O***NNP DT NNP VBZ NN IN DT NN WDT PRP VBP JJ IN PRP VBP RB VB TO VB IN DT NN NN JJ IN NN , NN , NNP NN , FW .
+the ASPECT#1s are razor - sharp , even in macro .***O O O O O O O O O T-POS O***DT NNP VBP NN HYPH JJ , RB IN NN .
