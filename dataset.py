@@ -11,7 +11,7 @@ class MyDataset(Dataset):
         with open(filename, "r") as f:
             for line in f:
                 line = line.strip()
-                text, label_text = line.split("####")
+                text, label_text = line.split("***")[0:2]
                 label_tuplelist = [tuple(_.rsplit("=", maxsplit=1)) for _ in label_text.split()]
                 label_tuplelist_idx, inner_offset = 0, 0
                 res = tokenizer(text, padding=PaddingStrategy.MAX_LENGTH, truncation=True)
@@ -19,13 +19,13 @@ class MyDataset(Dataset):
                 labels: List[str] = []
                 for token in tokenizer.convert_ids_to_tokens(input_ids):
                     if token in tokenizer.all_special_tokens:
-                        tag = 'O'
+                        tag = 'SPECIAL_TOKEN'
                     else:
                         label_tuple = label_tuplelist[label_tuplelist_idx]
                         if token.startswith("##"):
                             tag = f'I{labels[-1][1:]}' if labels[-1] != "O" else 'O'
                         else:
-                            tag = label_tuple[1]
+                            tag = label_tuple[-1]
                             if tag != 'O':
                                 tag = f'B{tag[1:]}' if labels[-1] == "O" else f'I{tag[1:]}'
                         inner_offset += len(token.replace("##", ""))
@@ -37,7 +37,7 @@ class MyDataset(Dataset):
                     data.append(
                         {
                             "input_ids": torch.as_tensor(input_ids, device=device), 
-                            "labels": torch.as_tensor([TAGS.index(label) for label in labels], device=device), 
+                            "labels": torch.as_tensor([TAGS.index(label) if label in TAGS else -1 for label in labels], device=device), 
                             "attention_mask": torch.as_tensor(res.attention_mask, device=device),
                             "token_type_ids": torch.as_tensor(res.token_type_ids, device=device)
                         })

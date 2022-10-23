@@ -12,6 +12,10 @@ class ModelArguments:
     pretrained_model: Optional[str] = field(
         default='bert-base-uncased', metadata={"help": "The name of the dataset to use (via the datasets library)."}
     )
+    do_train: Optional[bool] = field(default=True)
+    do_valid: Optional[bool] = field(default=True)
+    do_eval: Optional[bool] = field(default=True)
+    best_model_path: Optional[str] = field(default=None, metadata={"help": "path of the best model"})
     num_workers: Optional[int] = field(
         default=1,
         metadata={"help": "The number of processes to use for the preprocessing."},
@@ -44,7 +48,9 @@ class ModelArguments:
     num_epoch: Optional[int] = field(default=20, metadata={'help': 'try larger number for non-BERT models'})
     dropout: Optional[float] = field(default=0.1)
     lr: Optional[float] = field(default=2e-5, metadata={"help": "learning rate"})
-    l2reg: Optional[float] = field(default=0.01)
+    l2reg: Optional[float] = field(default=0.01, metadata={"help": "weight decay"})
+    warmup: Optional[float] = field(default=0.1, 
+        metadata={"help": "Proportion of training to perform linear learning rate warmup for."})
     max_seq_len: Optional[int] = field(default=100)
     optimizer: Optional[str] = field(default='adam')
     initializer: Optional[str] = field(default='xavier_uniform_', 
@@ -63,3 +69,5 @@ class ModelArguments:
             if self.validation_file is not None:
                 extension = self.validation_file.split(".")[-1]
                 assert extension in ["txt"], "`validation_file` should be a txt file."
+        if self.best_model_path is None and self.do_eval:
+            raise ValueError("Argument `best_model_path` is needed when `do_eval` is True")
