@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from typing import Optional
+from transformers import TrainingArguments
 
 
 @dataclass
@@ -12,9 +13,9 @@ class ModelArguments:
     pretrained_model: Optional[str] = field(
         default='bert-base-uncased', metadata={"help": "The name of the dataset to use (via the datasets library)."}
     )
-    do_train: Optional[bool] = field(default=True)
-    do_valid: Optional[bool] = field(default=True)
-    do_eval: Optional[bool] = field(default=True)
+    do_train: bool = field(default=False, metadata={"help": "Whether to run training."})
+    do_eval: bool = field(default=False, metadata={"help": "Whether to run eval on the dev set."})
+    do_predict: bool = field(default=False, metadata={"help": "Whether to run predictions on the test set."})
     best_model_path: Optional[str] = field(default=None, metadata={"help": "path of the best model"})
     num_workers: Optional[int] = field(
         default=1,
@@ -60,14 +61,23 @@ class ModelArguments:
     device: Optional[str] = field(default="cpu", metadata={"help": 'device for training'})
 
     def __post_init__(self):
-        if self.train_file is None or self.validation_file is None:
-            raise ValueError("Need  training, validation, test file.")
+        if self.do_train and self.train_file is None:
+            raise ValueError("Need training file when `do_train` is set.")
+        if self.do_eval and self.validation_file is None:
+            raise ValueError("Need validation file when `do_eval` is set.")
+        if self.do_predict and self.test_file is None:
+            raise ValueError("Need test file when `do_eval` is set.")
+        if self.train_file is None or self.test_file is None:
+            raise ValueError("Need training or test file.")
         else:
             if self.train_file is not None:
                 extension = self.train_file.split(".")[-1]
                 assert extension in ["txt"], "`train_file` should be a txt file."
-            if self.validation_file is not None:
-                extension = self.validation_file.split(".")[-1]
-                assert extension in ["txt"], "`validation_file` should be a txt file."
-        if self.best_model_path is None and self.do_eval:
-            raise ValueError("Argument `best_model_path` is needed when `do_eval` is True")
+                if self.do_eval:
+                    extension = self.validation_file.split(".")[-1]
+                    assert extension in ["txt"], "`validation_file` should be a txt file."
+            if self.test_file is not None:
+                extension = self.test_file.split(".")[-1]
+                assert extension in ["txt"], "`test_file` should be a txt file."
+        if self.best_model_path is None and self.do_predict and not self.do_train:
+            raise ValueError("Argument `best_model_path` is needed when `do_eval` is True and `do_train` is False")
