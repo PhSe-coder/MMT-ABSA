@@ -1,6 +1,8 @@
 import math
 import sys
 from time import localtime, strftime
+import time
+import shutil
 from typing import List
 from eval import absa_evaluate
 import torch
@@ -105,7 +107,7 @@ class Constructor:
         global_step = 0
         n_total, loss_total = 0, 0
         max_val_f1, max_val_epoch = 0, 0
-        for epoch in range(self.args.num_epoch):
+        for epoch in range(int(self.args.num_train_epochs)):
             logger.info('>' * 100)
             logger.info('> epoch: {}'.format(epoch))
             self.model.train()
@@ -144,10 +146,11 @@ class Constructor:
                 if val_f1 > max_val_f1:
                     max_val_f1 = val_f1
                     max_val_epoch = epoch
-                    if not os.path.exists('state_dict'):
-                        os.mkdir('state_dict')
-                    path = 'state_dict/{0}_{1}_{2}_val_pre_{3}_val_rec_{4}_val_f1_{5}.pt'.format(
-                        self.args.model_name, args.train_file.split(".")[0], args.test_file.split(".")[0], 
+                    os.makedirs('state_dict', exist_ok=True)
+                    path = 'state_dict/{}_{}_{}_{}_val_pre_{}_val_rec_{}_val_f1_{}.pt'.format(
+                        time.strftime('%Y%m%d%H%M', time.localtime()),
+                        self.args.model_name, self.args.train_file.split("/")[-1].split(".")[0], 
+                        self.args.validation_file.split("/")[-1].split(".")[0], 
                         round(val_pre, 4), round(val_rec, 4), round(val_f1, 4))
                     torch.save(self.model.state_dict(), path)
                     logger.info('>> saved: {}'.format(path))
@@ -155,6 +158,12 @@ class Constructor:
                 if epoch - max_val_epoch >= self.args.patience:
                     logger.info(f'>> early stopping at epoch: {epoch}')
                     break
+            else:
+                path = 'state_dict/{}_{}_{}_val_pre_{}_val_rec_{}_val_f1_{}.pt'.format(
+                        time.strftime('%Y%m%d%H%M', time.localtime()),
+                        self.args.model_name, self.args.train_file.split("/")[-1].split(".")[0],
+                        round(val_pre, 4), round(val_rec, 4), round(val_f1, 4))
+                torch.save(self.model.state_dict(), path)
         return path
     
     # @property
@@ -222,6 +231,7 @@ class Constructor:
                             torch.nn.init.uniform_(p, a=-stdv, b=stdv)
 
     def run(self):
+        os.makedirs(self.args.output_dir, exist_ok=True)
         best_model_path = self.args.best_model_path
         if self.args.do_train:
             train_data_loader = DataLoader(dataset=self.train_set, batch_size=self.args.batch_size, shuffle=True)
@@ -230,16 +240,22 @@ class Constructor:
             param_optimizer = [n for n in param_optimizer if 'pooler' not in n[0]]
             no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
             optimizer_grouped_parameters = [
-                {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'weight_decay': self.args.l2reg},
-                {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
+                {
+                    'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 
+                    'weight_decay': self.args.l2reg
+                },
+                {
+                    'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 
+                    'weight_decay': 0.0
+                }
             ]
             if self.args.optimizer == BertAdam:
                 optimizer = BertAdam(optimizer_grouped_parameters,
                             lr=self.args.lr,
                             warmup=self.args.warmup,
-                            t_total=self.args.num_epoch*len(train_data_loader))
+                            t_total=self.args.num_train_epochs*len(train_data_loader))
             else:
-                optimizer = self.args.optimizer(param_optimizer, lr=self.args.lr, weight_decay=self.args.l2reg)
+                optimizer = self.args.optimizer(optimizer_grouped_parameters, lr=self.args.lr)
             self.reset_params()
             val_data_loader = None
             if self.args.do_eval:
@@ -250,7 +266,11 @@ class Constructor:
             logger.info(f">> load best model: {best_model_path.split('/')[-1]}")
             self.model.load_state_dict(torch.load(best_model_path, map_location=torch.device(self.args.device)))
             test_pre, test_rec, test_f1 = self.evaluate(test_data_loader)
-            logger.info(f'>> test_pre: {test_pre:.4f}, test_rec: {test_rec:.4f}, test_f1: {test_f1:.4f}')
+            content = f'test_pre: {test_pre:.4f}, test_rec: {test_rec:.4f}, test_f1: {test_f1:.4f}'
+            logger.info(f'>> {content}')
+            with open(os.path.join(self.args.output_dir, "absa_prediction.txt"), "w") as f:
+                f.write(content)
+        shutil.move(best_model_path, self.args.output_dir)
 
 if __name__ == '__main__':
     args = parse_args()[0]

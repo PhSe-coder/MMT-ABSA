@@ -4,7 +4,7 @@ from transformers import TrainingArguments
 
 
 @dataclass
-class ModelArguments:
+class ModelArguments(TrainingArguments):
     """
     Arguments pertaining to what data we are going to input our model for training and eval.
     """
@@ -13,9 +13,6 @@ class ModelArguments:
     pretrained_model: Optional[str] = field(
         default='bert-base-uncased', metadata={"help": "The name of the dataset to use (via the datasets library)."}
     )
-    do_train: bool = field(default=False, metadata={"help": "Whether to run training."})
-    do_eval: bool = field(default=False, metadata={"help": "Whether to run eval on the dev set."})
-    do_predict: bool = field(default=False, metadata={"help": "Whether to run predictions on the test set."})
     best_model_path: Optional[str] = field(default=None, metadata={"help": "path of the best model"})
     num_workers: Optional[int] = field(
         default=1,
@@ -40,13 +37,9 @@ class ModelArguments:
     test_file: Optional[str] = field(
         default=None,
         metadata={"help": "An optional input test data file to predict on (a txt file)."},)
-    seed: Optional[int] = field(
-        default=42,
-        metadata={"help": 'set seed for reproducibility'})
     batch_size: Optional[int] = field(
         default=16,
         metadata={"help": 'training batch size'})
-    num_epoch: Optional[int] = field(default=20, metadata={'help': 'try larger number for non-BERT models'})
     dropout: Optional[float] = field(default=0.1)
     lr: Optional[float] = field(default=2e-5, metadata={"help": "learning rate"})
     l2reg: Optional[float] = field(default=0.01, metadata={"help": "weight decay"})
