@@ -3,6 +3,7 @@ construct_semeval_dataset/
 split.py
 data/
 state_dict/
+out/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
