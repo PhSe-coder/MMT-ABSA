@@ -14,37 +14,16 @@ import os
 import logging
 from tqdm import tqdm
 from transformers import HfArgumentParser, BertTokenizer, set_seed
-from pytorch_transformers import BertModel, BertPreTrainedModel
+from pytorch_transformers import BertModel
 from args import ModelArguments
 from dataset import MyDataset
-from model import Model
+from model import BertForTokenClassification
 from constants import TAGS
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 stdout_handler = logging.StreamHandler(sys.stdout)
 logger.addHandler(stdout_handler)
-
-class BertForTokenClassification(BertPreTrainedModel):
-    def __init__(self, config):
-        super(BertForTokenClassification, self).__init__(config)
-        self.num_labels = config.num_labels
-        self.bert = BertModel(config)
-        self.dropout = torch.nn.Dropout(config.hidden_dropout_prob)
-        self.classifier = torch.nn.Linear(config.hidden_size, config.num_labels)
-
-    def forward(self, input_ids, token_type_ids=None, attention_mask=None, labels=None):
-        outputs = self.bert(input_ids, token_type_ids=token_type_ids, attention_mask=attention_mask)
-        sequence_output = outputs[0]
-        sequence_output = self.dropout(sequence_output)
-        logits = self.classifier(sequence_output)  # attention_mask size (batch, seq_len)
-
-        if labels is not None:
-            loss_fct = torch.nn.CrossEntropyLoss(ignore_index=-1)
-            loss = loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
-            return loss
-        else:
-            return logits
 
 def parse_args():
     parser = HfArgumentParser(ModelArguments)
@@ -105,6 +84,7 @@ class Constructor:
         if args.do_predict:
             self.test_set = MyDataset(files[2], tokenizer, args.device)
         self.model = BertForTokenClassification.from_pretrained(args.pretrained_model, num_labels=self.num_labels)
+        # self.model = Model(args.pretrained_model)
         self.model.to(args.device)
         self.print_args()
 
@@ -137,6 +117,7 @@ class Constructor:
                 optimizer.zero_grad()
                 targets = batch.pop("labels")
                 outputs = self.model(**batch)
+                outputs = outputs.logits
                 loss = criterion(outputs.view(-1, self.num_labels), targets.view(-1))
                 loss.backward()
                 optimizer.step()
@@ -191,6 +172,7 @@ class Constructor:
             targets = batch.pop("labels")
             with torch.no_grad():
                 outputs = self.model(**batch)
+                outputs = outputs.logits
             pred_list, gold_list = self.id2label(outputs.detach().argmax(dim=-1).tolist(), targets.tolist())
             pred_Y.extend(pred_list)
             gold_Y.extend(gold_list)
