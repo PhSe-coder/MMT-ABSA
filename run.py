@@ -1,7 +1,6 @@
 import math
 import sys
 from time import localtime, strftime
-import time
 import shutil
 from typing import List
 from eval import absa_evaluate
