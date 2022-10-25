@@ -28,9 +28,9 @@ do
                 --optimizer "bertAdam" \
                 --lr "3e-5" \
                 --batch_size 16 \
-                --num_train_epochs 3
+                --num_train_epochs 3 \
                 --do_eval \
-                --validation_file "./dataset/${tar_domain}.validation.txt" \
+                --validation_file "./dataset/${tar_domain}.validation.txt"
         fi
     done
 done
