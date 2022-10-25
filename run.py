@@ -13,7 +13,8 @@ from optimization import BertAdam
 import os
 import logging
 from tqdm import tqdm
-from transformers import HfArgumentParser, BertTokenizer, BertModel, set_seed
+from transformers import HfArgumentParser, BertTokenizer, set_seed
+from pytorch_transformers import BertModel, BertPreTrainedModel
 from args import ModelArguments
 from dataset import MyDataset
 from model import Model
@@ -23,6 +24,27 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 stdout_handler = logging.StreamHandler(sys.stdout)
 logger.addHandler(stdout_handler)
+
+class BertForTokenClassification(BertPreTrainedModel):
+    def __init__(self, config):
+        super(BertForTokenClassification, self).__init__(config)
+        self.num_labels = config.num_labels
+        self.bert = BertModel(config)
+        self.dropout = torch.nn.Dropout(config.hidden_dropout_prob)
+        self.classifier = torch.nn.Linear(config.hidden_size, config.num_labels)
+
+    def forward(self, input_ids, token_type_ids=None, attention_mask=None, labels=None):
+        outputs = self.bert(input_ids, token_type_ids=token_type_ids, attention_mask=attention_mask)
+        sequence_output = outputs[0]
+        sequence_output = self.dropout(sequence_output)
+        logits = self.classifier(sequence_output)  # attention_mask size (batch, seq_len)
+
+        if labels is not None:
+            loss_fct = torch.nn.CrossEntropyLoss(ignore_index=-1)
+            loss = loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
+            return loss
+        else:
+            return logits
 
 def parse_args():
     parser = HfArgumentParser(ModelArguments)
@@ -35,12 +57,11 @@ def parse_args():
 
     return args
 
-def init(args):
-    if args.seed is not None:
-        set_seed(args.seed)
-        torch.backends.cudnn.deterministic = True
-        torch.backends.cudnn.benchmark = False
-        os.environ['PYTHONHASHSEED'] = str(args.seed)
+def init(args: ModelArguments):
+    set_seed(args.seed)
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
+    os.environ['PYTHONHASHSEED'] = str(args.seed)
     initializers = {
         'xavier_uniform_': torch.nn.init.xavier_uniform_,
         'xavier_normal_': torch.nn.init.xavier_normal_,
@@ -76,7 +97,6 @@ class Constructor:
         self.num_labels = len(TAGS)
         tokenizer = BertTokenizer.from_pretrained(args.pretrained_model, 
             model_max_length=args.max_seq_length)
-        self.tokenizer = tokenizer
         files = args.dataset_file['train'], args.dataset_file['validation'], args.dataset_file['test']
         if args.do_train:
             self.train_set = MyDataset(files[0], tokenizer, args.device)
@@ -84,7 +104,7 @@ class Constructor:
             self.validation_set = MyDataset(files[1], tokenizer, args.device)
         if args.do_predict:
             self.test_set = MyDataset(files[2], tokenizer, args.device)
-        self.model = Model(args.pretrained_model)
+        self.model = BertForTokenClassification.from_pretrained(args.pretrained_model, num_labels=self.num_labels)
         self.model.to(args.device)
         self.print_args()
 
@@ -107,17 +127,16 @@ class Constructor:
         global_step = 0
         n_total, loss_total = 0, 0
         max_val_f1, max_val_epoch = 0, 0
+        gold_Y, pred_Y = [], []
+        self.model.train()
         for epoch in range(int(self.args.num_train_epochs)):
             logger.info('>' * 100)
             logger.info('> epoch: {}'.format(epoch))
-            self.model.train()
-            logger.removeHandler(stdout_handler)
-            gold_Y, pred_Y = [], []
-            for _, batch in tqdm(enumerate(train_data_loader), f'epoch: {epoch}', len(train_data_loader)):
+            for i, batch in tqdm(enumerate(train_data_loader), f'epoch: {epoch}', len(train_data_loader)):
                 global_step += 1
                 optimizer.zero_grad()
                 targets = batch.pop("labels")
-                outputs = self.model(batch)
+                outputs = self.model(**batch)
                 loss = criterion(outputs.view(-1, self.num_labels), targets.view(-1))
                 loss.backward()
                 optimizer.step()
@@ -127,7 +146,7 @@ class Constructor:
                 l = len(outputs)
                 n_total += l
                 loss_total += loss.item() * l
-                if global_step % self.args.logging_steps == 0:
+                if global_step % self.args.logging_steps == 0 or i == len(train_data_loader) -1:
                     p, r, f1 = absa_evaluate(pred_Y, gold_Y)
                     inf = {
                         "steps": global_step,
@@ -136,9 +155,10 @@ class Constructor:
                         "recall": f"{r:.4f}",
                         "micro_f1": f"{f1:.4f}"
                     }
+                    logger.removeHandler(stdout_handler)
                     logger.info(", ".join([f"{k}: {v}" for k, v in inf.items()]))
+                    logger.addHandler(stdout_handler)
                     gold_Y, pred_Y = [], []
-            logger.addHandler(stdout_handler)
             if self.args.do_eval:
                 val_pre, val_rec, val_f1 = self.evaluate(val_data_loader)
                 logger.info(f'> val_pre: {val_pre:.4f}, val_rec: {val_rec:.4f}, val_f1: {val_f1:.4f}')
@@ -147,8 +167,7 @@ class Constructor:
                     max_val_f1 = val_f1
                     max_val_epoch = epoch
                     os.makedirs('state_dict', exist_ok=True)
-                    path = 'state_dict/{}_{}_{}_{}_val_pre_{}_val_rec_{}_val_f1_{}.pt'.format(
-                        time.strftime('%Y%m%d%H%M', time.localtime()),
+                    path = 'state_dict/{}_{}_{}_val_pre_{}_val_rec_{}_val_f1_{}.pt'.format(
                         self.args.model_name, self.args.train_file.split("/")[-1].split(".")[0], 
                         self.args.validation_file.split("/")[-1].split(".")[0], 
                         round(val_pre, 4), round(val_rec, 4), round(val_f1, 4))
@@ -159,42 +178,11 @@ class Constructor:
                     logger.info(f'>> early stopping at epoch: {epoch}')
                     break
             else:
-                path = 'state_dict/{}_{}_{}_val_pre_{}_val_rec_{}_val_f1_{}.pt'.format(
-                        time.strftime('%Y%m%d%H%M', time.localtime()),
+                path = 'state_dict/{}_{}_{}.pt'.format(
                         self.args.model_name, self.args.train_file.split("/")[-1].split(".")[0],
-                        round(val_pre, 4), round(val_rec, 4), round(val_f1, 4))
+                        self.args.test_file.split("/")[-1].split(".")[0])
                 torch.save(self.model.state_dict(), path)
         return path
-    
-    # @property
-    # def metrics(self):
-    #     num_classes = len(TAGS)
-    #     metrics = {
-    #         "precision": MulticlassPrecision(num_classes, average='macro', ignore_index=-1).to(self.args.device),
-    #         "recall": MulticlassRecall(num_classes, average='macro', ignore_index=-1).to(self.args.device),
-    #         "micro_f1": MulticlassF1Score(num_classes, average='macro', ignore_index=-1).to(self.args.device)
-    #     }
-    #     return metrics
-    
-    # def evaluate(self, data_loader: DataLoader):
-    #     self.model.eval()
-    #     metrics = self.metrics
-    #     precision = metrics.get("precision")
-    #     recall = metrics.get("recall")
-    #     micro_f1 = metrics.get("micro_f1")
-    #     for _, batch in enumerate(data_loader):
-    #         targets = batch.pop("labels")
-    #         with torch.no_grad():
-    #             outputs = self.model(batch)
-    #         outputs = outputs.transpose(1, 2)
-    #         precision.update(outputs, targets)
-    #         recall.update(outputs, targets)
-    #         micro_f1.update(outputs, targets)
-    #     p , r, f1 = precision.compute().item(), recall.compute().item(), micro_f1.compute().item()
-    #     precision.reset()
-    #     recall.reset()
-    #     micro_f1.reset()
-    #     return p, r, f1
     
     def evaluate(self, data_loader: DataLoader):
         self.model.eval()
@@ -202,19 +190,20 @@ class Constructor:
         for _, batch in enumerate(data_loader):
             targets = batch.pop("labels")
             with torch.no_grad():
-                outputs = self.model(batch)
-            pred_list, gold_list = self.id2label(outputs.argmax(dim=-1).tolist(), targets.tolist())
+                outputs = self.model(**batch)
+            pred_list, gold_list = self.id2label(outputs.detach().argmax(dim=-1).tolist(), targets.tolist())
             pred_Y.extend(pred_list)
             gold_Y.extend(gold_list)
+        self.model.train()
         return absa_evaluate(pred_Y, gold_Y)
     
     def id2label(self, predict: List[List[int]], gold: List[List[int]]):
         gold_Y: List[List[str]] = []
         pred_Y: List[List[str]] = []
-        for gold, pred in zip(predict, gold):
-            assert len(gold) == len(pred)
-            gold_list = [TAGS[gold[i]] for i in range(len(gold)) if gold[i] != -1]
-            pred_list = [TAGS[pred[i]] for i in range(len(gold)) if gold[i] != -1]
+        for _pred, _gold in zip(predict, gold):
+            assert len(_gold) == len(_pred)
+            gold_list = [TAGS[_gold[i]] for i in range(len(_gold)) if _gold[i] != -1]
+            pred_list = [TAGS[_pred[i]] for i in range(len(_gold)) if _gold[i] != -1]
             gold_Y.append(gold_list)
             pred_Y.append(pred_list)
         return pred_Y, gold_Y
@@ -234,7 +223,7 @@ class Constructor:
         os.makedirs(self.args.output_dir, exist_ok=True)
         best_model_path = self.args.best_model_path
         if self.args.do_train:
-            train_data_loader = DataLoader(dataset=self.train_set, batch_size=self.args.batch_size, shuffle=True)
+            train_data_loader = DataLoader(dataset=self.train_set, batch_size=self.args.batch_size, shuffle=False)
             criterion = nn.CrossEntropyLoss(ignore_index=-1)
             param_optimizer = [(k, v) for k, v in self.model.named_parameters() if v.requires_grad == True]
             param_optimizer = [n for n in param_optimizer if 'pooler' not in n[0]]
@@ -256,7 +245,7 @@ class Constructor:
                             t_total=self.args.num_train_epochs*len(train_data_loader))
             else:
                 optimizer = self.args.optimizer(optimizer_grouped_parameters, lr=self.args.lr)
-            self.reset_params()
+            # self.reset_params()
             val_data_loader = None
             if self.args.do_eval:
                 val_data_loader = DataLoader(dataset=self.validation_set, batch_size=self.args.batch_size, shuffle=True)
@@ -265,12 +254,13 @@ class Constructor:
             test_data_loader = DataLoader(dataset=self.test_set, batch_size=self.args.batch_size, shuffle=False)
             logger.info(f">> load best model: {best_model_path.split('/')[-1]}")
             self.model.load_state_dict(torch.load(best_model_path, map_location=torch.device(self.args.device)))
+            # self.model = torch.load(best_model_path, map_location=torch.device(self.args.device))
             test_pre, test_rec, test_f1 = self.evaluate(test_data_loader)
             content = f'test_pre: {test_pre:.4f}, test_rec: {test_rec:.4f}, test_f1: {test_f1:.4f}'
             logger.info(f'>> {content}')
             with open(os.path.join(self.args.output_dir, "absa_prediction.txt"), "w") as f:
                 f.write(content)
-        shutil.move(best_model_path, self.args.output_dir)
+        shutil.move(best_model_path, os.path.join(self.args.output_dir, best_model_path.split("/")[-1]))
 
 if __name__ == '__main__':
     args = parse_args()[0]
