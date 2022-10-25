@@ -223,7 +223,7 @@ class Constructor:
         os.makedirs(self.args.output_dir, exist_ok=True)
         best_model_path = self.args.best_model_path
         if self.args.do_train:
-            train_data_loader = DataLoader(dataset=self.train_set, batch_size=self.args.batch_size, shuffle=False)
+            train_data_loader = DataLoader(dataset=self.train_set, batch_size=self.args.batch_size, shuffle=True)
             criterion = nn.CrossEntropyLoss(ignore_index=-1)
             param_optimizer = [(k, v) for k, v in self.model.named_parameters() if v.requires_grad == True]
             param_optimizer = [n for n in param_optimizer if 'pooler' not in n[0]]
@@ -248,7 +248,7 @@ class Constructor:
             # self.reset_params()
             val_data_loader = None
             if self.args.do_eval:
-                val_data_loader = DataLoader(dataset=self.validation_set, batch_size=self.args.batch_size, shuffle=True)
+                val_data_loader = DataLoader(dataset=self.validation_set, batch_size=self.args.batch_size, shuffle=False)
             best_model_path = self.train(criterion, optimizer, train_data_loader, val_data_loader)
         if self.args.do_predict:
             test_data_loader = DataLoader(dataset=self.test_set, batch_size=self.args.batch_size, shuffle=False)
