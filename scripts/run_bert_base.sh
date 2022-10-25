@@ -2,6 +2,7 @@
 domains=('rest' 'service' 'laptop' 'device')
 
 export CUDA_VISIBLE_DEVICES=0,1
+export TRANSFORMERS_OFFLINE=1
 output='./out/bert_base/'
 for tar_domain in ${domains[@]};
 do
@@ -17,19 +18,19 @@ do
             then
                 continue
             fi
-	        python run.py
+	        python run.py \
                 --output_dir "${output}${src_domain}-${tar_domain}"  \
                 --train_file "./data/${src_domain}.train.txt" \
-                --validation_file, "./dataset/${tar_domain}.validation.txt" \
-                --test_file, "./dataset/${tar_domain}.test.txt" \
+                --test_file "./dataset/${tar_domain}.test.txt" \
                 --do_train \
-                --do_eval \
                 --do_predict \
                 --device "cuda:0" \
-                --optimizer "bertAdam",
-                --lr 3e-5 \
+                --optimizer "bertAdam" \
+                --lr "3e-5" \
                 --batch_size 16 \
                 --num_train_epochs 3
+                --do_eval \
+                --validation_file "./dataset/${tar_domain}.validation.txt" \
         fi
     done
 done
