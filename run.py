@@ -2,10 +2,11 @@ import math
 import sys
 from time import localtime, strftime
 import shutil
-from typing import List
+from typing import Callable, List
 from eval import absa_evaluate
 import torch
 import torch.nn as nn
+from torch import Tensor
 from torch.utils.data import DataLoader
 from torch.optim.optimizer import Optimizer
 from optimization import BertAdam
@@ -101,7 +102,7 @@ class Constructor:
         for arg in vars(self.args):
             logger.info('>>> {0}: {1}'.format(arg, getattr(self.args, arg)))
 
-    def train(self, criterion, optimizer: Optimizer, train_data_loader: DataLoader, 
+    def train(self, loss_func: Callable, optimizer: Optimizer, train_data_loader: DataLoader, 
             val_data_loader: DataLoader=None):
         global_step = 0
         n_total, loss_total = 0, 0
@@ -117,7 +118,7 @@ class Constructor:
                 targets = batch.pop("labels")
                 outputs = self.model(**batch)
                 outputs = outputs.logits
-                loss = criterion(outputs.view(-1, self.num_labels), targets.view(-1))
+                loss = loss_func(outputs.view(-1, self.num_labels), targets.view(-1))
                 loss.backward()
                 optimizer.step()
                 pred_list, gold_list = self.id2label(outputs.argmax(dim=-1).tolist(), targets.tolist())
@@ -200,12 +201,14 @@ class Constructor:
                             stdv = 1. / math.sqrt(p.shape[0])
                             torch.nn.init.uniform_(p, a=-stdv, b=stdv)
 
+    def loss_func(output: Tensor, target: Tensor, **kwargs):
+        return nn.CrossEntropyLoss(ignore_index=-1)(output, target)
+
     def run(self):
         os.makedirs(self.args.output_dir, exist_ok=True)
         best_model_path = self.args.best_model_path
         if self.args.do_train:
             train_data_loader = DataLoader(dataset=self.train_set, batch_size=self.args.batch_size, shuffle=True)
-            criterion = nn.CrossEntropyLoss(ignore_index=-1)
             param_optimizer = [(k, v) for k, v in self.model.named_parameters() if v.requires_grad == True]
             param_optimizer = [n for n in param_optimizer if 'pooler' not in n[0]]
             no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
@@ -230,7 +233,7 @@ class Constructor:
             val_data_loader = None
             if self.args.do_eval:
                 val_data_loader = DataLoader(dataset=self.validation_set, batch_size=self.args.batch_size, shuffle=False)
-            best_model_path = self.train(criterion, optimizer, train_data_loader, val_data_loader)
+            best_model_path = self.train(self.loss_func, optimizer, train_data_loader, val_data_loader)
         if self.args.do_predict:
             test_data_loader = DataLoader(dataset=self.test_set, batch_size=self.args.batch_size, shuffle=False)
             logger.info(f">> load best model: {best_model_path.split('/')[-1]}")
