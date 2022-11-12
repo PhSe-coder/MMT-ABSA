@@ -44,9 +44,9 @@ class Consumer(threading.Thread):
         self.args = args
         self.positive_words = set(opinion_lexicon.positive())
         self.negtive_words = set(opinion_lexicon.negative())
-        with open('./Lessico-Opinion.txt') as f:
+        with open('./double_propagation/Lessico-Opinion.txt') as f:
             ops = f.read().splitlines()
-        with open('./Lessico-Target.txt') as f:
+        with open('./double_propagation/Lessico-Target.txt') as f:
             tars = f.read().splitlines()
         self.target_set = set(tars)
         self.opinion_set = set(ops)
