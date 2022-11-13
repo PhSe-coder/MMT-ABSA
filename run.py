@@ -76,6 +76,7 @@ class Constructor:
         self.num_labels = len(TAGS)
         tokenizer = BertTokenizer.from_pretrained(args.pretrained_model, 
             model_max_length=args.max_seq_length)
+        self.tokenizer = tokenizer
         files = args.dataset_file['train'], args.dataset_file['validation'], args.dataset_file['test']
         if args.do_train:
             self.train_set = MyDataset(files[0], tokenizer, args.device)
@@ -165,9 +166,9 @@ class Constructor:
                 torch.save(self.model.state_dict(), path)
         return path
     
-    def evaluate(self, data_loader: DataLoader):
+    def evaluate(self, data_loader: DataLoader, to_file=False):
         self.model.eval()
-        gold_Y, pred_Y = [], []
+        text, gold_Y, pred_Y = [], [], []
         for _, batch in enumerate(data_loader):
             targets = batch.pop("labels")
             with torch.no_grad():
@@ -176,7 +177,13 @@ class Constructor:
             pred_list, gold_list = self.id2label(outputs.detach().argmax(dim=-1).tolist(), targets.tolist())
             pred_Y.extend(pred_list)
             gold_Y.extend(gold_list)
+            if to_file:
+                text.extend(self.tokenizer.decode(batch.get("input_ids")))
         self.model.train()
+        if to_file:
+            with open(os.path.join(self.args.output_dir, "predict.txt"), "w") as f:
+                for i in range(len(gold_Y)):
+                    f.write(f"{text[i]}***{pred_Y[i]}***{gold_Y[i]}")
         return absa_evaluate(pred_Y, gold_Y)
     
     def id2label(self, predict: List[List[int]], gold: List[List[int]]):
