@@ -13,10 +13,13 @@ __all__ = [
     ]
 
 # for the first time you should download wordnet
-nltk.download('wordnet')
+# nltk.download('wordnet')
 random.seed(1)
 
-Word = NamedTuple('Word', [('token', str), ('label', str)])
+class Word(NamedTuple):
+    token: str
+    gold_label: str
+    hard_label: str
 
 # stop words list
 stop_words = ['i', 'me', 'my', 'myself', 'we', 'our',
@@ -82,7 +85,7 @@ def synonym_replacement(words: Tuple[Word], n: int):
                 if word == random_word:
                     synonym = random.choice(synonyms)
                     for syn in synonym.split(' '):
-                        old_words.append(Word(syn, word.label))
+                        old_words.append(Word(syn, word.gold_label, word.hard_label))
                 else:
                     old_words.append(word)
             new_words = old_words.copy()                
@@ -166,14 +169,14 @@ def add_word(new_words: List[Word]):
     random_synonym = random_synonym.split(' ')
     # synonyms with multi-word
     while len(random_synonym) != 0:
-        new_words.insert(random_idx, Word(random_synonym[-1], random_word.label))
+        new_words.insert(random_idx, Word(random_synonym[-1], random_word.gold_label, random_word.hard_label))
         random_synonym = random_synonym[:-1]
 
 ########################################################################
 # main data augmentation function
 ########################################################################
 
-def eda(words: Tuple[Word], alpha_sr=0.1, alpha_ri=0.1, alpha_rs=0.1, p_rd=0.1, num_aug=9):
+def eda(words: Tuple[Word], alpha_sr=0.1, alpha_ri=0.1, alpha_rs=0.1, p_rd=0.1, num_aug=9, sep="***"):
     num_words = len(words)
     augmented_sentences = []
     num_new_per_technique = int(num_aug/4)+1
@@ -182,35 +185,31 @@ def eda(words: Tuple[Word], alpha_sr=0.1, alpha_ri=0.1, alpha_rs=0.1, p_rd=0.1, 
         n_sr = max(1, int(alpha_sr*num_words))
         for _ in range(num_new_per_technique):
             a_words = synonym_replacement(words, n_sr)
-            sentence = [word.token for word in a_words]
-            labels = [word.label for word in a_words]
-            augmented_sentences.append(f"{' '.join(sentence)}***{' '.join(labels)}")
+            result = (' '.join(getattr(word, field) for word in a_words) for field in Word._fields)
+            augmented_sentences.append(sep.join(result))
 
 	# ri
     if (alpha_ri > 0):
         n_ri = max(1, int(alpha_ri*num_words))
         for _ in range(num_new_per_technique):
             a_words = random_insertion(words, n_ri)
-            sentence = [word.token for word in a_words]
-            labels = [word.label for word in a_words]
-            augmented_sentences.append(f"{' '.join(sentence)}***{' '.join(labels)}")
+            result = (' '.join(getattr(word, field) for word in a_words) for field in Word._fields)
+            augmented_sentences.append(sep.join(result))
 
 	# rs
     if (alpha_rs > 0):
         n_rs = max(1, int(alpha_rs*num_words))
         for _ in range(num_new_per_technique):
             a_words = random_swap(words, n_rs)
-            sentence = [word.token for word in a_words]
-            labels = [word.label for word in a_words]
-            augmented_sentences.append(f"{' '.join(sentence)}***{' '.join(labels)}")
+            result = (' '.join(getattr(word, field) for word in a_words) for field in Word._fields)
+            augmented_sentences.append(sep.join(result))
 
 	# rd
     if (p_rd > 0):
         for _ in range(num_new_per_technique):
             a_words = random_deletion(words, p_rd)
-            sentence = [word.token for word in a_words]
-            labels = [word.label for word in a_words]
-            augmented_sentences.append(f"{' '.join(sentence)}***{' '.join(labels)}")
+            result = (' '.join(getattr(word, field) for word in a_words) for field in Word._fields)
+            augmented_sentences.append(sep.join(result))
 
 	# augmented_sentences = [get_only_chars(sentence) for sentence in augmented_sentences]
     random.shuffle(augmented_sentences)

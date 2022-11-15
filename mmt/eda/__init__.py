@@ -1,1 +1,1 @@
-from eda.eda import *
+from .eda import *

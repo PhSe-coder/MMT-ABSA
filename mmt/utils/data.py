@@ -1,13 +1,16 @@
 import os.path as osp
 from glob import glob
-
+from os import makedirs
 from torch.utils.data import random_split
+from torch.random import manual_seed
 
 __all__ = ['split']
 
 def split(data_dir: str,output_dir: str, pattern: str="*.train.txt"):
     if "train" not in pattern:
         raise ValueError("parameter `pattern` must contain literal string 'train'")
+    makedirs(output_dir, exist_ok=True)
+    manual_seed(42)
     for file in glob(osp.join(data_dir, pattern)):
         with open(file, "r") as f:
             data = f.readlines()

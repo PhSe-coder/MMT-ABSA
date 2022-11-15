@@ -7,6 +7,7 @@ import stanza
 from stanza import DownloadMethod
 from stanza.models.common.doc import Sentence
 
+logging.basicConfig(level = logging.INFO, format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 MR = ('amod', 'advmod', 'rcmod')
 JJ = ('JJ', 'JJS', 'JJR')
@@ -159,7 +160,7 @@ class Rule:
                                           d['deprel'] in ['nsubj'] and 
                                           d['xpos'] in NN, doc))
             if len(target_heads) > 1:
-              logger.warn(f"{' '.join([token['text'] for token in doc])} has MULTIPLE target heads.")
+              logger.debug(f"{' '.join([token['text'] for token in doc])} has MULTIPLE target heads.")
             for tok in target_heads: # O-->O-dep-->H<--T-dep<--T
               _tok = self.target_expand(tok)
               if _tok not in target_dict:
@@ -218,7 +219,7 @@ class Rule:
                           d['deprel'] == 'nsubj' and 
                           d['xpos'] in NN, doc))
         if len(target_heads) > 1:
-          logger.warn(f"{' '.join([token['text'] for token in doc])} has MULTIPLE target heads")
+          logger.debug(f"{' '.join([token['text'] for token in doc])} has MULTIPLE target heads")
         for tok in target_heads:
           _tok = self.target_expand(tok)
           if _tok not in target_dict:
@@ -248,7 +249,7 @@ class Rule:
                           d['xpos'] in JJ and
                           d['id'] != item['id'], doc))
         if len(opinion_heads) > 1:
-          logger.warn(f"{' '.join([token['text'] for token in doc])} has MULTIPLE opinion heads")
+          logger.debug(f"{' '.join([token['text'] for token in doc])} has MULTIPLE opinion heads")
         for opin in opinion_heads:
           list_opinion.append(opin['text'])
     return set(list_opinion)
@@ -270,7 +271,7 @@ class Rule:
                                           d['deprel'] in ['nsubj'] and 
                                           d['xpos'] in NN, doc))
         if len(target_heads) > 1:
-          logger.warn(f"{' '.join([token['text'] for token in doc])} has MULTIPLE target heads")
+          logger.debug(f"{' '.join([token['text'] for token in doc])} has MULTIPLE target heads")
         for tok in target_heads:
           _tok = self.target_expand(tok)
           if _tok not in target_dict:
