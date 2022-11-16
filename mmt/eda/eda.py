@@ -96,15 +96,17 @@ def synonym_replacement(words: Tuple[Word], n: int):
     return new_words
 
 def get_synonyms(word: str) -> List[str]:
-	synonyms = set()
-	for syn in wordnet.synsets(word.lower()):
-		for l in syn.lemmas():
-			synonym = l.name().replace("_", " ").replace("-", " ").lower()
-			synonym = "".join([char for char in synonym if char in ' qwertyuiopasdfghjklzxcvbnm'])
-			synonyms.add(synonym)
-	if word in synonyms:
-		synonyms.remove(word)
-	return list(synonyms)
+    synonyms = set()
+    for syn in wordnet.synsets(word.lower()):
+        for l in syn.lemmas():
+            synonym = l.name().replace("_", " ").replace("-", " ").lower()
+            synonym = "".join([char for char in synonym if char in ' qwertyuiopasdfghjklzxcvbnm']).strip()
+            if synonym == '':
+                continue
+            synonyms.add(synonym)
+    if word in synonyms:
+        synonyms.remove(word)
+    return list(synonyms)
 
 ########################################################################
 # Random deletion
@@ -186,6 +188,10 @@ def eda(words: Tuple[Word], alpha_sr=0.1, alpha_ri=0.1, alpha_rs=0.1, p_rd=0.1, 
         for _ in range(num_new_per_technique):
             a_words = synonym_replacement(words, n_sr)
             result = (' '.join(getattr(word, field) for word in a_words) for field in Word._fields)
+            result = list(result)
+            l = len(result[0].split())
+            for r in result:
+                assert l == len(r.split())
             augmented_sentences.append(sep.join(result))
 
 	# ri
@@ -194,6 +200,10 @@ def eda(words: Tuple[Word], alpha_sr=0.1, alpha_ri=0.1, alpha_rs=0.1, p_rd=0.1, 
         for _ in range(num_new_per_technique):
             a_words = random_insertion(words, n_ri)
             result = (' '.join(getattr(word, field) for word in a_words) for field in Word._fields)
+            result = list(result)
+            l = len(result[0].split())
+            for r in result:
+                assert l == len(r.split())
             augmented_sentences.append(sep.join(result))
 
 	# rs
@@ -202,6 +212,10 @@ def eda(words: Tuple[Word], alpha_sr=0.1, alpha_ri=0.1, alpha_rs=0.1, p_rd=0.1, 
         for _ in range(num_new_per_technique):
             a_words = random_swap(words, n_rs)
             result = (' '.join(getattr(word, field) for word in a_words) for field in Word._fields)
+            result = list(result)
+            l = len(result[0].split())
+            for r in result:
+                assert l == len(r.split())
             augmented_sentences.append(sep.join(result))
 
 	# rd
@@ -209,6 +223,10 @@ def eda(words: Tuple[Word], alpha_sr=0.1, alpha_ri=0.1, alpha_rs=0.1, p_rd=0.1, 
         for _ in range(num_new_per_technique):
             a_words = random_deletion(words, p_rd)
             result = (' '.join(getattr(word, field) for word in a_words) for field in Word._fields)
+            result = list(result)
+            l = len(result[0].split())
+            for r in result:
+                assert l == len(r.split())
             augmented_sentences.append(sep.join(result))
 
 	# augmented_sentences = [get_only_chars(sentence) for sentence in augmented_sentences]
