@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Optional
 from transformers import TrainingArguments
+from constants import SUPPORTED_MODELS
 
 
 @dataclass
@@ -9,7 +10,7 @@ class ModelArguments(TrainingArguments):
     Arguments pertaining to what data we are going to input our model for training and eval.
     """
 
-    model_name: Optional[str] = field(default="model", metadata={"help": "The name of the model (ner, pos...)."})
+    model_name: Optional[str] = field(default="bert", metadata={"help": "The name of the model (ner, pos...)."})
     pretrained_model: Optional[str] = field(
         default='bert-base-uncased', metadata={"help": "The name of the dataset to use (via the datasets library)."}
     )
@@ -43,17 +44,19 @@ class ModelArguments(TrainingArguments):
     dropout: Optional[float] = field(default=0.1)
     lr: Optional[float] = field(default=2e-5, metadata={"help": "learning rate"})
     l2reg: Optional[float] = field(default=0.01, metadata={"help": "weight decay"})
-    warmup: Optional[float] = field(default=0.1, 
+    warmup: Optional[float] = field(default=0.1,
         metadata={"help": "Proportion of training to perform linear learning rate warmup for."})
     max_seq_len: Optional[int] = field(default=100)
     optimizer: Optional[str] = field(default='adam')
-    initializer: Optional[str] = field(default='xavier_uniform_', 
+    initializer: Optional[str] = field(default='xavier_uniform_',
         metadata={"help": "initializer for customize parameters"})
     logging_steps: Optional[int] = field(default=10, metadata={"help": "Number of update steps between two logs"})
     patience: Optional[int] = field(default=5, metadata={"help": 'early stopping rounds'})
     device: Optional[str] = field(default="cpu", metadata={"help": 'device for training'})
 
     def __post_init__(self):
+        if self.model_name not in SUPPORTED_MODELS:
+            raise ValueError(f"Model name {self.model_name} is not supported.")
         if self.do_train and self.train_file is None:
             raise ValueError("Need training file when `do_train` is set.")
         if self.do_eval and self.validation_file is None:
