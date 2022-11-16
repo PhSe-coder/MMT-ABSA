@@ -6,6 +6,7 @@ from pytorch_revgrad import RevGrad
 from pytorch_transformers import BertModel, BertPreTrainedModel
 from transformers.modeling_outputs import TokenClassifierOutput
 
+__all__ = ['BertForTokenClassification', 'MMTModel', 'DomainModel']
 
 class BertForTokenClassification(BertPreTrainedModel):
     def __init__(self, config):
@@ -26,14 +27,14 @@ class BertForTokenClassification(BertPreTrainedModel):
         )
 
 @dataclass
-class Model(nn.Module):
+class MMTModel(nn.Module):
     model_1: BertForTokenClassification
     model_ema_1: BertForTokenClassification
     model_2: BertForTokenClassification
     model_ema_2: BertForTokenClassification
     
     def __post_init__(self):
-        super(Model, self).__init__()
+        super(MMTModel, self).__init__()
         
         
     def forward(self, input_ids, token_type_ids=None, attention_mask=None):
