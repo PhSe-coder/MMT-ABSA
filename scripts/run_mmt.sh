@@ -3,8 +3,9 @@ domains=('rest' 'service' 'laptop' 'device')
 
 export CUDA_VISIBLE_DEVICES=0,1
 export TRANSFORMERS_OFFLINE=1
-output='./out/bert_base/'
-train_dir='./data'
+output='./out/mmt_base/'
+src_train_dir='./processed/dataset'
+tar_train_dir='./processed/dataset'
 val_dir='./processed/dataset'
 test_dir='./processed/dataset'
 for tar_domain in ${domains[@]};
@@ -23,7 +24,7 @@ do
             fi
 	        python run.py \
                 --output_dir "${output}${src_domain}-${tar_domain}"  \
-                --train_file "${train_dir}/${src_domain}.train.txt" \
+                --train_file "${src_train_dir}/${src_domain}.train.txt" "${tar_train_dir}/${src_domain}.train.txt" \
                 --test_file "${test_dir}/${tar_domain}.test.txt" \
                 --do_train \
                 --do_predict \
