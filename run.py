@@ -4,14 +4,12 @@ import os
 import shutil
 import sys
 from time import localtime, strftime
-from typing import Callable, List, Union
+from typing import List, Union
 
 import torch
-import torch.nn as nn
-from pytorch_transformers import BertModel
-from torch import Tensor
+from pytorch_transformers import BertModel, BertConfig
 from torch.optim.optimizer import Optimizer
-from torch.utils.data import DataLoader
+from torch.utils.data import ConcatDataset, DataLoader
 from tqdm import tqdm
 from transformers import BertTokenizer, HfArgumentParser, set_seed
 from transformers.modeling_outputs import TokenClassifierOutput
@@ -71,43 +69,59 @@ def init(args: ModelArguments):
 
 class Constructor:
 
+    def __init__(self, args: ModelArguments):
+        self.args = args
+        self.tokenizer = BertTokenizer.from_pretrained(args.pretrained_model,
+                                                       model_max_length=args.max_seq_length)
+        self.dataset_init()
+        self.model_init()
+        self.running_init()
+        self.print_args()
+
     def model_init(self):
         model_name = self.args.model_name
+        num_labels = len(TAGS)
+        device = self.args.device
         assert model_name in SUPPORTED_MODELS, f'Model {model_name} is not supported'
         if model_name == 'bert':
             model = BertForTokenClassification.from_pretrained(args.pretrained_model,
-                                                               num_labels=self.num_labels)
+                                                               num_labels=num_labels)
         elif model_name == 'mmt':
             model_1 = BertForTokenClassification.from_pretrained(args.pretrained_model,
-                                                                 num_labels=self.num_labels)
+                                                                 num_labels=num_labels)
             model_ema_1 = BertForTokenClassification.from_pretrained(args.pretrained_model,
-                                                                     num_labels=self.num_labels)
+                                                                     num_labels=num_labels)
             model_2 = BertForTokenClassification.from_pretrained(args.pretrained_model,
-                                                                 num_labels=self.num_labels)
+                                                                 num_labels=num_labels)
             model_ema_2 = BertForTokenClassification.from_pretrained(args.pretrained_model,
-                                                                     num_labels=self.num_labels)
-            model = MMTModel(model_1, model_ema_1, model_2, model_ema_2)
+                                                                     num_labels=num_labels)
+            config = BertConfig.from_pretrained(args.pretrained_model)
+            for param in model_ema_1.parameters():
+                param.detach_()
+            for param in model_ema_2.parameters():
+                param.detach_()
+            domain_model = DomainModel(config.hidden_size)
+            model = MMTModel(model_1, model_ema_1, model_2, model_ema_2, domain_model)
         self.model: Union[BertForTokenClassification, MMTModel] = model
+        self.model.to(device)
 
     def dataset_init(self):
         args = self.args
         dataset = MMTDataset if args.model_name == 'mmt' else BaseDataset
         if args.do_train:
-            self.train_set = dataset(self.args.train_file, self.tokenizer, args.device)
+            datasets = []
+            datasets.append(dataset(args.train_files[0], self.tokenizer, args.device))
+            if args.model_name == 'mmt':
+                datasets.append(dataset(args.train_files[1], self.tokenizer, args.device, False))
+            self.train_set = ConcatDataset(datasets)
         if args.do_eval:
-            self.validation_set = dataset(self.args.validation_file, self.tokenizer, args.device)
+            self.validation_set = dataset(self.args.validation_file, self.tokenizer, args.device,
+                                          False)
         if args.do_predict:
-            self.test_set = dataset(self.args.test_file, self.tokenizer, args.device)
+            self.test_set = dataset(self.args.test_file, self.tokenizer, args.device, False)
 
-    def __init__(self, args: ModelArguments):
-        self.args = args
-        self.num_labels = len(TAGS)
-        self.tokenizer = BertTokenizer.from_pretrained(args.pretrained_model,
-                                                       model_max_length=args.max_seq_length)
-        self.dataset_init()
-        self.model_init(args.model_name)
-        self.model.to(args.device)
-        self.print_args()
+    def running_init(self):
+        os.makedirs(self.args.output_dir, exist_ok=True)
 
     def print_args(self):
         n_trainable_params, n_nontrainable_params = 0, 0
@@ -124,7 +138,6 @@ class Constructor:
             logger.info('>>> {0}: {1}'.format(arg, getattr(self.args, arg)))
 
     def train(self,
-              loss_func: Callable,
               optimizer: Optimizer,
               train_data_loader: DataLoader,
               val_data_loader: DataLoader = None):
@@ -138,14 +151,14 @@ class Constructor:
             logger.info('> epoch: {}'.format(epoch))
             for i, batch in tqdm(enumerate(train_data_loader), f'epoch: {epoch}',
                                  len(train_data_loader)):
-                global_step += 1
                 optimizer.zero_grad()
-                targets = batch.pop("gold_labels")
+                targets = batch.get("gold_labels")
                 outputs: TokenClassifierOutput = self.model(**batch)
-                logits = outputs.logits
-                loss = loss_func(logits.view(-1, self.num_labels), targets.view(-1))
+                logits, loss = outputs.logits, outputs.loss
+                assert loss is not None
                 loss.backward()
                 optimizer.step()
+                self.model.post_operation(global_step=global_step)
                 pred_list, gold_list = self.id2label(
                     logits.argmax(dim=-1).tolist(), targets.tolist())
                 pred_Y.extend(pred_list)
@@ -153,6 +166,7 @@ class Constructor:
                 l = len(logits)
                 n_total += l
                 loss_total += loss.item() * l
+                global_step += 1
                 if global_step % self.args.logging_steps == 0 or i == len(train_data_loader) - 1:
                     p, r, f1 = absa_evaluate(pred_Y, gold_Y)
                     inf = {
@@ -165,19 +179,20 @@ class Constructor:
                     logger.removeHandler(stdout_handler)
                     logger.info(", ".join([f"{k}: {v}" for k, v in inf.items()]))
                     logger.addHandler(stdout_handler)
-                    gold_Y, pred_Y = [], []
+                    gold_Y.clear()
+                    pred_Y.clear()
             if self.args.do_eval:
                 val_pre, val_rec, val_f1 = self.evaluate(val_data_loader)
                 logger.info(
                     f'> val_pre: {val_pre:.4f}, val_rec: {val_rec:.4f}, val_f1: {val_f1:.4f}')
-
+                assert val_f1 > 0
                 if val_f1 > max_val_f1:
                     max_val_f1 = val_f1
                     max_val_epoch = epoch
                     os.makedirs('state_dict', exist_ok=True)
                     path = 'state_dict/{}_{}_{}_val_pre_{}_val_rec_{}_val_f1_{}.pt'.format(
                         self.args.model_name,
-                        self.args.train_file.split("/")[-1].split(".")[0],
+                        self.args.train_files.split("/")[-1].split(".")[0],
                         self.args.validation_file.split("/")[-1].split(".")[0], round(val_pre, 4),
                         round(val_rec, 4), round(val_f1, 4))
                     torch.save(self.model.state_dict(), path)
@@ -189,7 +204,7 @@ class Constructor:
             else:
                 path = 'state_dict/{}_{}_{}.pt'.format(
                     self.args.model_name,
-                    self.args.train_file.split("/")[-1].split(".")[0],
+                    self.args.train_files.split("/")[-1].split(".")[0],
                     self.args.test_file.split("/")[-1].split(".")[0])
                 torch.save(self.model.state_dict(), path)
         return path
@@ -198,11 +213,11 @@ class Constructor:
         self.model.eval()
         text, gold_Y, pred_Y = [], [], []
         for _, batch in enumerate(data_loader):
-            targets = batch.pop("gold_labels")
+            targets = batch.get("gold_labels")
             with torch.no_grad():
-                outputs = self.model(**batch)
-                outputs = outputs.logits
-            pred_list, gold_list = self.id2label(outputs.detach().argmax(dim=-1).tolist(),
+                outputs: TokenClassifierOutput = self.model(**batch)
+                logits = outputs.logits
+            pred_list, gold_list = self.id2label(logits.detach().argmax(dim=-1).tolist(),
                                                  targets.tolist())
             pred_Y.extend(pred_list)
             gold_Y.extend(gold_list)
@@ -237,16 +252,15 @@ class Constructor:
                             stdv = 1. / math.sqrt(p.shape[0])
                             torch.nn.init.uniform_(p, a=-stdv, b=stdv)
 
-    def loss_func(output: Tensor, target: Tensor, **kwargs):
-        return nn.CrossEntropyLoss(ignore_index=-1)(output, target)
-
     def run(self):
-        os.makedirs(self.args.output_dir, exist_ok=True)
         best_model_path = self.args.best_model_path
         if self.args.do_train:
-            train_data_loader = DataLoader(dataset=self.train_set,
-                                           batch_size=self.args.batch_size,
-                                           shuffle=True)
+            train_data_loader = DataLoader(
+                dataset=self.train_set,
+                batch_size=self.args.batch_size,
+                shuffle=True,
+                collate_fn=self.train_set.datasets[0].collate_fn if hasattr(
+                    self.train_set.datasets[0], "collate_fn") else None)
             param_optimizer = [(k, v) for k, v in self.model.named_parameters()
                                if v.requires_grad == True]
             param_optimizer = [n for n in param_optimizer if 'pooler' not in n[0]]
@@ -270,15 +284,20 @@ class Constructor:
             # self.reset_params()
             val_data_loader = None
             if self.args.do_eval:
-                val_data_loader = DataLoader(dataset=self.validation_set,
-                                             batch_size=self.args.batch_size,
-                                             shuffle=False)
-            best_model_path = self.train(self.loss_func, optimizer, train_data_loader,
-                                         val_data_loader)
+                val_data_loader = DataLoader(
+                    dataset=self.validation_set,
+                    batch_size=self.args.batch_size,
+                    shuffle=False,
+                    collate_fn=self.validation_set.datasets[0].collate_fn if hasattr(
+                        self.train_set.datasets[0], "collate_fn") else None)
+            best_model_path = self.train(optimizer, train_data_loader, val_data_loader)
         if self.args.do_predict:
-            test_data_loader = DataLoader(dataset=self.test_set,
-                                          batch_size=self.args.batch_size,
-                                          shuffle=False)
+            test_data_loader = DataLoader(
+                dataset=self.test_set,
+                batch_size=self.args.batch_size,
+                shuffle=False,
+                collate_fn=self.test_set.datasets[0].collate_fn if hasattr(
+                    self.train_set.datasets[0], "collate_fn") else None)
             logger.info(f">> load best model: {best_model_path.split('/')[-1]}")
             self.model.load_state_dict(
                 torch.load(best_model_path, map_location=torch.device(self.args.device)))
