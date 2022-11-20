@@ -14,7 +14,7 @@ JJ = ('JJ', 'JJS', 'JJR')
 NN = ('NN', 'NNS', 'NNP')
 SENTMENT_MAP = {0: 'NEG', 1: 'NEU', 2: 'POS'}
 
-# stanza.download("en")
+stanza.download("en")
 # set tokenize_pretokenized=True to prevent further tokenization or sentence segmentation
 # see more: https://stanfordnlp.github.io/stanza/tokenize.html#start-with-pretokenized-text
 nlp = stanza.Pipeline("en", processors='tokenize,pos,depparse,sentiment,mwt,lemma', tokenize_pretokenized=True, 
