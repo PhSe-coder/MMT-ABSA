@@ -14,6 +14,7 @@ from mmt.double_propagation import Rule
 logging.basicConfig(level = logging.INFO, format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 nltk.download('opinion_lexicon')
+nltk.download('omw-1.4')
 step = 0
 tagging_schemas = ['t', 'bio']
 
@@ -34,7 +35,7 @@ class Producer(threading.Thread):
         self.sep = sep
         # file line count
         self.count = sum(1 for _ in open(self.args.dataset, "rb"))
-    
+
     def put(self, text_list: List[str], rest_list):
         sentences = Rule.annotation_plus(text_list)
         for i, sentence in enumerate(sentences):
@@ -82,7 +83,7 @@ class Consumer(threading.Thread):
             tars = f.read().splitlines()
         self.target_set = set(tars)
         self.opinion_set = set(ops)
-        
+
     def run(self):
         global step
         with open(self.args.output_file, "w") as f:
