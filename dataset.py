@@ -46,8 +46,9 @@ class BaseDataset(Dataset):
 
     def __init__(self, filename: str, tokenizer: PreTrainedTokenizer, device=None, src=True):
         data = []
+        total_lines = sum(1 for _ in open(filename, "rb"))
         with open(filename, "r") as f:
-            for line in f:
+            for line in tqdm(f, total=total_lines, desc=filename):
                 line = line.strip()
                 text, text_labels = line.rsplit("***")[0:2]
                 tok_dict: Dict[str, List[int]] = tokenizer(text,
