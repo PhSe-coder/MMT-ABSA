@@ -28,6 +28,22 @@ class SoftEntropy(nn.Module):
         return loss
 
 
+class MSE(nn.Module):
+
+    def __init__(self):
+        super(SoftEntropy, self).__init__()
+        self.mse_loss = nn.MSELoss(reduction='none')
+
+    def forward(self, inputs, targets, attention_mask: Tensor = None):
+        loss = self.mse_loss(inputs, targets).view(-1)
+        if attention_mask is not None:
+            active_loss = attention_mask.view(-1) == 1
+            loss = loss[active_loss].mean()
+        else:
+            loss = loss.mean()
+        return loss
+
+
 __all__ = ['BertForTokenClassification', 'MMTModel', 'DomainModel']
 
 
