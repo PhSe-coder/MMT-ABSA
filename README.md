@@ -1,5 +1,8 @@
 # graduation
-
+## 0. Env setting
+```shell
+conda env create -f conda_env.yaml
+```
 ## 1. Data preprocess
 ```shell
 ./scripts/preprocess.sh
