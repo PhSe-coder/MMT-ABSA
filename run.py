@@ -108,7 +108,7 @@ class Constructor:
             model = model.cuda()
             if device_count > 1:
                 torch.cuda.set_device(self.args.local_rank)
-                torch.distributed.init_process_group(backend='nccl', rank=0, world_size=1)
+            torch.distributed.init_process_group(backend='nccl', rank=0, world_size=1)
         self.model = DistributedDataParallel(model, find_unused_parameters=True)
 
     def dataset_init(self):
