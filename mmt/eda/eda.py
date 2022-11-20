@@ -13,7 +13,7 @@ __all__ = [
     ]
 
 # for the first time you should download wordnet
-# nltk.download('wordnet')
+nltk.download('wordnet')
 random.seed(1)
 
 class Word(NamedTuple):
