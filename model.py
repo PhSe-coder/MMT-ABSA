@@ -31,7 +31,7 @@ class SoftEntropy(nn.Module):
 class MSE(nn.Module):
 
     def __init__(self):
-        super(SoftEntropy, self).__init__()
+        super(MSE, self).__init__()
         self.mse_loss = nn.MSELoss(reduction='none')
 
     def forward(self, inputs, targets, attention_mask: Tensor = None):
