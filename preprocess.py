@@ -29,29 +29,45 @@ logger.info("copy test dataset into %s", tmp_dst_1)
 for file in glob("./data/*.test.txt"):
     copy(file, tmp_dst_1)
 makedirs(tmp_dst_2, exist_ok=True)
-# for file in listdir(tmp_dst_1):
-#     logger.info("process dataset %s with double propagation algorithm", file)
-#     dp.run(dp.parser.parse_args(["--dataset",
-#                                    osp.join(tmp_dst_1, file),
-#                                    "--output-file",
-#                                    osp.join(tmp_dst_2, file),
-#                                    "--batch-size",
-#                                    str(dp_batch_size)]))
+for file in listdir(tmp_dst_1):
+    input_file = osp.join(tmp_dst_1, file)
+    output_file = osp.join(tmp_dst_2, file)
+    if "train" not in input_file:
+        logger.info("copy %s dataset into %s", file, tmp_dst_2)
+        copy(input_file, tmp_dst_2)
+        continue
+    logger.info("process dataset %s with double propagation algorithm", file)
+    dp.run(
+        dp.parser.parse_args([
+            "--dataset", input_file, "--output-file", output_file, "--batch-size",
+            str(dp_batch_size)
+        ]))
+
 makedirs(tmp_dst_3, exist_ok=True)
 for file in listdir(tmp_dst_2):
+    input_file = osp.join(tmp_dst_2, file)
+    output_file = osp.join(tmp_dst_3, file)
+    if "train" not in input_file:
+        logger.info("copy %s dataset into %s", file, tmp_dst_3)
+        copy(input_file, tmp_dst_3)
+        continue
     logger.info("augment dataset %s", file)
     ag.gen_eda(
         ag.ap.parse_args([
-            "--input",
-            osp.join(tmp_dst_2, file), "--output",
-            osp.join(tmp_dst_3, file), "--num_aug",
+            "--input", input_file, "--output", output_file, "--num_aug",
             str(num_aug), "--alpha_sr", "0.05", "--alpha_rd", "0.1", "--alpha_ri", "0.1",
             "--alpha_rs", "0.1"
         ]))
 makedirs(args.dst, exist_ok=True)
 for file in listdir(tmp_dst_3):
     logger.info("process dataset %s", file)
-    with open(osp.join(tmp_dst_3, file), "r") as f, open(osp.join(args.dst, file), "w") as f1:
+    input_file = osp.join(tmp_dst_3, file)
+    output_file = osp.join(args.dst, file)
+    if "train" not in input_file:
+        logger.info("copy %s dataset into %s", file, args.dst)
+        copy(input_file, args.dst)
+        continue
+    with open(input_file, "r") as f, open(output_file, "w") as f1:
         line = f.readline()
         lines = []
         count = 0
