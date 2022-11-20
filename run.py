@@ -7,9 +7,11 @@ from time import localtime, strftime
 from typing import List, Union
 
 import torch
+import torch.nn as nn
 from pytorch_transformers import BertModel, BertConfig
 from torch.optim.optimizer import Optimizer
 from torch.utils.data import ConcatDataset, DataLoader
+from torch.nn.parallel import DistributedDataParallel
 from tqdm import tqdm
 from transformers import BertTokenizer, HfArgumentParser, set_seed
 from transformers.modeling_outputs import TokenClassifierOutput
@@ -34,7 +36,7 @@ def parse_args():
         # let's parse it to get our arguments.
         args = parser.parse_json_file(json_file=os.path.abspath(sys.argv[1]))
     else:
-        args = parser.parse_args_into_dataclasses()
+        args = parser.parse_args_into_dataclasses(return_remaining_strings=True)
 
     return args
 
@@ -81,7 +83,6 @@ class Constructor:
     def model_init(self):
         model_name = self.args.model_name
         num_labels = len(TAGS)
-        device = self.args.device
         assert model_name in SUPPORTED_MODELS, f'Model {model_name} is not supported'
         if model_name == 'bert':
             model = BertForTokenClassification.from_pretrained(args.pretrained_model,
@@ -89,36 +90,41 @@ class Constructor:
         elif model_name == 'mmt':
             model_1 = BertForTokenClassification.from_pretrained(args.pretrained_model,
                                                                  num_labels=num_labels)
-            model_ema_1 = BertForTokenClassification.from_pretrained(args.pretrained_model,
+            model_1_ema = BertForTokenClassification.from_pretrained(args.pretrained_model,
                                                                      num_labels=num_labels)
             model_2 = BertForTokenClassification.from_pretrained(args.pretrained_model,
                                                                  num_labels=num_labels)
-            model_ema_2 = BertForTokenClassification.from_pretrained(args.pretrained_model,
+            model_2_ema = BertForTokenClassification.from_pretrained(args.pretrained_model,
                                                                      num_labels=num_labels)
             config = BertConfig.from_pretrained(args.pretrained_model)
-            for param in model_ema_1.parameters():
+            for param in model_1_ema.parameters():
                 param.detach_()
-            for param in model_ema_2.parameters():
+            for param in model_2_ema.parameters():
                 param.detach_()
             domain_model = DomainModel(config.hidden_size)
-            model = MMTModel(model_1, model_ema_1, model_2, model_ema_2, domain_model)
-        self.model: Union[BertForTokenClassification, MMTModel] = model
-        self.model.to(device)
+        model = MMTModel(model_1, model_1_ema, model_2, model_2_ema, domain_model)
+        device_count = torch.cuda.device_count()
+        if device_count >= 1:
+            model = model.cuda()
+            if device_count > 1:
+                torch.cuda.set_device(self.args.local_rank)
+                torch.distributed.init_process_group(backend='nccl', rank=0, world_size=1)
+        self.model = DistributedDataParallel(model, find_unused_parameters=True)
 
     def dataset_init(self):
         args = self.args
-        dataset = MMTDataset if args.model_name == 'mmt' else BaseDataset
         if args.do_train:
+            dataset = MMTDataset if args.model_name == 'mmt' else BaseDataset
             datasets = []
             datasets.append(dataset(args.train_files[0], self.tokenizer, args.device))
             if args.model_name == 'mmt':
                 datasets.append(dataset(args.train_files[1], self.tokenizer, args.device, False))
             self.train_set = ConcatDataset(datasets)
         if args.do_eval:
-            self.validation_set = dataset(self.args.validation_file, self.tokenizer, args.device,
+            self.validation_set = BaseDataset(self.args.validation_file, self.tokenizer, args.device,
                                           False)
         if args.do_predict:
-            self.test_set = dataset(self.args.test_file, self.tokenizer, args.device, False)
+            self.test_set = BaseDataset(self.args.test_file, self.tokenizer, args.device, False)
 
     def running_init(self):
         os.makedirs(self.args.output_dir, exist_ok=True)
@@ -158,7 +164,7 @@ class Constructor:
                 assert loss is not None
                 loss.backward()
                 optimizer.step()
-                self.model.post_operation(global_step=global_step)
+                self.model.module.post_operation(global_step=global_step)
                 pred_list, gold_list = self.id2label(
                     logits.argmax(dim=-1).tolist(), targets.tolist())
                 pred_Y.extend(pred_list)
@@ -191,8 +197,7 @@ class Constructor:
                     max_val_epoch = epoch
                     os.makedirs('state_dict', exist_ok=True)
                     path = 'state_dict/{}_{}_{}_val_pre_{}_val_rec_{}_val_f1_{}.pt'.format(
-                        self.args.model_name,
-                        self.args.train_files.split("/")[-1].split(".")[0],
+                        self.args.model_name, self.args.train_files[0].split("/")[-1].split(".")[0],
                         self.args.validation_file.split("/")[-1].split(".")[0], round(val_pre, 4),
                         round(val_rec, 4), round(val_f1, 4))
                     torch.save(self.model.state_dict(), path)
@@ -203,8 +208,7 @@ class Constructor:
                     break
             else:
                 path = 'state_dict/{}_{}_{}.pt'.format(
-                    self.args.model_name,
-                    self.args.train_files.split("/")[-1].split(".")[0],
+                    self.args.model_name, self.args.train_files[0].split("/")[-1].split(".")[0],
                     self.args.test_file.split("/")[-1].split(".")[0])
                 torch.save(self.model.state_dict(), path)
         return path
@@ -255,12 +259,15 @@ class Constructor:
     def run(self):
         best_model_path = self.args.best_model_path
         if self.args.do_train:
+            if best_model_path is not None:
+                self.model.load_state_dict(
+                    torch.load(best_model_path, map_location=torch.device(self.args.device)))
             train_data_loader = DataLoader(
                 dataset=self.train_set,
                 batch_size=self.args.batch_size,
                 shuffle=True,
-                collate_fn=self.train_set.datasets[0].collate_fn if hasattr(
-                    self.train_set.datasets[0], "collate_fn") else None)
+                collate_fn=self.train_set.datasets[0].collate_fn if callable(
+                    getattr(self.train_set.datasets[0], "collate_fn", None)) else None)
             param_optimizer = [(k, v) for k, v in self.model.named_parameters()
                                if v.requires_grad == True]
             param_optimizer = [n for n in param_optimizer if 'pooler' not in n[0]]
@@ -288,16 +295,16 @@ class Constructor:
                     dataset=self.validation_set,
                     batch_size=self.args.batch_size,
                     shuffle=False,
-                    collate_fn=self.validation_set.datasets[0].collate_fn if hasattr(
-                        self.train_set.datasets[0], "collate_fn") else None)
+                    collate_fn=self.validation_set.collate_fn if callable(
+                        getattr(self.validation_set, "collate_fn", None)) else None)
             best_model_path = self.train(optimizer, train_data_loader, val_data_loader)
+        logger.info(f">> best model path: {best_model_path}")
         if self.args.do_predict:
-            test_data_loader = DataLoader(
-                dataset=self.test_set,
-                batch_size=self.args.batch_size,
-                shuffle=False,
-                collate_fn=self.test_set.datasets[0].collate_fn if hasattr(
-                    self.train_set.datasets[0], "collate_fn") else None)
+            test_data_loader = DataLoader(dataset=self.test_set,
+                                          batch_size=self.args.batch_size,
+                                          shuffle=False,
+                                          collate_fn=self.test_set.collate_fn if callable(
+                                              getattr(self.test_set, "collate_fn", None)) else None)
             logger.info(f">> load best model: {best_model_path.split('/')[-1]}")
             self.model.load_state_dict(
                 torch.load(best_model_path, map_location=torch.device(self.args.device)))
