@@ -13,7 +13,7 @@ from mmt.double_propagation import Rule
 
 logging.basicConfig(level = logging.INFO, format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
-# nltk.download('opinion_lexicon')
+nltk.download('opinion_lexicon')
 step = 0
 tagging_schemas = ['t', 'bio']
 
