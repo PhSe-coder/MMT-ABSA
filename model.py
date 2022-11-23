@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as f
 from torch import Tensor
 from pytorch_revgrad import RevGrad
 from pytorch_transformers import BertModel, BertPreTrainedModel
@@ -33,14 +34,18 @@ class MSE(nn.Module):
     def __init__(self):
         super(MSE, self).__init__()
         self.mse_loss = nn.MSELoss(reduction='none')
+        self.softmax = nn.Softmax(-1)
 
     def forward(self, inputs, targets, attention_mask: Tensor = None):
-        loss = self.mse_loss(inputs, targets).view(-1)
+        num_labels = inputs.shape[-1]
+        input_softmax = self.softmax(inputs)
+        target_softmax = self.softmax(targets)
+        loss = self.mse_loss(input_softmax, target_softmax).view(-1, num_labels)
         if attention_mask is not None:
             active_loss = attention_mask.view(-1) == 1
-            loss = loss[active_loss].mean()
+            loss = loss[active_loss].mean(0).sum()
         else:
-            loss = loss.mean()
+            loss = loss.mean(0).sum()
         return loss
 
 
@@ -68,6 +73,7 @@ class DomainModel(nn.Module):
 class BertForTokenClassification(BertPreTrainedModel):
 
     def __init__(self, config):
+        config.output_hidden_states = True
         super(BertForTokenClassification, self).__init__(config)
         self.num_labels = config.num_labels
         self.bert = BertModel(config)
@@ -79,34 +85,126 @@ class BertForTokenClassification(BertPreTrainedModel):
                 input_ids: Tensor,
                 token_type_ids: Tensor = None,
                 attention_mask: Tensor = None,
+                gold_labels: Tensor = None,
+                hard_label_weight: float = 1.0,
+                domain_mask: Tensor = None,
                 **kwargs):
-        labels: Tensor = kwargs.get("gold_labels")
-        token_weights: Tensor = kwargs.get("token_weights")
-        if token_weights is not None:
-            assert token_weights.shape == input_ids.shape
         outputs = self.bert(input_ids, token_type_ids=token_type_ids, attention_mask=attention_mask)
         sequence_output = outputs[0]
-
+        # half_num = int(self.config.num_hidden_layers / 2)
+        # sequence_output = 0.6*torch.stack(outputs[2][1:half_num]).mean(0) + 0.4*torch.stack(
+        #     outputs[2][half_num:]).mean(0)
         sequence_output = self.dropout(sequence_output)
         logits = self.classifier(sequence_output)  # attention_mask size (batch, seq_len)
         loss = None
-        if labels is not None:
+        if gold_labels is not None:
             # Only keep active parts of the loss
             if attention_mask is not None:
                 active_loss = attention_mask.view(-1) == 1
                 active_logits = logits.view(-1, self.num_labels)[active_loss]
-                active_labels = labels.view(-1)[active_loss]
+                active_labels = gold_labels.view(-1)[active_loss]
                 loss = self.loss_fct(active_logits, active_labels)
-                if token_weights is not None:
-                    loss = token_weights.view(-1)[active_loss].mul(loss).mean()
+                if domain_mask is not None:
+                    src_domain_loss = loss[domain_mask.view(-1)[active_loss] ==
+                                           True].mean().nan_to_num(0)
+                    tar_domain_loss = loss[domain_mask.view(-1)[active_loss] ==
+                                           False].mean().nan_to_num(0)
+                    loss = src_domain_loss + hard_label_weight * tar_domain_loss
             else:
-                loss = self.loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
-                if token_weights is not None:
-                    loss = token_weights.view(-1).mul(loss).mean()
+                loss = self.loss_fct(logits.view(-1, self.num_labels), gold_labels.view(-1))
+                if domain_mask is not None:
+                    src_domain_loss = loss[domain_mask.view(-1) == True].mean()
+                    tar_domain_loss = loss[domain_mask.view(-1) == False].mean()
+                    loss = src_domain_loss + hard_label_weight * tar_domain_loss
         return TokenClassifierOutput(logits=logits, loss=loss, hidden_states=sequence_output)
 
     def post_operation(self, *args, **kwargs):
         pass
+
+
+def softmax_mse_loss_weight(input_logits,
+                            target_logits,
+                            weight,
+                            word_seq,
+                            attention_mask=None,
+                            thr1=0.6,
+                            thr2=0.9,
+                            thr3=0.4):
+    """Compute the weighted squared loss
+    """
+    assert input_logits.size() == target_logits.size()
+    input_softmax = f.softmax(input_logits, dim=-1)
+    target_softmax = f.softmax(target_logits, dim=-1)
+    num_classes = input_logits.size()[-1]
+    # print('number_classes',num_classes)
+    pro = torch.max(target_softmax, dim=-1, keepdim=True)
+
+    o_mask = (pro[1] == 0).float()
+    # print('before pad o tag:', torch.sum(o_mask))
+    other_mask = (pro[1] != 0).float()
+    # print('before pad other tag:', torch.sum(other_mask))
+
+    total_word_number = 0
+    # print('contain pad word number:', word_seq.shape[0]*word_seq.shape[1])
+    if attention_mask is not None:
+        pad_mask = (attention_mask != 0).float()
+        total_word_number = torch.sum(pad_mask)
+        # print('+++word_total number:', torch.sum(pad_mask))
+        o_mask = o_mask * pad_mask.unsqueeze(2)
+        # print('after pad:', torch.sum(o_mask))
+        other_mask = other_mask * pad_mask.unsqueeze(2)
+        # print('after pad other:', torch.sum(other_mask))
+
+    o_number = torch.sum(o_mask)
+    o_top_number = int(thr1 * o_number)
+
+    # print('o_top_number:', o_top_number)
+    # print('o_number:', o_number)
+    other_number = torch.sum(other_mask)
+    other_top_number = int(thr1 * other_number)
+    #o_top_number = 15 * other_top_number
+    # print('other_top_number:', other_top_number)
+    # print('other_number:', other_number)
+    ##print('o_mask:', o_mask)
+    ##print('other_mask:', other_mask)
+    sort_o, _ = torch.topk((o_mask * pro[0]).view(-1), o_top_number)
+    sort_other, _ = torch.topk((other_mask * pro[0]).view(-1), other_top_number)
+
+    if sort_o.shape[0] == 0:
+        fix_o_thr = 0
+    else:
+        fix_o_thr = sort_o[-1]
+    if sort_other.shape[0] == 0:
+        fix_other_thr = 0
+    else:
+        fix_other_thr = sort_other[-1]
+
+    #fix_o_thr = torch.sum(o_mask*pro[0]) / torch.sum(o_mask)
+    #fix_other_thr = torch.sum(other_mask*pro[0]) / (torch.sum(other_mask)+1e-10)
+    if fix_o_thr < thr2:
+        fix_o_thr = thr2
+    if fix_other_thr < thr3:
+        fix_other_thr = thr3
+
+    # print('o_thr:', fix_o_thr)
+    # print('other_thr:', fix_other_thr)
+    thr_mask = (pro[0] > fix_o_thr).float()
+    thr_mask_1 = (pro[0] > fix_other_thr).float()
+    #sum_num = torch.sum(thr_mask)
+    ##print('thr_mask:', thr_mask)
+    ##print('pro[0]:', pro[0]*thr_mask)
+
+    #weight_mask = (o_mask*thr_mask+other_mask*thr_mask_1)
+    o_mat = o_mask * thr_mask
+    other_mat = other_mask * thr_mask_1
+    # print('O tag number:', torch.sum(o_mat))
+    # print('Other tag number:', torch.sum(other_mat))
+    weight_mask = o_mat + other_mat
+
+    loss = weight.unsqueeze(1).unsqueeze(2) * weight_mask * ((input_softmax - target_softmax)**2)
+    loss = torch.mean(loss.view(-1)) * num_classes
+    #loss = torch.sum(loss)/total_word_number
+    return loss
 
 
 class MMTModel(nn.Module):
@@ -153,39 +251,43 @@ class MMTModel(nn.Module):
         # for target domain, supervised with hard labels generated by double propagation
         labels = torch.where(domains, gold_labels, hard_labels)
         labels_1, labels_2 = torch.chunk(labels, 2)
-        domains_1, domains_2 = torch.chunk(torch.as_tensor(domains.squeeze(-1), dtype=float), 2)
-        token_weights = torch.broadcast_to(
-            torch.where(domains_1 == 0, self.hard_label_loss_weight, domains_1).unsqueeze(-1),
-            input_ids_1.shape).contiguous()
-        outputs1: TokenClassifierOutput = self.model_1(input_ids_1,
-                                                       token_type_ids_1,
-                                                       attention_mask_1,
-                                                       gold_labels=labels_1,
-                                                       token_weights=token_weights)
+        domains_1, domains_2 = torch.chunk(domains, 2)
+        torch.broadcast_to(domains_1, input_ids_1.shape)
+        domain_mask = torch.broadcast_to(domains_1, input_ids_1.shape).contiguous()
+        outputs1: TokenClassifierOutput = self.model_1(
+            input_ids_1,
+            token_type_ids_1,
+            attention_mask_1,
+            gold_labels=labels_1,
+            hard_label_weight=self.hard_label_loss_weight,
+            domain_mask=domain_mask)
         outputs1_ema: TokenClassifierOutput = self.model_ema_1(input_ids_2, token_type_ids_2,
                                                                attention_mask_2)
-        token_weights = torch.broadcast_to(
-            torch.where(domains_2 == 0, self.hard_label_loss_weight, domains_2).unsqueeze(-1),
-            input_ids_2.shape).contiguous()
-        outputs2: TokenClassifierOutput = self.model_2(input_ids_2,
-                                                       token_type_ids_2,
-                                                       attention_mask_2,
-                                                       gold_labels=labels_2,
-                                                       token_weights=token_weights)
+        domain_mask = torch.broadcast_to(domains_2, input_ids_2.shape).contiguous()
+        outputs2: TokenClassifierOutput = self.model_2(
+            input_ids_2,
+            token_type_ids_2,
+            attention_mask_2,
+            gold_labels=labels_2,
+            hard_label_weight=self.hard_label_loss_weight,
+            domain_mask=domain_mask)
         outputs2_ema: TokenClassifierOutput = self.model_ema_2(input_ids_1, token_type_ids_1,
                                                                attention_mask_1)
         loss_ce = outputs1.loss + outputs2.loss
-        domain_pre, _ = self.dom_model(outputs1.hidden_states)
-        d_loss_1 = self.domain_loss(domain_pre, domains_1)
-        domain_pre, _ = self.dom_model(outputs2.hidden_states)
-        d_loss_2 = self.domain_loss(domain_pre, domains_2)
+        domain_pre_1, _ = self.dom_model(outputs1.hidden_states)
+        d_loss_1 = self.domain_loss(domain_pre_1, domains_1.squeeze(-1).float())
+        domain_pre_2, _ = self.dom_model(outputs2.hidden_states)
+        d_loss_2 = self.domain_loss(domain_pre_2, domains_2.squeeze(-1).float())
         d_loss = d_loss_1 + d_loss_2
         loss_ce_soft = self.ce_soft_loss(outputs1.logits, outputs2_ema.logits,
                                          attention_mask_1) + self.ce_soft_loss(
                                              outputs2.logits, outputs1_ema.logits, attention_mask_2)
+        # domains = domains.squeeze(-1)
+        # print(domains)
+        # weights = torch.sigmoid(torch.cat([domain_pre_1, domain_pre_2])[domains==0])
+        # loss_ce_soft = softmax_mse_loss_weight(torch.cat([outputs1.logits, outputs2.logits])[domains==0], torch.cat([outputs2_ema.logits, outputs1_ema.logits])[domains==0], weights, input_ids[domains==0], attention_mask[domains==0])
 
-        loss = loss_ce * (1 - self.ce_soft_weight) + \
-             loss_ce_soft * self.ce_soft_weight + d_loss * self.domain_loss_weight
+        loss = loss_ce + loss_ce_soft * self.ce_soft_weight + d_loss * self.domain_loss_weight
         logger.info("loss_ce: %f, loss_ce_soft: %f, d_loss: %f, loss: %f", loss_ce.item(),
                     loss_ce_soft.item(), d_loss.item(), loss.item())
         return TokenClassifierOutput(logits=torch.cat([outputs1.logits, outputs2.logits]),
