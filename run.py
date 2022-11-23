@@ -103,7 +103,7 @@ class Constructor:
             for param in model_2_ema.parameters():
                 param.detach_()
             domain_model = DomainModel(config.hidden_size)
-        model = MMTModel(model_1, model_1_ema, model_2, model_2_ema, domain_model)
+            model = MMTModel(model_1, model_1_ema, model_2, model_2_ema, domain_model)
         device_count = torch.cuda.device_count()
         if device_count >= 1:
             model = model.cuda()
