@@ -85,7 +85,7 @@ def synonym_replacement(words: Tuple[Word], n: int):
                 if word == random_word:
                     synonym = random.choice(synonyms)
                     for syn in synonym.split(' '):
-                        old_words.append(Word(syn, word.gold_label, word.hard_label))
+                        old_words.append(Word(syn, *list(word)[1:]))
                 else:
                     old_words.append(word)
             new_words = old_words.copy()
@@ -171,7 +171,7 @@ def add_word(new_words: List[Word]):
     random_synonym = random_synonym.split(' ')
     # synonyms with multi-word
     while len(random_synonym) != 0:
-        new_words.insert(random_idx, Word(random_synonym[-1], random_word.gold_label, random_word.hard_label))
+        new_words.insert(random_idx, Word(random_synonym[-1], *list(random_word)[1:]))
         random_synonym = random_synonym[:-1]
 
 ########################################################################
