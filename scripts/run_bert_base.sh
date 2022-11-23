@@ -1,7 +1,7 @@
 #!/bin/bash
 domains=('rest' 'service' 'laptop' 'device')
 
-export CUDA_VISIBLE_DEVICES=0,1
+export CUDA_VISIBLE_DEVICES=0
 export TRANSFORMERS_OFFLINE=0
 output='./out/bert_base/'
 train_dir='./data'
@@ -23,7 +23,7 @@ do
             fi
 	        python run.py \
                 -m torch.distributed.launch \
-                --nproc_per_node=2 \
+                --nproc_per_node=1 \
                 --local_rank 0 \
                 --model_name "bert" \
                 --output_dir "${output}${src_domain}-${tar_domain}"  \
@@ -36,9 +36,9 @@ do
                 --device "cuda:0" \
                 --optimizer "rmsprop" \
                 --lr "1e-3" \
-                --bert_lr "2e-5" \
+                --bert_lr "3e-5" \
                 --batch_size 16 \
-                --num_train_epochs 4
+                --num_train_epochs 3
         fi
     done
 done
