@@ -23,26 +23,26 @@ class Word(NamedTuple):
 
 # stop words list
 stop_words = ['i', 'me', 'my', 'myself', 'we', 'our',
-			'ours', 'ourselves', 'you', 'your', 'yours',
-			'yourself', 'yourselves', 'he', 'him', 'his',
-			'himself', 'she', 'her', 'hers', 'herself',
-			'it', 'its', 'itself', 'they', 'them', 'their',
-			'theirs', 'themselves', 'what', 'which', 'who',
-			'whom', 'this', 'that', 'these', 'those', 'am',
-			'is', 'are', 'was', 'were', 'be', 'been', 'being',
-			'have', 'has', 'had', 'having', 'do', 'does', 'did',
-			'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or',
-			'because', 'as', 'until', 'while', 'of', 'at',
-			'by', 'for', 'with', 'about', 'against', 'between',
-			'into', 'through', 'during', 'before', 'after',
-			'above', 'below', 'to', 'from', 'up', 'down', 'in',
-			'out', 'on', 'off', 'over', 'under', 'again',
-			'further', 'then', 'once', 'here', 'there', 'when',
-			'where', 'why', 'how', 'all', 'any', 'both', 'each',
-			'few', 'more', 'most', 'other', 'some', 'such', 'no',
-			'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too',
-			'very', 's', 't', 'can', 'will', 'just', 'don',
-			'should', 'now', '']
+   'ours', 'ourselves', 'you', 'your', 'yours',
+   'yourself', 'yourselves', 'he', 'him', 'his',
+   'himself', 'she', 'her', 'hers', 'herself',
+   'it', 'its', 'itself', 'they', 'them', 'their',
+   'theirs', 'themselves', 'what', 'which', 'who',
+   'whom', 'this', 'that', 'these', 'those', 'am',
+   'is', 'are', 'was', 'were', 'be', 'been', 'being',
+   'have', 'has', 'had', 'having', 'do', 'does', 'did',
+   'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or',
+   'because', 'as', 'until', 'while', 'of', 'at',
+   'by', 'for', 'with', 'about', 'against', 'between',
+   'into', 'through', 'during', 'before', 'after',
+   'above', 'below', 'to', 'from', 'up', 'down', 'in',
+   'out', 'on', 'off', 'over', 'under', 'again',
+   'further', 'then', 'once', 'here', 'there', 'when',
+   'where', 'why', 'how', 'all', 'any', 'both', 'each',
+   'few', 'more', 'most', 'other', 'some', 'such', 'no',
+   'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too',
+   'very', 's', 't', 'can', 'will', 'just', 'don',
+   'should', 'now', '']
 
 # cleaning up text
 def get_only_chars(line):
@@ -88,10 +88,10 @@ def synonym_replacement(words: Tuple[Word], n: int):
                         old_words.append(Word(syn, word.gold_label, word.hard_label))
                 else:
                     old_words.append(word)
-            new_words = old_words.copy()                
-            #print("replaced", random_word, "with", synonym)
+            new_words = old_words.copy()
+            # print("replaced", random_word, "with", synonym)
             num_replaced += 1
-        if num_replaced >= n: #only replace up to n words
+        if num_replaced >= n: # only replace up to n words
             break
     return new_words
 
@@ -136,15 +136,15 @@ def random_swap(words: Tuple[Word], n: int):
     return new_words
 
 def swap_word(words: List[Word]):
-	random_idx_1 = random.randint(0, len(words)-1)
-	random_idx_2 = random_idx_1
-	counter = 0
-	while random_idx_2 == random_idx_1:
-		random_idx_2 = random.randint(0, len(words)-1)
-		counter += 1
-		if counter > 3:
-			return
-	words[random_idx_1], words[random_idx_2] = words[random_idx_2], words[random_idx_1]
+    random_idx_1 = random.randint(0, len(words)-1)
+    random_idx_2 = random_idx_1
+    counter = 0
+    while random_idx_2 == random_idx_1:
+        random_idx_2 = random.randint(0, len(words)-1)
+        counter += 1
+        if counter > 3:
+            return
+    words[random_idx_1], words[random_idx_2] = words[random_idx_2], words[random_idx_1]
 
 ########################################################################
 # Random insertion
@@ -152,10 +152,10 @@ def swap_word(words: List[Word]):
 ########################################################################
 
 def random_insertion(words: Tuple[Word], n: int):
-	new_words = list(words)
-	for _ in range(n):
-		add_word(new_words)
-	return new_words
+    new_words = list(words)
+    for _ in range(n):
+        add_word(new_words)
+    return new_words
 
 def add_word(new_words: List[Word]):
     synonyms = []
@@ -185,62 +185,60 @@ def eda(words: Tuple[Word], alpha_sr=0.1, alpha_ri=0.1, alpha_rs=0.1, p_rd=0.1, 
     # sr
     if (alpha_sr > 0):
         n_sr = max(1, int(alpha_sr*num_words))
-        for _ in range(num_new_per_technique):
+        i = 0
+        iters = 0
+        while i < num_aug:
+            iters += 1
             a_words = synonym_replacement(words, n_sr)
             result = (' '.join(getattr(word, field) for word in a_words) for field in Word._fields)
-            result = list(result)
-            l = len(result[0].split())
-            for r in result:
-                assert l == len(r.split())
-            augmented_sentences.append(sep.join(result))
+            text = sep.join(result)
+            if iters == 100:
+                root_text = sep.join(' '.join(getattr(word, field) for word in words)
+                                     for field in Word._fields)
+                augmented_sentences.append(root_text)
+                break
+            if text not in augmented_sentences:
+                augmented_sentences.append(text)
+                i += 1
+                iters = 0
+        if len(augmented_sentences) % 2 != 0:
+            augmented_sentences.pop()
 
-	# ri
+# ri
     if (alpha_ri > 0):
         n_ri = max(1, int(alpha_ri*num_words))
         for _ in range(num_new_per_technique):
             a_words = random_insertion(words, n_ri)
             result = (' '.join(getattr(word, field) for word in a_words) for field in Word._fields)
-            result = list(result)
-            l = len(result[0].split())
-            for r in result:
-                assert l == len(r.split())
             augmented_sentences.append(sep.join(result))
 
-	# rs
+# rs
     if (alpha_rs > 0):
         n_rs = max(1, int(alpha_rs*num_words))
         for _ in range(num_new_per_technique):
             a_words = random_swap(words, n_rs)
             result = (' '.join(getattr(word, field) for word in a_words) for field in Word._fields)
-            result = list(result)
-            l = len(result[0].split())
-            for r in result:
-                assert l == len(r.split())
             augmented_sentences.append(sep.join(result))
 
-	# rd
+# rd
     if (p_rd > 0):
         for _ in range(num_new_per_technique):
             a_words = random_deletion(words, p_rd)
             result = (' '.join(getattr(word, field) for word in a_words) for field in Word._fields)
-            result = list(result)
-            l = len(result[0].split())
-            for r in result:
-                assert l == len(r.split())
             augmented_sentences.append(sep.join(result))
 
-	# augmented_sentences = [get_only_chars(sentence) for sentence in augmented_sentences]
+# augmented_sentences = [get_only_chars(sentence) for sentence in augmented_sentences]
     random.shuffle(augmented_sentences)
 
-	# trim so that we have the desired number of augmented sentences
+    # trim so that we have the desired number of augmented sentences
     if num_aug >= 1:
         augmented_sentences = augmented_sentences[:num_aug]
     else:
         keep_prob = num_aug / len(augmented_sentences)
         augmented_sentences = [s for s in augmented_sentences if random.uniform(0, 1) < keep_prob]
 
-	# append the original sentence
-    # sentence = [word.token for word in words]
-    # labels = [word.label for word in words]
-    # augmented_sentences.append(f"{' '.join(sentence)}***{' '.join(labels)}")
+# append the original sentence
+# sentence = [word.token for word in words]
+# labels = [word.label for word in words]
+# augmented_sentences.append(f"{' '.join(sentence)}***{' '.join(labels)}")
     return augmented_sentences
