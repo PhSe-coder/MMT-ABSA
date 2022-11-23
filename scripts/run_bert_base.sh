@@ -3,8 +3,6 @@ domains=('rest' 'service' 'laptop' 'device')
 
 export CUDA_VISIBLE_DEVICES=0,1
 export TRANSFORMERS_OFFLINE=0
-export MASTER_ADDR=localhost
-export MASTER_PORT=58999
 output='./out/bert_base/'
 train_dir='./data'
 val_dir='./processed/dataset'
@@ -31,15 +29,16 @@ do
                 --output_dir "${output}${src_domain}-${tar_domain}"  \
                 --train_file "${train_dir}/${src_domain}.train.txt" \
                 --test_file "${test_dir}/${tar_domain}.test.txt" \
+                --validation_file "${val_dir}/${tar_domain}.validation.txt" \
                 --do_train \
                 --do_predict \
-                --device "cuda:0" \
-                --optimizer "bertAdam" \
-                --lr "3e-5" \
-                --batch_size 16 \
-                --num_train_epochs 5 \
                 --do_eval \
-                --validation_file "${val_dir}/${tar_domain}.validation.txt"
+                --device "cuda:0" \
+                --optimizer "rmsprop" \
+                --lr "1e-3" \
+                --bert_lr "2e-5" \
+                --batch_size 16 \
+                --num_train_epochs 4
         fi
     done
 done
