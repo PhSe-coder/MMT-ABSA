@@ -41,7 +41,9 @@ class ModelArguments(TrainingArguments):
     )
     batch_size: Optional[int] = field(default=16, metadata={"help": 'training batch size'})
     dropout: Optional[float] = field(default=0.1)
-    lr: Optional[float] = field(default=2e-5, metadata={"help": "learning rate"})
+    bert_lr: Optional[float] = field(default=2e-5,
+                                     metadata={"help": "learning rate for pretrained model"})
+    lr: Optional[float] = field(default=1e-3, metadata={"help": "learning rate for custom modules"})
     l2reg: Optional[float] = field(default=0.01, metadata={"help": "weight decay"})
     warmup: Optional[float] = field(
         default=0.1,
