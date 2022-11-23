@@ -9,7 +9,7 @@ import nltk
 from nltk.corpus import opinion_lexicon
 from tqdm import tqdm
 
-from mmt.double_propagation import Rule
+from mmt.double_propagation import *
 
 logging.basicConfig(level = logging.INFO, format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -36,8 +36,8 @@ class Producer(threading.Thread):
         # file line count
         self.count = sum(1 for _ in open(self.args.dataset, "rb"))
 
-    def put(self, text_list: List[str], rest_list):
-        sentences = Rule.annotation_plus(text_list)
+    def put(self, text_list: List[str], rest_list: List[str]):
+        sentences = annotation_plus(text_list)
         for i, sentence in enumerate(sentences):
             self.queue.put((sentence, rest_list[i]))
 
