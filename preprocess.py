@@ -7,7 +7,7 @@ from shutil import copy
 
 import example.augment as ag
 
-import example.double_propagation as dp
+# import example.double_propagation as dp
 from mmt.utils import split
 
 logging.basicConfig(level=logging.INFO,
@@ -21,8 +21,12 @@ tmp_dst_1 = "./processed/tmp"
 tmp_dst_2 = "./processed/dp_tmp"
 tmp_dst_3 = "./processed/ag_tmp"
 dp_batch_size = 512
-num_aug = 16
+num_aug = 4
 assert num_aug % 2 == 0
+alpha_sr = 0.05
+alpha_rd = 0
+alpha_ri = 0
+alpha_rs = 0
 logger.info("split train set into train/validation dataset, save in %s", tmp_dst_1)
 split(args.src, tmp_dst_1)
 logger.info("copy test dataset into %s", tmp_dst_1)
@@ -55,8 +59,11 @@ for file in listdir(tmp_dst_2):
     ag.gen_eda(
         ag.ap.parse_args([
             "--input", input_file, "--output", output_file, "--num_aug",
-            str(num_aug), "--alpha_sr", "0.05", "--alpha_rd", "0.1", "--alpha_ri", "0.1",
-            "--alpha_rs", "0.1"
+            str(num_aug), "--alpha_sr",
+            str(alpha_sr), "--alpha_rd",
+            str(alpha_rd), "--alpha_ri",
+            str(alpha_ri), "--alpha_rs",
+            str(alpha_rs)
         ]))
 makedirs(args.dst, exist_ok=True)
 for file in listdir(tmp_dst_3):
@@ -74,11 +81,11 @@ for file in listdir(tmp_dst_3):
         while line:
             count += 1
             lines.append(line)
-            if count == num_aug:
+            if count == 2:
                 count = 0
                 f1.writelines([
                     f"{left.strip()}####{right.strip()}\n"
-                    for left, right in zip(lines[:int(num_aug / 2)], lines[int(num_aug / 2):])
+                    for left, right in zip(lines[:1], lines[1:])
                 ])
                 lines.clear()
             line = f.readline()
