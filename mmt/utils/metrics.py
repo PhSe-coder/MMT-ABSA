@@ -9,7 +9,7 @@ def compare(models_dir: str):
     models = listdir(models_dir)
     data: List[Dict[str, float]] = []
     for model in models:
-        model_path = f"./out/{model}"
+        model_path = osp.join(models_dir, model)
         src_tar_list = listdir(model_path)
         f1_list: List[float] = []
         for file in glob(osp.join(model_path, "**/absa_prediction.txt")):
