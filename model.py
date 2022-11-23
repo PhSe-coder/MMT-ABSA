@@ -110,12 +110,16 @@ class BertForTokenClassification(BertPreTrainedModel):
                     tar_domain_loss = loss[domain_mask.view(-1)[active_loss] ==
                                            False].mean().nan_to_num(0)
                     loss = src_domain_loss + hard_label_weight * tar_domain_loss
+                else:
+                    loss = loss.mean()
             else:
                 loss = self.loss_fct(logits.view(-1, self.num_labels), gold_labels.view(-1))
                 if domain_mask is not None:
                     src_domain_loss = loss[domain_mask.view(-1) == True].mean()
                     tar_domain_loss = loss[domain_mask.view(-1) == False].mean()
                     loss = src_domain_loss + hard_label_weight * tar_domain_loss
+                else:
+                    loss = loss.mean()
         return TokenClassifierOutput(logits=logits, loss=loss, hidden_states=sequence_output)
 
     def post_operation(self, *args, **kwargs):
