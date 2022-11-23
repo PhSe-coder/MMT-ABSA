@@ -4,8 +4,9 @@ import os
 import shutil
 import sys
 from time import localtime, strftime
-from typing import List, Union
+from typing import List
 
+import socket
 import torch
 import torch.nn as nn
 from pytorch_transformers import BertModel, BertConfig
@@ -108,6 +109,10 @@ class Constructor:
             model = model.cuda()
             if device_count > 1:
                 torch.cuda.set_device(self.args.local_rank)
+            sock = socket.socket()
+            sock.bind(('', 0))
+            os.environ["MASTER_ADDR"] = 'localhost'
+            os.environ["MASTER_PORT"] = str(sock.getsockname()[1])
             torch.distributed.init_process_group(backend='nccl', rank=0, world_size=1)
         self.model = DistributedDataParallel(model, find_unused_parameters=True)
 
@@ -144,7 +149,7 @@ class Constructor:
             logger.info('>>> {0}: {1}'.format(arg, getattr(self.args, arg)))
 
     def train(self,
-              optimizer: Optimizer,
+              optimizers: List[Optimizer],
               train_data_loader: DataLoader,
               val_data_loader: DataLoader = None):
         global_step = 0
@@ -157,13 +162,13 @@ class Constructor:
             logger.info('> epoch: {}'.format(epoch))
             for i, batch in tqdm(enumerate(train_data_loader), f'epoch: {epoch}',
                                  len(train_data_loader)):
-                optimizer.zero_grad()
+                [optimizer.zero_grad() for optimizer in optimizers]
                 targets = batch.get("gold_labels")
                 outputs: TokenClassifierOutput = self.model(**batch)
                 logits, loss = outputs.logits, outputs.loss
                 assert loss is not None
                 loss.backward()
-                optimizer.step()
+                [optimizer.step() for optimizer in optimizers]
                 self.model.module.post_operation(global_step=global_step)
                 pred_list, gold_list = self.id2label(
                     logits.argmax(dim=-1).tolist(), targets.tolist())
@@ -270,24 +275,33 @@ class Constructor:
                     getattr(self.train_set.datasets[0], "collate_fn", None)) else None)
             param_optimizer = [(k, v) for k, v in self.model.named_parameters()
                                if v.requires_grad == True]
-            param_optimizer = [n for n in param_optimizer if 'pooler' not in n[0]]
+            pretrained_param_optimizer = [n for n in param_optimizer if 'pooler' not in n[0]]
+            custom_param_optimizer = [n for n in param_optimizer if 'bert' not in n[0]]
             no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
             optimizer_grouped_parameters = [{
-                'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)],
+                'params':
+                [p for n, p in pretrained_param_optimizer if not any(nd in n for nd in no_decay)],
                 'weight_decay':
                 self.args.l2reg
             }, {
-                'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)],
+                'params':
+                [p for n, p in pretrained_param_optimizer if any(nd in n for nd in no_decay)],
                 'weight_decay':
                 0.0
             }]
-            if self.args.optimizer == BertAdam:
-                optimizer = BertAdam(optimizer_grouped_parameters,
-                                     lr=self.args.lr,
-                                     warmup=self.args.warmup,
-                                     t_total=self.args.num_train_epochs * len(train_data_loader))
-            else:
-                optimizer = self.args.optimizer(optimizer_grouped_parameters, lr=self.args.lr)
+            optimizers = [
+                BertAdam(optimizer_grouped_parameters,
+                         lr=self.args.bert_lr,
+                         warmup=self.args.warmup,
+                         t_total=self.args.num_train_epochs * len(train_data_loader))
+            ]
+            optimizers.append(
+                self.args.optimizer([{
+                    "params": [p for _, p in custom_param_optimizer],
+                    "lr": self.args.lr,
+                    "alpha": 0.9,
+                    "eps": 1e-06
+                }]))
             # self.reset_params()
             val_data_loader = None
             if self.args.do_eval:
@@ -297,7 +311,7 @@ class Constructor:
                     shuffle=False,
                     collate_fn=self.validation_set.collate_fn if callable(
                         getattr(self.validation_set, "collate_fn", None)) else None)
-            best_model_path = self.train(optimizer, train_data_loader, val_data_loader)
+            best_model_path = self.train(optimizers, train_data_loader, val_data_loader)
         logger.info(f">> best model path: {best_model_path}")
         if self.args.do_predict:
             test_data_loader = DataLoader(dataset=self.test_set,
