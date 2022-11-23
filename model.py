@@ -277,12 +277,12 @@ class MMTModel(nn.Module):
             domain_mask=domain_mask)
         outputs2_ema: TokenClassifierOutput = self.model_ema_2(input_ids_1, token_type_ids_1,
                                                                attention_mask_1)
-        loss_ce = outputs1.loss + outputs2.loss
+        loss_ce = (outputs1.loss + outputs2.loss)/2
         domain_pre_1, _ = self.dom_model(outputs1.hidden_states)
         d_loss_1 = self.domain_loss(domain_pre_1, domains_1.squeeze(-1).float())
         domain_pre_2, _ = self.dom_model(outputs2.hidden_states)
         d_loss_2 = self.domain_loss(domain_pre_2, domains_2.squeeze(-1).float())
-        d_loss = d_loss_1 + d_loss_2
+        d_loss = (d_loss_1 + d_loss_2)/2
         loss_ce_soft = self.ce_soft_loss(outputs1.logits, outputs2_ema.logits,
                                          attention_mask_1) + self.ce_soft_loss(
                                              outputs2.logits, outputs1_ema.logits, attention_mask_2)
