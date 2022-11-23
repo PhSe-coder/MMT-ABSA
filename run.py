@@ -113,6 +113,7 @@ class Constructor:
             sock.bind(('', 0))
             os.environ["MASTER_ADDR"] = 'localhost'
             os.environ["MASTER_PORT"] = str(sock.getsockname()[1])
+            sock.close()
             torch.distributed.init_process_group(backend='nccl', rank=0, world_size=1)
         self.model = DistributedDataParallel(model, find_unused_parameters=True)
 
