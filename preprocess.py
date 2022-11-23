@@ -7,7 +7,7 @@ from shutil import copy
 
 import example.augment as ag
 
-# import example.double_propagation as dp
+import example.double_propagation as dp
 from mmt.utils import split
 
 logging.basicConfig(level=logging.INFO,
