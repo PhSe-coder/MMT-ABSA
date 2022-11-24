@@ -10,6 +10,8 @@ import example.augment as ag
 import example.annotation as ann
 from mmt.utils import split
 
+from transformers import BertTokenizer
+
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -29,45 +31,48 @@ alpha_sr = 0.05
 alpha_rd = 0
 alpha_ri = 0
 alpha_rs = 0
-logger.info("split train set into train/validation dataset, save in %s", tmp_dst_1)
-split(args.src, tmp_dst_1)
-logger.info("copy test dataset into %s", tmp_dst_1)
-for file in glob("./data/*.test.txt"):
-    copy(file, tmp_dst_1)
+# logger.info("split train set into train/validation dataset, save in %s", tmp_dst_1)
+# split(args.src, tmp_dst_1)
+# logger.info("copy test dataset into %s", tmp_dst_1)
+# for file in glob("./data/*.test.txt"):
+#     copy(file, tmp_dst_1)
 
-makedirs(tmp_dst_2, exist_ok=True)
-for file in listdir(tmp_dst_1):
-    input_file = osp.join(tmp_dst_1, file)
-    output_file = osp.join(tmp_dst_2, file)
-    if "train" not in input_file:
-        logger.info("copy %s dataset into %s", file, tmp_dst_2)
-        copy(input_file, tmp_dst_2)
-        continue
-    logger.info("process dataset %s with double propagation algorithm", file)
-    ann.run(
-        ann.parser.parse_args([
-            "--dataset", input_file, "--output-file", output_file, "--batch-size",
-            str(ann_batch_size)
-        ]))
-
+# makedirs(tmp_dst_2, exist_ok=True)
+# for file in listdir(tmp_dst_1):
+#     input_file = osp.join(tmp_dst_1, file)
+#     output_file = osp.join(tmp_dst_2, file)
+#     if "train" not in input_file:
+#         logger.info("copy %s dataset into %s", file, tmp_dst_2)
+#         copy(input_file, tmp_dst_2)
+#         continue
+#     logger.info("process dataset %s with pos,dep annotation", file)
+#     ann.run(
+#         ann.parser.parse_args([
+#             "--dataset", input_file, "--output-file", output_file, "--batch-size",
+#             str(ann_batch_size)
+#         ]))
 
 with open(pos_file, "w") as pos_writer, open(deprel_file, "w") as deprel_writer:
-    pos_tag_list = []
-    deprel_tag_list = []
-    for file in listdir(tmp_dst_2):
+    pos_tag_dict = {}
+    deprel_tag_dict = {}
+    tokenizer: BertTokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
+    for file in glob(osp.join(tmp_dst_2, "*.train.txt")):
         with open(file, "r") as f:
             for line in f:
-                text, gold_labels, pos_tag_labels, delrel_tag_labels = line.strip().split("***")
-                pos_tag_list.extend([
-                    _ for item in set(pos_tag_labels.split())
-                    for _ in [f"B-{item[1:]}", f"I-{item[1:]}"] if _ not in pos_tag_list
-                ])
-                deprel_tag_list.extend([
-                    _ for item in set(delrel_tag_labels.split())
-                    for _ in [f"B-{item[1:]}", f"I-{item[1:]}"] if _ not in deprel_tag_list
-                ])
-    pos_writer.writelines([tag + '\n' for tag in pos_tag_list])
-    deprel_writer.writelines([tag + '\n' for tag in deprel_tag_list])
+                for token, label, pos, deprel in zip(
+                        *[item.split() for item in line.strip().split("***")]):
+                    if label == 'O':
+                        continue
+                    res = tokenizer.wordpiece_tokenizer.tokenize(token)
+                    assert pos != 'O'
+                    assert deprel != 'O'
+                    pos_tag_dict[f"B{pos[1:]}"] = pos_tag_dict.get(f"B{pos[1:]}", 0) + 1
+                    pos_tag_dict[f"I{pos[1:]}"] = pos_tag_dict.get(f"I{pos[1:]}", 0) + len(res[1:])
+                    deprel_tag_dict[f"B{deprel[1:]}"] = deprel_tag_dict.get(f"B{deprel[1:]}", 0) + 1
+                    deprel_tag_dict[f"I{deprel[1:]}"] = deprel_tag_dict.get(f"I{deprel[1:]}",
+                                                                            0) + len(res[1:])
+    pos_writer.writelines([tag + '\n' for tag, count in pos_tag_dict.items() if count >= 10])
+    deprel_writer.writelines([tag + '\n' for tag, count in deprel_tag_dict.items() if count >= 10])
 
 makedirs(tmp_dst_3, exist_ok=True)
 for file in listdir(tmp_dst_2):
