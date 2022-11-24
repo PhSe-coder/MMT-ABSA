@@ -78,7 +78,7 @@ class Consumer(threading.Thread):
         with open(self.args.output_file, "w") as f:
             while True:
                 try:
-                    sentence, rest = self.data.get(timeout=8)
+                    sentence, rest = self.data.get(timeout=15)
                     text: str = sentence.text
                     assert self.sep not in rest
                     gold_labels: List[str] =  rest.split()
