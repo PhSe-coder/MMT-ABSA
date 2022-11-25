@@ -19,7 +19,8 @@ random.seed(1)
 class Word(NamedTuple):
     token: str
     gold_label: str
-    hard_label: str
+    pos_label: str
+    deprel_label: str
 
 # stop words list
 stop_words = ['i', 'me', 'my', 'myself', 'we', 'our',
