@@ -1,13 +1,13 @@
 #!/bin/bash
 domains=('rest' 'service' 'laptop' 'device')
 
-export CUDA_VISIBLE_DEVICES=0,1
+export CUDA_VISIBLE_DEVICES=0
 export TRANSFORMERS_OFFLINE=0
 output='./out/mmt_base/'
-src_train_dir='./processed/dataset'
-tar_train_dir='./processed/dataset'
-val_dir='./processed/dataset'
-test_dir='./processed/dataset'
+src_train_dir='./processed1/dataset'
+tar_train_dir='./processed1/dataset'
+val_dir='./processed1/dataset'
+test_dir='./processed1/dataset'
 for tar_domain in ${domains[@]};
 do
     for src_domain in  ${domains[@]};
@@ -24,7 +24,7 @@ do
             fi
 	        python run.py \
                 -m torch.distributed.launch \
-                --nproc_per_node=2 \
+                --nproc_per_node=1 \
                 --local_rank 0 \
                 --model_name "mmt" \
                 --output_dir "${output}${src_domain}-${tar_domain}"  \
@@ -37,9 +37,9 @@ do
                 --device "cuda:0" \
                 --optimizer "rmsprop" \
                 --lr "1e-3" \
-                --bert_lr "2e-5" \
-                --batch_size 16 \
-                --num_train_epochs 4
+                --bert_lr "5e-5" \
+                --batch_size 32 \
+                --num_train_epochs 3
         fi
     done
 done
