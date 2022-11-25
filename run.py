@@ -232,12 +232,12 @@ class Constructor:
             pred_Y.extend(pred_list)
             gold_Y.extend(gold_list)
             if to_file:
-                text.extend(self.tokenizer.decode(batch.get("input_ids")))
+                text.extend(self.tokenizer.batch_decode(batch.get("input_ids"), skip_special_tokens=True))
         self.model.train()
         if to_file:
             with open(os.path.join(self.args.output_dir, "predict.txt"), "w") as f:
                 for i in range(len(gold_Y)):
-                    f.write(f"{text[i]}***{pred_Y[i]}***{gold_Y[i]}")
+                    f.write(f"{text[i]}***{' '.join(pred_Y[i])}***{' '.join(gold_Y[i])}\n")
         return absa_evaluate(pred_Y, gold_Y)
 
     def id2label(self, predict: List[List[int]], gold: List[List[int]]):
@@ -324,7 +324,7 @@ class Constructor:
             self.model.load_state_dict(
                 torch.load(best_model_path, map_location=torch.device(self.args.device)))
             # self.model = torch.load(best_model_path, map_location=torch.device(self.args.device))
-            test_pre, test_rec, test_f1 = self.evaluate(test_data_loader)
+            test_pre, test_rec, test_f1 = self.evaluate(test_data_loader, True)
             content = f'test_pre: {test_pre:.4f}, test_rec: {test_rec:.4f}, test_f1: {test_f1:.4f}'
             logger.info(f'>> {content}')
             with open(os.path.join(self.args.output_dir, "absa_prediction.txt"), "w") as f:
