@@ -136,3 +136,5 @@ construct_semeval_dataset/
 state_dict/
 processed/
 out/
+entities/
+ann/
