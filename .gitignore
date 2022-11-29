@@ -1,8 +1,3 @@
-construct_semeval_dataset/
-.vscode/
-state_dict/
-processed/
-out/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -132,3 +127,12 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# vscode settings
+.vscode/
+
+# model outputs
+construct_semeval_dataset/
+state_dict/
+processed/
+out/
