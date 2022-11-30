@@ -44,33 +44,74 @@ def transform(
 class BaseDataset(Dataset):
 
     def __init__(self, filename: str, tokenizer: PreTrainedTokenizer, device=None, src=True):
-        data = []
+        dataset = []
         total_lines = sum(1 for _ in open(filename, "rb"))
+        pos_list = [item.split()[0] for item in open("./pos.txt").read().splitlines()]
+        deprel_list = [
+            item.split()[0] for item in open("./deprel.txt").read().splitlines()
+        ]
         with open(filename, "r") as f:
             for line in tqdm(f, total=total_lines, desc=filename):
                 line = line.strip()
-                text, text_labels = line.rsplit("***")[0:2]
+                pos_labels, deprel_labels, hard_labels = None, None, None
+                try:
+                    text, gold_labels, pos_labels, deprel_labels, hard_labels = line.rsplit("***")
+                except ValueError:
+                    text, gold_labels = line.rsplit("***")
                 tok_dict: Dict[str, List[int]] = tokenizer(text,
                                                            padding=PaddingStrategy.MAX_LENGTH,
                                                            truncation=True)
                 wordpiece_tokens = tokenizer.convert_ids_to_tokens(tok_dict.input_ids)
                 special_tokens = tokenizer.all_special_tokens
-                labels = transform(text, text_labels, wordpiece_tokens, special_tokens)
-                _labels = [TAGS.index(label) if label in TAGS else -1 for label in labels]
-                data.append({
+                glod_wordpiece_labels = transform(text, gold_labels, wordpiece_tokens,
+                                                  special_tokens)
+                _labels = [
+                    TAGS.index(label) if label in TAGS else -1 for label in glod_wordpiece_labels
+                ]
+                data = {
                     "input_ids": as_tensor(tok_dict.input_ids, device=device),
-                    "gold_labels": as_tensor(_labels, device=device),
+                    "gold_labels": as_tensor(_labels.copy(), device=device),
                     "attention_mask": as_tensor(tok_dict.attention_mask, device=device),
                     "token_type_ids": as_tensor(tok_dict.token_type_ids, device=device),
                     "domains": as_tensor([src], device=device)
-                })
-        self.data = data
+                }
+                if hard_labels is not None:
+                    labels = transform(text, hard_labels, wordpiece_tokens,
+                                                      special_tokens)
+                    _labels = [TAGS.index(label) if label in TAGS else -1 for label in labels]
+                    data['hard_labels'] = as_tensor(_labels.copy(), device=device)
+                if pos_labels is not None:
+                    labels = transform(text, pos_labels, wordpiece_tokens, special_tokens)
+                    _labels.clear()
+                    for idx, label in enumerate(labels):
+                        if label in pos_list:
+                            _labels.append(pos_list.index(label))
+                        else:
+                            if glod_wordpiece_labels[idx] not in ["O", "SPECIAL_TOKEN"]:
+                                _labels.append(pos_list.index(label[0]+'-[UNK]'))
+                            else:
+                                _labels.append(-1)
+                    data['pos_labels'] = as_tensor(_labels.copy(), device=device)
+                if deprel_labels is not None:
+                    labels = transform(text, deprel_labels, wordpiece_tokens, special_tokens)
+                    _labels.clear()
+                    for idx, label in enumerate(labels):
+                        if label in deprel_list:
+                            _labels.append(deprel_list.index(label))
+                        else:
+                            if glod_wordpiece_labels[idx] not in ["O", "SPECIAL_TOKEN"]:
+                                _labels.append(deprel_list.index(label[0] + '-[UNK]'))
+                            else:
+                                _labels.append(-1)
+                    data['deprel_labels'] = as_tensor(_labels.copy(), device=device)
+                dataset.append(data)
+        self.dataset = dataset
 
     def __getitem__(self, index):
-        return self.data[index]
+        return self.dataset[index]
 
     def __len__(self):
-        return len(self.data)
+        return len(self.dataset)
 
 
 # class MMTDataset(Dataset):
@@ -138,18 +179,18 @@ class MMTDataset(Dataset):
                  src=True) -> None:
         dataset = []
         total_lines = sum(1 for _ in open(filename, "rb"))
-        pos_list = [item.split()[0] for item in open("./processed1/pos.txt").read().splitlines()]
+        pos_list = [item.split()[0] for item in open("./pos.txt").read().splitlines()]
         deprel_list = [
-            item.split()[0] for item in open("./processed1/deprel.txt").read().splitlines()
+            item.split()[0] for item in open("./deprel.txt").read().splitlines()
         ]
         with open(filename, "r") as f:
             for line in tqdm(f, total=total_lines, desc=filename):
                 line = line.strip()
                 special_tokens = tokenizer.all_special_tokens
                 input_ids, attention_mask, token_type_ids = [], [], []
-                gold_label_list, pos_label_list, deprel_label_list, domains = [], [], [], []
+                gold_label_list, pos_label_list, deprel_label_list, domains, hard_label_list = [], [], [], [], []
                 for item in line.split("####"):
-                    text, gold_labels, pos_labels, deprel_labels = item.rsplit("***")
+                    text, gold_labels, pos_labels, deprel_labels, hard_labels = item.rsplit("***")
                     tok_dict: Dict[str, List[int]] = tokenizer(text,
                                                                padding=PaddingStrategy.MAX_LENGTH,
                                                                truncation=True)
@@ -158,6 +199,9 @@ class MMTDataset(Dataset):
                     _labels = [TAGS.index(label) if label in TAGS else -1 for label in glod_wordpiece_labels]
                     input_ids.append(as_tensor(tok_dict.input_ids, device=device))
                     gold_label_list.append(as_tensor(_labels.copy(), device=device))
+                    labels = transform(text, hard_labels, wordpiece_tokens, special_tokens)
+                    _labels = [TAGS.index(label) if label in TAGS else -1 for label in labels]
+                    hard_label_list.append(as_tensor(_labels.copy(), device=device))
                     labels = transform(text, pos_labels, wordpiece_tokens, special_tokens)
                     _labels = []
                     for idx, label in enumerate(labels):
@@ -189,6 +233,7 @@ class MMTDataset(Dataset):
                     "gold_labels": gold_label_list,
                     "pos_labels": pos_label_list,
                     "deprel_labels": deprel_label_list,
+                    "hard_labels": hard_label_list,
                     "attention_mask": attention_mask,
                     "token_type_ids": token_type_ids,
                     "domains": domains
