@@ -36,6 +36,30 @@ def absa_evaluate(pred_Y: List[List[str]], gold_Y: List[List[str]]):
     return pre, rec, f1
 
 
+def tag2aspect(tag_sequence):
+    """
+    convert BIO tag sequence to the aspect sequence
+    :param tag_sequence: tag sequence in BIO tagging schema
+    :return:
+    """
+    ts_sequence = []
+    beg = -1
+    for index, ts_tag in enumerate(tag_sequence):
+        if ts_tag == 'O':
+            if beg != -1:
+                ts_sequence.append((beg, index - 1))
+                beg = -1
+        else:
+            cur = ts_tag.split('-')[0]  # unified tags
+            if cur == 'B':
+                if beg != -1:
+                    ts_sequence.append((beg, index - 1))
+                beg = index
+
+    if beg != -1:
+        ts_sequence.append((beg, index))
+    return ts_sequence
+
 def tag2aspect_sentiment(ts_tag_sequence: List[str]) -> List[Tuple[int, int, str]]:
     """support Tag sequence: ['O', 'B-POS', 'B-NEG', 'B-NEU', 'I-POS', 'I-NEG', 'I-NEU']
 
@@ -121,3 +145,40 @@ def absa_evaluate_polarity(pred_Y: List[List[str]], gold_Y: List[List[str]], pol
     f1 = 2 * pre * rec / (pre + rec + 0.00001)
 
     return pre, rec, f1
+
+
+def evaluate(test_Y, pred_Y):
+    """evaluate function for aspect term extraction
+
+    Parameters
+    ----------
+    pred_Y : List[List[str]]
+        predicted tags
+    gold_Y : List[List[str]]
+        gold standard tags (i.e., post-processed labels)
+    polarity : str
+        polarity needed to be evaluated
+
+    Returns
+    -------
+    Tuple[float, float, str]
+        precision, recall, micro f1
+    """
+    assert len(test_Y) == len(pred_Y)
+    length = len(test_Y)
+    TP, FN, FP = 0, 0, 0
+
+    for i in range(length):
+        gold = test_Y[i]
+        pred = pred_Y[i]
+        assert len(gold) == len(pred)
+        gold_aspects = tag2aspect(gold)
+        pred_aspects = tag2aspect(pred)
+        n_hit = match(pred=pred_aspects, gold=gold_aspects)
+        TP += n_hit
+        FP += (len(pred_aspects) - n_hit)
+        FN += (len(gold_aspects) - n_hit)
+    p = float(TP) / float(TP + FP + 0.00001)
+    r = float(TP) / float(TP + FN + 0.0001)
+    f1 = 2 * p * r / (p + r + 0.00001)
+    return p, r, f1
