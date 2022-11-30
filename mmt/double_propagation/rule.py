@@ -15,7 +15,7 @@ NN = ('NN', 'NNS', 'NNP')
 SENTMENT_MAP = {0: 'NEG', 1: 'NEU', 2: 'POS'}
 
 
-__all__ = ['Rule']
+__all__ = ['Rule', 'SENTMENT_MAP']
 
 class Rule:
     def __init__(self, text: Union[str, Sentence], pos_words: Set[str], neg_words: Set[str]):
