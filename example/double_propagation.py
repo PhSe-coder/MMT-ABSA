@@ -19,6 +19,7 @@ step = 0
 tagging_schemas = ['t', 'bio']
 
 parser = ArgumentParser(description='Annotate a absa dataset by Double Propagation Algorithm')
+parser.add_argument("--sep", default="***", type=str, help="data item seperator")
 parser.add_argument("--dataset", required=True, help="Dataset to be annotated")
 parser.add_argument("--output-file", required=True, help="Path where the annotation result should to be saved")
 parser.add_argument("--epoch-nums", type=int, default=3, help="iteration numbers of the algorithm")
@@ -56,7 +57,7 @@ class Producer(threading.Thread):
                         rest = ''
                     text_list.append(text)
                     rest_list.append(rest)
-                    if idx % self.args.batch_size == 0:
+                    if (idx + 1) % self.args.batch_size == 0:
                         self.put(text_list, rest_list)
                         text_list.clear()
                         rest_list.clear()
@@ -150,8 +151,8 @@ class Consumer(threading.Thread):
 
 def run(args):
     queue = Queue()
-    producer = Producer(args, 'Producer', queue)
-    consumer = Consumer(args, 'Consumer', queue, args.opinion_file, args.target_file)
+    producer = Producer(args, 'Producer', queue, args.sep)
+    consumer = Consumer(args, 'Consumer', queue, args.opinion_file, args.target_file, args.sep)
     producer.start()
     consumer.start()
     producer.join()
