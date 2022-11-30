@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 tagging_schemas = ['t', 'bio']
 
 parser = ArgumentParser(description='Annotate a absa dataset with dep and pos tag')
+parser.add_argument("--sep", default="***", type=str, help="data item seperator")
 parser.add_argument("--dataset", required=True, help="Dataset to be annotated")
 parser.add_argument("--output-file",
                     required=True,
@@ -85,10 +86,10 @@ class Consumer(threading.Thread):
                     doc: List[dict] = sentence.to_dict()
                     assert len(gold_labels) == len(doc)
                     pos_labels, deprel_labels = [], []
-                    for word, label in zip(doc, gold_labels):
+                    for word, _ in zip(doc, gold_labels):
                         pos, deprel = word['xpos'], word['deprel']
-                        pos_label = "T-{}".format(pos) if label != 'O' else 'O'
-                        deprel_label = "T-{}".format(deprel) if label != 'O' else 'O'
+                        pos_label = "T-{}".format(pos)
+                        deprel_label = "T-{}".format(deprel)
                         pos_labels.append(pos_label)
                         deprel_labels.append(deprel_label)
                     assert len(gold_labels) == len(deprel_labels)
@@ -103,8 +104,8 @@ class Consumer(threading.Thread):
 
 def run(args):
     queue = Queue()
-    producer = Producer(args, 'Producer', queue)
-    consumer = Consumer(args, 'Consumer', queue)
+    producer = Producer(args, 'Producer', queue, args.sep)
+    consumer = Consumer(args, 'Consumer', queue, args.sep)
     producer.start()
     consumer.start()
     producer.join()
