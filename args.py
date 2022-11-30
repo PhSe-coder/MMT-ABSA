@@ -9,6 +9,8 @@ class ModelArguments(TrainingArguments):
     """
     Arguments pertaining to what data we are going to input our model for training and eval.
     """
+    init_1: str = field(default=None, metadata={"help": "pretrained model used to initialize the mmt model 1"})
+    init_2: str = field(default=None, metadata={"help": "pretrained model used to initialize the mmt model 2"})
 
     model_name: Optional[str] = field(default="bert",
                                       metadata={"help": "The name of the model (ner, pos...)."})
@@ -29,7 +31,7 @@ class ModelArguments(TrainingArguments):
              "than this will be truncated, sequences shorter will be padded.")
         },
     )
-    train_files: Optional[List[str]] = field(
+    train_file: Optional[str] = field(
         default=None, metadata={"help": "The input training data files (txt file)."})
     validation_file: Optional[str] = field(
         default=None,
@@ -50,7 +52,7 @@ class ModelArguments(TrainingArguments):
         metadata={"help": "Proportion of training to perform linear learning rate warmup for."})
     max_seq_len: Optional[int] = field(default=100)
     optimizer: Optional[str] = field(default='adam')
-    initializer: Optional[str] = field(default='xavier_uniform_',
+    initializer: Optional[str] = field(default='kaiming_uniform_',
                                        metadata={"help": "initializer for customize parameters"})
     logging_steps: Optional[int] = field(
         default=10, metadata={"help": "Number of update steps between two logs"})
@@ -58,26 +60,22 @@ class ModelArguments(TrainingArguments):
     device: Optional[str] = field(default="cpu", metadata={"help": 'device for training'})
 
     def __post_init__(self):
+        if self.model_name == 'mmt' and (self.init_1 is None or self.init_2 is None):
+            raise ValueError("init_1 and init_2 arguments are needed.")
         if self.model_name not in SUPPORTED_MODELS:
             raise ValueError(f"Model name {self.model_name} is not supported.")
-        if self.do_train and self.train_files is None:
+        if self.do_train and self.train_file is None:
             raise ValueError("Need training file when `do_train` is set.")
         if self.do_eval and self.validation_file is None:
             raise ValueError("Need validation file when `do_eval` is set.")
         if self.do_predict and self.test_file is None:
             raise ValueError("Need test file when `do_eval` is set.")
-        if self.train_files is None or self.test_file is None:
+        if self.train_file is None or self.test_file is None:
             raise ValueError("Need training or test file.")
         else:
-            if self.train_files is not None:
-                if self.model_name == 'bert':
-                    assert len(
-                        self.train_files) == 1, "exactly one train file is supported for bert model"
-                elif self.model_name == 'mmt':
-                    assert len(self.train_files) == 2, \
-                    "exactly two train file (source and target) is supported for bert model"
-                assert all(file.split(".")[-1] == 'txt'
-                           for file in self.train_files), "`train_file` should be a txt file."
+            if self.train_file is not None:
+                extension = self.train_file.split(".")[-1]
+                assert extension in ["txt"], "`train_file` should be a txt file."
                 if self.do_eval:
                     extension = self.validation_file.split(".")[-1]
                     assert extension in ["txt"], "`validation_file` should be a txt file."
