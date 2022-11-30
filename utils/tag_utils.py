@@ -46,7 +46,7 @@ def Annotate(txt, language="en", theta=0.1):
     :param txt: 一段文本对象，str类型
     :param language: 使用的语言 “de”为德语, “en”为英语，“it”为意语.默认为英语“en”
     :param theta:阈值[0, 1]，选择标注得分，阈值越大筛选出来的映射就越可靠，默认为0.1
-    :return:键值对[(A, B):score]  A为文本当中的概念实体，B为维基概念实体，score为其得分
+    :return:键值对[(begin, end): (score, mention, entity_title, entity_id, uri)]
     """
     annotations = tagme.annotate(txt, lang=language)
     dic = dict()
