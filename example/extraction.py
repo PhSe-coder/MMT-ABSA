@@ -132,7 +132,6 @@ class Producer(threading.Thread):
                 hard_label_list.clear()
         global ready
         ready = True
-        print("%s finished!" % self.getName())
 
 
 class Consumer(threading.Thread):
@@ -239,7 +238,6 @@ class Consumer(threading.Thread):
                 except Empty:
                     if ready:
                         break
-        print("%s finished!" % self.getName())
 
 
 def run(args):
@@ -250,7 +248,6 @@ def run(args):
     consumer.start()
     producer.join()
     consumer.join()
-    print('All threads finished!')
 
 
 if __name__ == '__main__':
