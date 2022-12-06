@@ -2,6 +2,7 @@ import logging
 import os
 from typing import List, Tuple, Union
 import tagme
+import pickle
 from qwikidata.sparql import return_sparql_query_results
 
 # 标注的“Authorization Token”，需要注册才有
@@ -61,9 +62,17 @@ def Annotate(txt, language="en", theta=0.1):
     return dic
 
 
-def get_base_classes_of_item(entity_id: Union[str, None]) -> Tuple[str]:
+def get_base_classes_of_item(entity_id: Union[str, None],
+                             entity_dir_path: str = None) -> Tuple[str]:
     if entity_id is None:
         return []
+    if entity_dir_path:
+        os.makedirs(entity_dir_path, exist_ok=True)
+    path = os.path.join(entity_dir_path, entity_id + '.pkl')
+    if os.path.exists(path):
+        with open(path, "rb") as f:
+            ret = pickle.load(f)
+        return ret
     sparql_query = """
 SELECT ?pLabel WHERE {{
   wd:{} wdt:P279 ?p .
@@ -73,4 +82,8 @@ SELECT ?pLabel WHERE {{
 }}
 """.format(entity_id)
     results = return_sparql_query_results(sparql_query)
-    return tuple(binding["pLabel"]["value"] for binding in results["results"]["bindings"])
+    ret = tuple(binding["pLabel"]["value"] for binding in results["results"]["bindings"])
+    if entity_dir_path:
+        with open(path, "wb") as f:
+            pickle.dump(ret, f)
+    return ret
