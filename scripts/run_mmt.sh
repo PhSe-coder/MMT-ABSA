@@ -4,10 +4,10 @@ domains=('rest' 'service' 'laptop' 'device')
 export CUDA_VISIBLE_DEVICES=0
 export TRANSFORMERS_OFFLINE=0
 output='./out/mmt_base/'
-src_train_dir='./processed1/dataset'
-tar_train_dir='./processed1/dataset'
-val_dir='./processed1/dataset'
-test_dir='./processed1/dataset'
+src_train_dir='./processed/dataset'
+tar_train_dir='./processed/dataset'
+val_dir='./processed/dataset'
+test_dir='./processed/dataset'
 for tar_domain in ${domains[@]};
 do
     for src_domain in  ${domains[@]};

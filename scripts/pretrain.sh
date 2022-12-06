@@ -2,9 +2,9 @@
 export CUDA_VISIBLE_DEVICES=0
 export TRANSFORMERS_OFFLINE=0
 output='./out/bert_base/'
-src_train_dir='./processed1/ag_tmp'
-val_dir='./processed1/dataset'
-test_dir='./processed1/dataset'
+src_train_dir='./processed/ag_tmp'
+val_dir='./processed/dataset'
+test_dir='./processed/dataset'
 src_domain=$1
 tar_domain=$2
 python run.py -m torch.distributed.launch --nproc_per_node=1 --local_rank 0 \
