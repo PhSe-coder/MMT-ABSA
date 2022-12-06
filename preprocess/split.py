@@ -8,9 +8,9 @@ from shutil import copy
 import torch
 from torch.utils.data import random_split
 
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 parser = ArgumentParser(description="Data split")
 parser.add_argument("--src", type=str, default="./data")
 parser.add_argument("--dest", type=str, default="./processed/tmp")

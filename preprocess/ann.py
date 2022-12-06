@@ -10,9 +10,9 @@ from transformers import BertTokenizer
 
 import example.annotation as ann
 
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 parser = ArgumentParser(description="POS and dep")
 parser.add_argument("--src", type=str, default="./processed/tmp")
 parser.add_argument("--dest", type=str, default="./processed/ann_tmp")

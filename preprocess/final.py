@@ -4,9 +4,9 @@ from argparse import ArgumentParser
 from os import listdir, makedirs
 from shutil import copy
 
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 parser = ArgumentParser(description="Data merge")
 parser.add_argument("--src", type=str, default="./processed/ent_tmp")
 parser.add_argument("--dest", type=str, default="./processed/dataset")
