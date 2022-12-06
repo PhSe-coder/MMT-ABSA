@@ -1,13 +1,15 @@
 import logging
-from typing import List
-
+import os
+from typing import List, Tuple, Union
 import tagme
+from qwikidata.sparql import return_sparql_query_results
 
 # 标注的“Authorization Token”，需要注册才有
 tagme.GCUBE_TOKEN = "58cf013e-71b9-4d8d-a7c1-396f5e842bec-843339462"
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(format='%(asctime)s: %(levelname)s: %(message)s')
+
 
 def ot2bio_absa(ts_tag_sequence: List[str]):
     new_ts_sequence: List[str] = []
@@ -57,3 +59,18 @@ def Annotate(txt, language="en", theta=0.1):
         except:
             logger.error('error annotation about ' + ann)
     return dic
+
+
+def get_base_classes_of_item(entity_id: Union[str, None]) -> Tuple[str]:
+    if entity_id is None:
+        return []
+    sparql_query = """
+SELECT ?pLabel WHERE {{
+  wd:{} wdt:P279 ?p .
+  SERVICE wikibase:label {{
+    bd:serviceParam wikibase:language "en" .
+   }}
+}}
+""".format(entity_id)
+    results = return_sparql_query_results(sparql_query)
+    return tuple(binding["pLabel"]["value"] for binding in results["results"]["bindings"])
