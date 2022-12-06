@@ -7,6 +7,7 @@ from random import randint
 import time
 from typing import List
 import numpy as np
+import fasttext.util
 import fasttext
 from sklearn.metrics.pairwise import cosine_similarity
 from tqdm import tqdm
@@ -46,7 +47,8 @@ class Producer(threading.Thread):
         self.entity_path: str = args.entity_path
         # file line count
         self.count = sum(1 for _ in open(self.args.dataset, "rb"))
-        self.model = fasttext.load_model('/root/autodl-tmp/cc.en.300.bin')
+        fasttext.util.download_model('en', if_exists='ignore')  # English
+        self.model = fasttext.load_model('cc.en.300.bin')
         self.mean_vec = np.load(args.mean_vec)
 
     def process(self, index: int, sentence: str):
