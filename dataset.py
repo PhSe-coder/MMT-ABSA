@@ -46,9 +46,9 @@ class BaseDataset(Dataset):
     def __init__(self, filename: str, tokenizer: PreTrainedTokenizer, device=None, src=True):
         dataset = []
         total_lines = sum(1 for _ in open(filename, "rb"))
-        pos_list = [item.split()[0] for item in open("./pos.txt").read().splitlines()]
+        pos_list = [item.split()[0] for item in open("./ann/rest_pos.txt").read().splitlines()]
         deprel_list = [
-            item.split()[0] for item in open("./deprel.txt").read().splitlines()
+            item.split()[0] for item in open("./ann/rest_deprel.txt").read().splitlines()
         ]
         with open(filename, "r") as f:
             for line in tqdm(f, total=total_lines, desc=filename):
@@ -179,9 +179,9 @@ class MMTDataset(Dataset):
                  src=True) -> None:
         dataset = []
         total_lines = sum(1 for _ in open(filename, "rb"))
-        pos_list = [item.split()[0] for item in open("./pos.txt").read().splitlines()]
+        pos_list = [item.split()[0] for item in open("./ann/rest_pos.txt").read().splitlines()]
         deprel_list = [
-            item.split()[0] for item in open("./deprel.txt").read().splitlines()
+            item.split()[0] for item in open("./ann/rest_deprel.txt").read().splitlines()
         ]
         with open(filename, "r") as f:
             for line in tqdm(f, total=total_lines, desc=filename):
@@ -258,7 +258,7 @@ if __name__ == "__main__":
     from transformers import BertTokenizer
 
     tokenizer = BertTokenizer.from_pretrained("bert-base-uncased", model_max_length=100)
-    dataset = MMTDataset("./processed1/dataset/rest.train.txt", tokenizer)
+    dataset = MMTDataset("./processed/dataset/rest.train.txt", tokenizer)
     from torch.utils.data import DataLoader
 
     dataloader = DataLoader(dataset, 16, True, collate_fn=dataset.collate_fn)
