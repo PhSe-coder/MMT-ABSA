@@ -35,6 +35,11 @@ parser.add_argument("--schema",
                     default="t",
                     choices=tagging_schemas,
                     help="annotaion schema for each tag")
+parser.add_argument(
+    "--entity-save-path",
+    default='processed/ent',
+    help="path to save the baseclass entities",
+)
 
 
 class Producer(threading.Thread):
@@ -75,7 +80,8 @@ class Producer(threading.Thread):
                 for i in range(len(begins) - 1):
                     if ends[i] + 1 == begins[i + 1]:
                         ent[(begins[i], ends[i])] = res_dict.get((begins[i], ends[i]))
-                        ent[(begins[i + 1], ends[i + 1])] = res_dict.get((begins[i + 1], ends[i + 1]))
+                        ent[(begins[i + 1], ends[i + 1])] = res_dict.get(
+                            (begins[i + 1], ends[i + 1]))
                         continue
                     if len(ent) != 0:
                         keys = list(ent.keys())
@@ -83,7 +89,8 @@ class Producer(threading.Thread):
                         ent.clear()
                     # prevent overlap
                     if not any(
-                            set(range(begins[i], ends[i])).intersection(set(range(*key))) for key in result.keys()):
+                            set(range(begins[i], ends[i])).intersection(set(range(*key)))
+                            for key in result.keys()):
                         result[(begins[i], ends[i])] = res_dict.get((begins[i], ends[i]))
                 if len(ent) != 0:
                     ent_keys = list(ent.keys())
@@ -127,18 +134,22 @@ class Producer(threading.Thread):
                         self.mean_vec.reshape(1, -1),
                         np.array(self.model.get_word_vector(entity_title.lower())).reshape(1, -1)))
                 time.sleep(1)
-                for item in get_base_classes_of_item(self.get_entity_id(entity_title)): # replace original item if the baseclass item can increase the domain similarity
+                for item in get_base_classes_of_item(
+                        self.get_entity_id(entity_title)
+                ):  # replace original item if the baseclass item can increase the domain similarity
                     _sim = float(
                         cosine_similarity(
                             self.mean_vec.reshape(1, -1),
                             np.array(self.model.get_word_vector(item.lower())).reshape(1, -1)))
                     if _sim > sim:
                         baseclass_items[item] = _sim
-                items = tuple(zip(*sorted(baseclass_items.items(), key=lambda item: item[1], reverse=True)))
+                items = tuple(
+                    zip(*sorted(baseclass_items.items(), key=lambda item: item[1], reverse=True)))
                 res_result[k] = (*result[k], items[0] if items else ())
         except Exception as e:
             raise e
         return {index: res_result}
+
     def get_entity_id(self, entity_title: str):
         with open(self.entity_path, encoding='utf-8') as f:
             for line in f:
