@@ -73,6 +73,7 @@ def get_base_classes_of_item(entity_id: Union[str, None],
             with open(path, "rb") as f:
                 ret = pickle.load(f)
             return ret
+    assert entity_id.startswith("Q")
     sparql_query = """
 SELECT ?pLabel WHERE {{
   wd:{} wdt:P279 ?p .
