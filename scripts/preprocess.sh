@@ -1,8 +1,12 @@
 #!/bin/bash
 export PYTHONPATH=$PYTHONPATH:$(pwd)
-wget -O /tmp/wikidata5m_alias.tar.gz https://www.dropbox.com/s/lnbhc8yuhit4wm5/wikidata5m_alias.tar.gz?dl=1
-tar -zxvf /tmp/wikidata5m_alias.tar.gz -C ./
-python ./preprocess/ent_link.py --src ./data --dest ./processed/ent_tmp
+FILE=./wikidata5m_entity.txt
+if [[ ! -f "$FILE" ]]; then
+    wget -O /tmp/wikidata5m_alias.tar.gz https://www.dropbox.com/s/lnbhc8yuhit4wm5/wikidata5m_alias.tar.gz?dl=1
+    tar -zxvf /tmp/wikidata5m_alias.tar.gz -C ./
+fi
+python ./preprocess/get_entity.py --src ./data
+python ./preprocess/ent_replace.py --src ./data --dest ./processed/ent_tmp
 python ./preprocess/split.py --src ./processed/ent_tmp --dest ./processed/tmp
 python ./preprocess/ann.py --src ./processed/tmp --dest ./processed/ann_tmp
 python ./preprocess/dp.py --src ./processed/ann_tmp --dest ./processed/dp_tmp
