@@ -194,7 +194,7 @@ class Constructor:
                 assert loss is not None
                 loss.backward()
                 [optimizer.step() for optimizer in optimizers]
-                self.model.module.post_operation(global_step=global_step)
+                # self.model.module.post_operation(global_step=global_step)
                 pred_list, gold_list = self.id2label(
                     logits.argmax(dim=-1).tolist(), targets.tolist())
                 pred_Y.extend(pred_list)
@@ -300,7 +300,8 @@ class Constructor:
                 batch_size=self.args.batch_size,
                 shuffle=True,
                 collate_fn=self.train_set.collate_fn if callable(
-                    getattr(self.train_set, "collate_fn", None)) else None)
+                    getattr(self.train_set, "collate_fn", None)) else None,
+                drop_last=True)
             param_optimizer = [(k, v) for k, v in self.model.named_parameters()
                                if v.requires_grad == True]
             pretrained_param_optimizer = [n for n in param_optimizer if 'pooler' not in n[0]]
