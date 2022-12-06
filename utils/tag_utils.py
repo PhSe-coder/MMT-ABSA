@@ -68,11 +68,11 @@ def get_base_classes_of_item(entity_id: Union[str, None],
         return []
     if entity_dir_path:
         os.makedirs(entity_dir_path, exist_ok=True)
-    path = os.path.join(entity_dir_path, entity_id + '.pkl')
-    if os.path.exists(path):
-        with open(path, "rb") as f:
-            ret = pickle.load(f)
-        return ret
+        path = os.path.join(entity_dir_path, entity_id + '.pkl')
+        if os.path.exists(path):
+            with open(path, "rb") as f:
+                ret = pickle.load(f)
+            return ret
     sparql_query = """
 SELECT ?pLabel WHERE {{
   wd:{} wdt:P279 ?p .
