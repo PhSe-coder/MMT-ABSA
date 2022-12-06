@@ -5,6 +5,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from queue import Empty, Queue
 from random import randint
 import time
+import os
 from typing import List
 import numpy as np
 import fasttext.util
@@ -135,7 +136,7 @@ class Producer(threading.Thread):
                         np.array(self.model.get_word_vector(entity_title.lower())).reshape(1, -1)))
                 time.sleep(1)
                 for item in get_base_classes_of_item(
-                        self.get_entity_id(entity_title)
+                        self.get_entity_id(entity_title), self.args.entity_save_path
                 ):  # replace original item if the baseclass item can increase the domain similarity
                     _sim = float(
                         cosine_similarity(
@@ -166,7 +167,7 @@ class Producer(threading.Thread):
                                disable=False):  # disable the bar
                 if future.exception():
                     future.set_result({})
-                    raise future.exception()
+                    logger.warn(future.exception().args)
                 results.update(future.result())
         res = [result for _, result in sorted(results.items(), key=lambda item: item[0])]
         for i, text in enumerate(text_list):
@@ -208,6 +209,7 @@ class Consumer(threading.Thread):
 
     def run(self):
         global ready
+        os.makedirs(os.path.dirname(self.args.output_file), exist_ok=True)
         with open(self.args.output_file, "w") as f:
             while True:
                 try:
@@ -322,5 +324,5 @@ if __name__ == '__main__':
         parser.parse_args([
             "--dataset", "./data/rest.train.txt", "--output-file",
             "processed/ent_tmp/rest.train.txt", "--batch-size", "512", "--entity-path",
-            "/root/autodl-tmp/wikidata5m_entity.txt", "--mean-vec", "./processed/rest_mean_vec.npy"
+            "./wikidata5m_entity.txt", "--mean-vec", "./processed/rest_mean_vec.npy"
         ]))
