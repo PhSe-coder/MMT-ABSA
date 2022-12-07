@@ -14,6 +14,10 @@ parser.add_argument("--src", type=str, default="./data")
 parser.add_argument("--dest", type=str, default="./processed/ent_tmp")
 parser.add_argument("--batch-size", type=int, default=512)
 parser.add_argument("--vector-dir", type=str, default="./processed/vectors")
+parser.add_argument("--max-workers",
+                    type=int,
+                    default=16,
+                    help="number of workers used to send requests")
 args = parser.parse_args()
 src = args.src
 dest = args.dest
@@ -35,5 +39,6 @@ for file in listdir(src):
         ext.parser.parse_args([
             "--dataset", input_file, "--output-file", output_file, "--batch-size",
             str(batch_size), "--mean-vec",
-            osp.join(vector_dir, domain + "_mean_vec.npy")
+            osp.join(vector_dir, domain + "_mean_vec.npy"), "--max-workers",
+            str(args.max_workers)
         ]))
