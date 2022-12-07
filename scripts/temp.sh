@@ -11,7 +11,7 @@ tar_domain=$2
 python run.py -m torch.distributed.launch --nproc_per_node=1 --local_rank 0 \
 --model_name "mmt" \
 --output_dir "${output}${src_domain}-${tar_domain}"  \
---train_file "${src_train_dir}/${src_domain}.train.txt" "${tar_train_dir}/${tar_domain}.train.txt" \
+--train_file "${tar_train_dir}/${tar_domain}.train.txt" \
 --test_file "${test_dir}/${tar_domain}.test.txt" \
 --validation_file "${val_dir}/${tar_domain}.validation.txt" \
 --do_train \
