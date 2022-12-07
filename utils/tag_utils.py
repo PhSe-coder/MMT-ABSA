@@ -4,8 +4,7 @@ from typing import List, Tuple, Union
 import tagme
 import pickle
 from qwikidata.sparql import return_sparql_query_results
-
-# 标注的“Authorization Token”，需要注册才有
+# tagme token
 tagme.GCUBE_TOKEN = "58cf013e-71b9-4d8d-a7c1-396f5e842bec-843339462"
 
 logger = logging.getLogger(__name__)
@@ -53,6 +52,8 @@ def Annotate(txt, language="en", theta=0.1):
     """
     annotations = tagme.annotate(txt, lang=language)
     dic = dict()
+    if annotations is None:
+        return dic
     for ann in annotations.get_annotations(theta):
         try:
             dic[(ann.begin, ann.end)] = (ann.score, ann.mention, ann.entity_title, ann.entity_id,
