@@ -8,7 +8,7 @@ import time
 import os
 from typing import List
 from urllib3.exceptions import MaxRetryError
-from requests.exceptions import ProxyError, JSONDecodeError
+from requests.exceptions import ProxyError, JSONDecodeError, ConnectionError
 import numpy as np
 import fasttext.util
 import fasttext
@@ -44,6 +44,10 @@ parser.add_argument(
     default='processed/ent',
     help="path to save the baseclass entities",
 )
+parser.add_argument("--max-workers",
+                    type=int,
+                    default=16,
+                    help="number of workers used to send requests")
 
 
 class Producer(threading.Thread):
@@ -163,9 +167,9 @@ class Producer(threading.Thread):
                     baseclass_items.items(), key=lambda item: item[1], reverse=True))
                 res_result[k] = (*result[k], items)
                 # print(index, "one iter end", time.time() - start)
-        except (MaxRetryError, ProxyError, JSONDecodeError) as e:
+        except (MaxRetryError, ProxyError, JSONDecodeError, ConnectionError) as e:
+            # retry
             logger.warning(e.args)
-            time.sleep(1)
             return self.process(index, sentence)
         except Exception as e:
             raise e
@@ -173,19 +177,20 @@ class Producer(threading.Thread):
         return {index: res_result}
 
     def put(self, text_list: List[str], rest_list: List[str]):
+        global ready
         results = {}
-        with ThreadPoolExecutor(max_workers=16) as t:
+        with ThreadPoolExecutor(max_workers=self.args.max_workers) as t:
             for future in tqdm(as_completed(
                 [t.submit(self.process, idx, sentence) for idx, sentence in enumerate(text_list)]),
                                total=len(text_list),
                                disable=False):  # disable the bar
                 if future.exception():
                     future.set_result({})
-                    logger.warning(future.exception().args)
-                    exit(-1)
+                    logger.warning(type(future.exception()))
                 results.update(future.result())
+        logger.info("sort process results according to sentence index.")
         res = [result for _, result in sorted(results.items(), key=lambda item: item[0])]
-        for i, text in enumerate(text_list):
+        for i, text in tqdm(enumerate(text_list), desc="put process results to task queue"):
             self.queue.put((text, rest_list[i], res[i]))
 
     def run(self):
@@ -244,7 +249,9 @@ class Consumer(threading.Thread):
                             [labels[i][-3:] for i in range(idx_tuple[0], idx_tuple[1] + 1)])
                         if len(sentis) != 1:
                             continue
-                        senti = "T-" + sentis.pop()
+                        senti = sentis.pop()
+                        if senti != 'O':
+                            senti = "T-" + senti
                         original_span = idx_tuple[1] + 1 - idx_tuple[0]
                         replaced_item = v[-1][0].split(" ")
                         replaced_span = len(replaced_item)
@@ -313,7 +320,7 @@ class Consumer(threading.Thread):
                             logger.debug(f"{text} has OVERLAPPED aspect terms")
                         i += 1
                     assert len(tokens) == len(labels), f"{tokens} {labels}"
-                    f.write(f"{text}{self.sep}{' '.join(labels)}\n")
+                    f.write(f"{' '.join(tokens)}{self.sep}{' '.join(labels)}\n")
                 except Empty:
                     if ready:
                         ready = False
@@ -335,7 +342,7 @@ def run(args):
 if __name__ == '__main__':
     run(
         parser.parse_args([
-            "--dataset", "./data/device.train.txt", "--output-file",
-            "processed/ent_tmp/device.train.txt", "--batch-size", "512", "--mean-vec",
-            "./processed/vectors/device_mean_vec.npy"
+            "--dataset", "./data/laptop.train.txt", "--output-file",
+            "processed/ent_tmp/laptop.train.txt", "--batch-size", "512", "--mean-vec",
+            "./processed/vectors/laptop_mean_vec.npy"
         ]))

@@ -42,7 +42,9 @@ class Producer(threading.Thread):
         with open(self.args.dataset, "r") as f:
             text_list = []
             rest_list = []
-            for idx, line in tqdm(enumerate(f), total=self.count, desc="{}".format(self.args.dataset)):
+            for idx, line in tqdm(enumerate(f),
+                                  total=self.count,
+                                  desc="{}".format(self.args.dataset)):
                 try:
                     text, rest = line.split(self.sep, maxsplit=1)
                 except ValueError:
@@ -65,11 +67,7 @@ class Producer(threading.Thread):
 
 class Consumer(threading.Thread):
 
-    def __init__(self,
-                 args,
-                 name: str,
-                 queue: Queue,
-                 sep="***"):
+    def __init__(self, args, name: str, queue: Queue, sep="***"):
         threading.Thread.__init__(self, name=name)
         self.data = queue
         self.args = args
@@ -82,7 +80,7 @@ class Consumer(threading.Thread):
                     sentence, rest = self.data.get(timeout=15)
                     text: str = sentence.text
                     assert self.sep not in rest
-                    gold_labels: List[str] =  rest.split()
+                    gold_labels: List[str] = rest.split()
                     doc: List[dict] = sentence.to_dict()
                     assert len(gold_labels) == len(doc)
                     pos_labels, deprel_labels = [], []
@@ -114,4 +112,8 @@ def run(args):
 
 
 if __name__ == '__main__':
-    run(parser.parse_args())
+    run(
+        parser.parse_args([
+            "--dataset", "./processed/tmp/device.train.txt", "--output-file",
+            "./processed/ann_tmp/device.train.txt"
+        ]))
