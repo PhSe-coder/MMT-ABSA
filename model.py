@@ -84,7 +84,6 @@ class BertForTokenClassification(BertPreTrainedModel):
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
         self.classifier = nn.Linear(config.hidden_size, config.num_labels)
         self.loss_fct = nn.CrossEntropyLoss(ignore_index=-1)
-        self.w_k = nn.Linear()
 
     def forward(self,
                 input_ids: Tensor,
