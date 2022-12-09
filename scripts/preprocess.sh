@@ -9,9 +9,9 @@ if [[ ! -f "$FILE" ]]; then
     tar -zxvf /tmp/wikidata5m_alias.tar.gz -C ./
 fi
 python ./preprocess/get_entity.py --src ./data
-python ./preprocess/ent_replace.py --src ./data --dest ./processed/ent_tmp --max-workers 128
+# python ./preprocess/ent_replace.py --src ./data --dest ./processed/ent_tmp --max-workers 128
 sleep 5s
-python ./preprocess/split.py --src ./processed/ent_tmp --dest ./processed/tmp
+python ./preprocess/split.py --src ./data --dest ./processed/tmp
 python ./preprocess/ann.py --src ./processed/tmp --dest ./processed/ann_tmp
 python ./preprocess/dp.py --src ./processed/ann_tmp --dest ./processed/dp_tmp
 sleep 5s
