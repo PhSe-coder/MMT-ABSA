@@ -19,7 +19,7 @@ from transformers.modeling_outputs import TokenClassifierOutput
 
 from args import ModelArguments
 from constants import SUPPORTED_MODELS, TAGS
-from dataset import BaseDataset, MMTDataset
+from dataset import BaseDataset, ContrastDataset, MMTDataset
 from eval import absa_evaluate
 from model import *
 from optimization import BertAdam
@@ -83,6 +83,7 @@ class Constructor:
         self.print_args()
 
     def model_init(self):
+        args = self.args
         model_name = self.args.model_name
         num_labels = len(TAGS)
         assert model_name in SUPPORTED_MODELS, f'Model {model_name} is not supported'
@@ -131,6 +132,22 @@ class Constructor:
             for param in model_2_ema.parameters():
                 param.detach_()
             model = MMTModel(model_1, model_1_ema, model_2, model_2_ema)
+        elif model_name == 'contrast':
+            model_1 = BertForTokenClassification.from_pretrained(args.pretrained_model,
+                                                                 num_labels=num_labels)
+            model_2 = BertForTokenClassification.from_pretrained(args.pretrained_model,
+                                                                 num_labels=num_labels)
+            model_1.load_state_dict({
+                k.replace('module.', ''): v
+                for k, v in torch.load(self.args.init_1,
+                                       map_location=torch.device(self.args.device)).items()
+            })
+            model_2.load_state_dict({
+                k.replace('module.', ''): v
+                for k, v in torch.load(self.args.init_1,
+                                       map_location=torch.device(self.args.device)).items()
+            })
+            model = ContrastModel(model_1, model_2)
         device_count = torch.cuda.device_count()
         if device_count >= 1:
             model = model.cuda()
@@ -147,9 +164,14 @@ class Constructor:
     def dataset_init(self):
         args = self.args
         if args.do_train:
-            dataset = MMTDataset if args.model_name == 'mmt' else BaseDataset
-            self.train_set = dataset(args.train_file, self.tokenizer, args.device,
-                                     args.model_name != 'mmt')
+            if args.model_name == 'bert':
+                self.train_set = BaseDataset(args.train_file, self.tokenizer, args.device, True)
+            elif args.model_name == 'mmt':
+                self.train_set = MMTDataset(args.train_file, self.tokenizer, args.device, False)
+            elif args.model_name == 'contrast':
+                self.train_set = ContrastDataset(args.train_file, self.tokenizer, args.device,
+                                                 False)
+
         if args.do_eval:
             self.validation_set = BaseDataset(self.args.validation_file, self.tokenizer,
                                               args.device, False)
@@ -194,17 +216,20 @@ class Constructor:
                 assert loss is not None
                 loss.backward()
                 [optimizer.step() for optimizer in optimizers]
-                # self.model.module.post_operation(global_step=global_step)
-                pred_list, gold_list = self.id2label(
-                    logits.argmax(dim=-1).tolist(), targets.tolist())
-                pred_Y.extend(pred_list)
-                gold_Y.extend(gold_list)
+                if targets is not None:  # consider unsupervised learning
+                    pred_list, gold_list = self.id2label(
+                        logits.argmax(dim=-1).tolist(), targets.tolist())
+                    pred_Y.extend(pred_list)
+                    gold_Y.extend(gold_list)
                 l = len(logits)
                 n_total += l
                 loss_total += loss.item() * l
                 global_step += 1
                 if global_step % self.args.logging_steps == 0 or i == len(train_data_loader) - 1:
-                    p, r, f1 = absa_evaluate(pred_Y, gold_Y)
+                    if targets is not None:
+                        p, r, f1 = absa_evaluate(pred_Y, gold_Y)
+                    else:
+                        p, r, f1 = 0, 0, 0
                     inf = {
                         "steps": global_step,
                         "loss": loss_total / n_total,
@@ -238,10 +263,15 @@ class Constructor:
                     logger.info(f'>> early stopping at epoch: {epoch}')
                     break
             else:
-                path = 'state_dict/{}_{}_{}.pt'.format(
-                    self.args.model_name,
-                    self.args.train_file.split("/")[-1].split(".")[0],
-                    self.args.test_file.split("/")[-1].split(".")[0])
+                if self.args.test_file is None:
+                    path = 'state_dict/{}_{}.pt'.format(
+                        self.args.model_name,
+                        self.args.train_file.split("/")[-1].split(".")[0])
+                else:
+                    path = 'state_dict/{}_{}_{}.pt'.format(
+                        self.args.model_name,
+                        self.args.train_file.split("/")[-1].split(".")[0],
+                        self.args.test_file.split("/")[-1].split(".")[0])
                 torch.save(self.model.state_dict(), path)
         return path
 
