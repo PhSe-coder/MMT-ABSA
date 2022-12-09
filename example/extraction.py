@@ -343,6 +343,6 @@ if __name__ == '__main__':
     run(
         parser.parse_args([
             "--dataset", "./data/laptop.train.txt", "--output-file",
-            "processed/ent_tmp/laptop.train.txt", "--batch-size", "512", "--mean-vec",
+            "processed/ent_tmp/laptop.train.txt", "--batch-size", "1", "--mean-vec",
             "./processed/vectors/laptop_mean_vec.npy"
         ]))
