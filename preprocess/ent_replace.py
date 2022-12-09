@@ -30,10 +30,6 @@ for file in listdir(src):
     domain = file.split('.')[0]
     input_file = osp.join(src, file)
     output_file = osp.join(dest, file)
-    if "train" not in input_file:
-        logger.info("copy %s dataset into %s", file, dest)
-        copy(input_file, dest)
-        continue
     logger.info("Extracting entities for dataset %s", file)
     ext.run(
         ext.parser.parse_args([
