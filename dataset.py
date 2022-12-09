@@ -170,6 +170,51 @@ class BaseDataset(Dataset):
 #         return batch_dict
 
 
+class ContrastDataset(Dataset):
+
+    def __init__(self,
+                 filename: str,
+                 tokenizer: PreTrainedTokenizer,
+                 device=None,
+                 src=False) -> None:
+        dataset = []
+        total_lines = sum(1 for _ in open(filename, "rb"))
+        with open(filename, "r") as f:
+            for line in tqdm(f, total=total_lines, desc=filename):
+                line = line.strip()
+                input_ids, attention_mask, token_type_ids = [], [], []
+                domains = []
+                for item in line.split("####"):
+                    text = item.rsplit("***")
+                    tok_dict: Dict[str, List[int]] = tokenizer(text,
+                                                               padding=PaddingStrategy.MAX_LENGTH,
+                                                               truncation=True)
+                    input_ids.append(as_tensor(tok_dict.input_ids, device=device))
+                    attention_mask.append(as_tensor(tok_dict.attention_mask, device=device))
+                    token_type_ids.append(as_tensor(tok_dict.token_type_ids, device=device))
+                    # specified as a list for the benefit of tensor broadcasting
+                    domains.append(as_tensor([src], device=device))
+                dataset.append({
+                    "input_ids": input_ids,
+                    "attention_mask": attention_mask,
+                    "token_type_ids": token_type_ids,
+                    "domains": domains
+                })
+        self.dataset = dataset
+
+    def __getitem__(self, index):
+        return self.dataset[index]
+
+    def __len__(self):
+        return len(self.dataset)
+
+    @staticmethod
+    def collate_fn(batch):
+        batch_dict: Dict[str, List[Tensor]] = default_collate(batch)
+        for k, v in batch_dict.items():
+            batch_dict[k] = cat(v)
+        return batch_dict
+
 class MMTDataset(Dataset):
 
     def __init__(self,
