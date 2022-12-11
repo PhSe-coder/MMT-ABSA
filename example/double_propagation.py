@@ -1,6 +1,5 @@
 import logging
 import threading
-import time
 from argparse import ArgumentParser
 from queue import Empty, Queue
 from typing import List
@@ -16,6 +15,7 @@ logger = logging.getLogger(__name__)
 nltk.download('opinion_lexicon')
 nltk.download('omw-1.4')
 step = 0
+ready = False
 tagging_schemas = ['t', 'bio']
 
 parser = ArgumentParser(description='Annotate a absa dataset by Double Propagation Algorithm')
@@ -43,7 +43,7 @@ class Producer(threading.Thread):
             self.queue.put((sentence, rest_list[i]))
 
     def run(self):
-        global step
+        global step, ready
         for i in range(self.args.epoch_nums):
             with open(self.args.dataset, "r") as f:
                 text_list = []
@@ -65,8 +65,8 @@ class Producer(threading.Thread):
                     self.put(text_list, rest_list)
                     text_list.clear()
                     rest_list.clear()
-            time.sleep(3)
             step = i + 1
+        ready =True
         print("%s finished!" % self.getName())
 
 
@@ -86,11 +86,11 @@ class Consumer(threading.Thread):
         self.opinion_set = set(ops)
 
     def run(self):
-        global step
+        global step, ready
         with open(self.args.output_file, "w") as f:
             while True:
                 try:
-                    sentence, rest = self.data.get(timeout=8)
+                    sentence, rest = self.data.get(timeout=5)
                     rule = Rule(sentence, self.positive_words, self.negtive_words)
                     tar_dict, _ = rule.propagation(self.target_set, self.opinion_set)
                     if step != self.args.epoch_nums - 1:
@@ -146,7 +146,10 @@ class Consumer(threading.Thread):
                     else:
                         f.write(f"{text}{self.sep}{rest.strip()}{self.sep}{' '.join(labels)}\n")
                 except Empty:
-                    break
+                    if ready:
+                        ready = False
+                        step = 0
+                        break
         print("%s finished!" % self.getName())
 
 def run(args):
