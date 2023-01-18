@@ -90,6 +90,8 @@ class Consumer(threading.Thread):
                     assert len(gold_labels) == len(deprel_labels)
                     assert len(gold_labels) == len(pos_labels)
                     assert len(gold_labels) == len(heads)
+                    if len(text.split(" ")) == 1:
+                        continue
                     f.write(
                         f"{self.sep.join([text, rest.strip(), ' '.join(pos_labels), ' '.join(deprel_labels), ' '.join(heads)])}\n"
                     )
