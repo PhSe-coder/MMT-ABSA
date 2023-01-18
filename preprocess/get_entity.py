@@ -12,6 +12,7 @@ import fasttext
 import fasttext.util
 import nltk
 import numpy as np
+from func_timeout import func_set_timeout
 import torch
 from nltk.corpus import stopwords
 from qwikidata.entity import WikidataItem
@@ -69,7 +70,7 @@ def process_ann(sentence: str):
     return _result, result
 
 
-for domain in ("rest", "laptop", "service", "device"):
+for domain in ("rest", "laptop", "service", "device",):
     entities_tuple_list = []
     lines = []
     # get all sentences in a domain
@@ -81,20 +82,20 @@ for domain in ("rest", "laptop", "service", "device"):
                            desc=f"Extracting eitities in {domain} domain"):
             entities_tuple_list.append(future.result())
     entities_dict_list = [entities_dict
-                          for _, entities_dict in entities_tuple_list]  # {titile: metion}
-    _entities_dict_list = {
+                          for _, entities_dict in entities_tuple_list]  # {title: metion}
+    _entities_dict = {
         k: v
         for entities_dict, _ in entities_tuple_list for k, v in entities_dict.items()
     }  # {metion: titile}
     # remove stopwords
-    entities = [
+    emtity_metions = [
         word for entities_dict in entities_dict_list for word in entities_dict.values()
         if word not in stopword_set
     ]
     # save domain entities with pickle
     with open(os.path.join(save_dir, domain + ".pkl"), "wb") as f:
-        pickle.dump(entities, f)
-    counters = Counter(entities)
+        pickle.dump(emtity_metions, f)
+    counters = Counter(emtity_metions)
     # sort entities by frequency, high -> low
     sorted_entities: List[Tuple[str, int]] = sorted(filter(lambda item: item[1] > 0,
                                                            counters.items()),
@@ -103,7 +104,7 @@ for domain in ("rest", "laptop", "service", "device"):
     vec_dict = {}
     for entity in sorted_entities:
         e = entity[0]
-        vec_dict[e] = model.get_word_vector(e)
+        vec_dict[e] = model.get_word_vector(e.lower()) # case unsensitive for entities
     logger.info(f"compute mean vector for {domain} domain")
     getter = itemgetter(*[entity for entity, _ in sorted_entities[:10]])
     mean_vec = np.average(getter(vec_dict),
@@ -115,16 +116,22 @@ for domain in ("rest", "laptop", "service", "device"):
     res = np.array([
         cosine_similarity(mean_vec.reshape(1, -1), vec_dict[k].reshape(1, -1)) for k in vec_dict
     ]).squeeze()
-    topk = torch.topk(torch.from_numpy(res), int(0.6 * res.shape[0])).indices.tolist()
-    k = len([sim for sim in itemgetter(*topk)(res) if sim > 0.1])
-    topk = torch.topk(torch.from_numpy(res), k).indices.tolist()
+    # topk = torch.topk(torch.from_numpy(res), int(0.6 * res.shape[0])).indices.tolist()
+    # k = len([sim for sim in itemgetter(*topk)(res) if sim > 0.1])
+    # topk = torch.topk(torch.from_numpy(res), k).indices.tolist()
+    topk = torch.topk(torch.from_numpy(res), int(res.shape[0])).indices.tolist()
     ents = set([item[0] for item in itemgetter(*topk)(sorted_entities)])
-    # {entity_mention: entity_tile}
-    entity_dict = {entity: _entities_dict_list[entity] for entity in ents}
+    # path = os.path.join(args.output_dir, domain + ".txt")
+    # with open(path, "w") as f:
+    #     for k in tqdm(ents, desc="save entity with description"):
+    #         f.write(f"{k}\n")
+    # {entity_mention: entity_title}
+    entity_dict = {entity: _entities_dict[entity] for entity in ents}
     entity_qid_dict = {entity: entity_map.get(title) for entity, title in entity_dict.items()}
     entity_desc_dict = {}
 
-    @retry()
+    @retry(tries=6) # retry when any exception occurs
+    @func_set_timeout(30) # set timeout for request
     def get(e, q):
         return e, WikidataItem(get_entity_dict_from_api(q)).get_description()
     entity_qid_dict = {k: v for k, v in entity_qid_dict.items() if v is not None}
@@ -132,9 +139,11 @@ for domain in ("rest", "laptop", "service", "device"):
         for future in tqdm(as_completed(
             [t.submit(get, entity, qid) for entity, qid in entity_qid_dict.items()]),
                            total=len(entity_qid_dict)):
-            result = future.result()
-            entity_desc_dict[result[0]] = result[1]
+            if future.exception() is None:
+                result = future.result()
+                entity_desc_dict[result[0]] = result[1]
     path = os.path.join(args.output_dir, domain + ".txt")
+    # entity_title: entity_description
     with open(path, "w") as f:
         for k, v in tqdm(entity_desc_dict.items(), desc="save entity with description"):
-            f.write(f"{k}####{v}")
+            f.write(f"{k} is {v}.\n")

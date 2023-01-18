@@ -60,3 +60,4 @@ for file in listdir(src):
             str(alpha_ri), "--alpha_rs",
             str(alpha_rs)
         ]))
+logging.info("Augment Ready.")

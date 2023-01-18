@@ -12,6 +12,7 @@ logger.setLevel(logging.INFO)
 parser = ArgumentParser(description="Double propagation algorithm")
 parser.add_argument("--src", type=str, default="./processed/ann_tmp")
 parser.add_argument("--dest", type=str, default="./processed/dp_tmp")
+parser.add_argument("--ent-dir", type=str, default="./processed/ents")
 parser.add_argument("--batch-size", type=int, default=512)
 args = parser.parse_args()
 src = args.src
@@ -29,8 +30,10 @@ for file in listdir(src):
         copy(input_file, dest)
         continue
     logger.info("process dataset %s with double propagation algorithm", file)
+    domain = file.split('.')[0]
     dp.run(
         dp.parser.parse_args([
             "--dataset", input_file, "--output-file", output_file, "--batch-size",
-            str(batch_size)
+            str(batch_size), "--ent-file",
+            osp.join(args.ent_dir, domain + ".txt")
         ]))
