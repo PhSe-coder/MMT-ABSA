@@ -71,8 +71,7 @@ class MSE(nn.Module):
 
 
 __all__ = [
-    'PretrainedBertForTokenClassification', 'BertForTokenClassification', 'MMTModel',
-    'ContrastModel'
+    'PretrainedBertForTokenClassification', 'BertForTokenClassification', 'MMTModel'
 ]
 
 
