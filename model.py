@@ -1,14 +1,32 @@
 import logging
-
+from typing import Dict
+import dgl
 import torch
 import torch.nn as nn
 import torch.nn.functional as f
-from pytorch_revgrad import RevGrad
-from pytorch_transformers import BertModel, BertPreTrainedModel
+from constants import DEPREL_DICT
+from transformers import BertModel, BertPreTrainedModel
 from torch import Tensor
 from transformers.modeling_outputs import TokenClassifierOutput
-
+from gat import HGAT
 logger = logging.getLogger(__name__)
+
+
+# dynamic threshold
+class MILoss(nn.Module):
+
+    def __init__(self, threshold=0.7):
+        super(MILoss, self).__init__()
+        self.mi_threshold = threshold
+
+    def forward(self, p: Tensor):
+        condi_entropy = -torch.sum(p * torch.log(p), dim=-1).mean()
+        y_dis = torch.mean(p, dim=0)
+        y_entropy = -torch.sum(y_dis * torch.log(y_dis), dim=-1)
+        if y_entropy.item() < self.mi_threshold:
+            return -y_entropy + condi_entropy
+        else:
+            return condi_entropy
 
 
 class SoftEntropy(nn.Module):
@@ -53,33 +71,164 @@ class MSE(nn.Module):
 
 
 __all__ = [
-    'PretrainedBertForTokenClassification', 'BertForTokenClassification', 'MMTModel', 'DomainModel',
+    'PretrainedBertForTokenClassification', 'BertForTokenClassification', 'MMTModel',
     'ContrastModel'
 ]
 
 
-class DomainModel(nn.Module):
+class MeanPooling(nn.Module):
 
-    def __init__(self, dim: int, adv: float = 1.0):
-        super(DomainModel, self).__init__()
-        out_dim = int(dim / 2)
-        self.project = nn.Sequential(nn.Linear(dim, out_dim), nn.Tanh(), nn.Linear(out_dim, 1),
-                                     nn.Softmax(dim=1))
-        self.full_layer = nn.Linear(dim, 1)
-        self.grl = RevGrad(adv)
+    def __init__(self):
+        super(MeanPooling, self).__init__()
 
-    def forward(self, inputs):
-        temp = self.grl(inputs)
-        alphas = self.project(temp)
-        x = torch.sum(temp * alphas, dim=1)
-        final_out = self.full_layer(x)
-        return final_out.squeeze(-1), alphas
+    def forward(self, last_hidden_state, attention_mask):
+        input_mask_expanded = attention_mask.unsqueeze(-1).expand(last_hidden_state.size()).float()
+        sum_embeddings = torch.sum(last_hidden_state * input_mask_expanded, 1)
+        sum_mask = input_mask_expanded.sum(1)
+        sum_mask = torch.clamp(sum_mask, min=1e-9)
+        mean_embeddings = sum_embeddings / sum_mask
+        return mean_embeddings
+
+
+# class DomainModel(nn.Module):
+
+#     def __init__(self, dim: int, adv: float = 1.0):
+#         super(DomainModel, self).__init__()
+#         self.domain_loss = nn.BCEWithLogitsLoss()
+#         self.mean_pooling = MeanPooling()
+#         self.attention = nn.Sequential(nn.Linear(dim, int(dim / 2)), nn.ReLU(inplace=True),
+#                                        nn.Dropout(0.5), nn.Linear(int(dim / 2), int(dim / 4)),
+#                                        nn.ReLU(inplace=True), nn.Dropout(0.5),
+#                                        nn.Linear(int(dim / 4), 1))
+#         # self.full_layer = nn.Linear(dim, 1)
+#         self.grl = RevGrad(adv)
+
+#     def forward(self, inputs, attention_mask, entity_probs, logits, gold_labels):
+#         temp = self.grl(inputs)
+#         if gold_labels is not None:
+#             #     valid_tensor = (torch.argmax(f.softmax(logits, -1), -1)
+#             #                     == gold_labels) & (gold_labels != 0) & (gold_labels != -1)
+#             #     x = temp[(entity_probs > 0.5) | valid_tensor]
+#             domains = torch.ones(temp.size(0), device=inputs.device)
+#         else:
+#             #     valid_tensor = (torch.max(f.softmax(logits, -1), -1)[0] > 0.5) & (torch.argmax(
+#             #         f.softmax(logits, -1), -1) != 0)
+#             #     x = temp[(entity_probs > 0.5) | valid_tensor]
+#             domains = torch.zeros(temp.size(0), device=inputs.device)
+#         pooling = self.mean_pooling(inputs, attention_mask)
+#         outputs = self.attention(pooling).squeeze(-1)
+#         loss = self.domain_loss(outputs, domains)
+#         return TokenClassifierOutput(loss=loss)
 
 
 class BertForTokenClassification(BertPreTrainedModel):
 
     def __init__(self, config):
         super(BertForTokenClassification, self).__init__(config)
+        self.num_labels = config.num_labels
+        self.dep_embeddings_num = 300
+        self.bert = BertModel(config)
+        self.num_heads = 3
+        self.alpha = 0.015
+        self.dropout = nn.Dropout(0.1)
+        self.loss_fct = nn.CrossEntropyLoss(ignore_index=-1)
+        self.mi_loss = MILoss()
+        self.classifier = nn.Linear(config.hidden_size, config.num_labels)
+        self.dep_embeddings = nn.Embedding(len(DEPREL_DICT), self.dep_embeddings_num, 0)
+        self.gat = HGAT(config.hidden_size, config.hidden_size, self.dep_embeddings_num, self.num_heads)
+
+    def forward(
+        self,
+        batch_tgt: Dict[str, Tensor],
+        batch_src: Dict[str, Tensor] = None,
+    ):
+        if self.training:
+            input_ids = torch.cat([batch_src['input_ids'], batch_tgt['input_ids']])
+            token_type_ids = torch.cat([batch_src['token_type_ids'], batch_tgt['token_type_ids']])
+            attention_mask = torch.cat([batch_src['attention_mask'], batch_tgt['attention_mask']])
+            deprel_graph = dgl.batch([batch_src['deprel_graph'], batch_tgt['deprel_graph']])
+            subtoken_ids = torch.cat([batch_src['subtoken_ids'], batch_tgt['subtoken_ids']])
+            sequence_output = self.bert(input_ids,
+                                        token_type_ids=token_type_ids,
+                                        attention_mask=attention_mask)[0]
+            sequence_output = self.dropout(sequence_output)
+            deprel_graph.edata['ex'] = self.dep_embeddings(deprel_graph.edata['ex'])
+            # sign = torch.as_tensor([1, -1] * int(len(deprel_graph.edata['ex']) / 2), device=deprel_graph.edata['ex'].device).unsqueeze(-1)
+            # deprel_graph.edata['ex'] = deprel_graph.edata['ex'] * sign
+            sequences = []
+            for subtoken_id, sequence in zip(subtoken_ids, sequence_output):
+                span_len = 1
+                span = []
+                for i in range(len(subtoken_id)):
+                    if subtoken_id[i] != -1 and subtoken_id[i] != 0:
+                        span.append(sequence[i])
+                        if subtoken_id[i] == subtoken_id[i+1]:
+                            span_len += 1
+                        else:
+                            if span_len == 1:
+                                sequences.append(span[0])
+                            else:
+                                sequences.append(torch.stack(span).mean(0))
+                            span = []
+                            span_len = 1
+            gat_output = self.gat(deprel_graph, torch.stack(sequences))
+            gat_output = self.dropout(gat_output)
+            logits: Tensor = self.classifier(gat_output)
+            src_logits = logits[:batch_src['subtoken_ids'].max(-1)[0].sum()]
+            tgt_logits = logits[batch_src['subtoken_ids'].max(-1)[0].sum():]
+            gold_labels = batch_src['gold_labels']
+            # src_mask = batch_src['attention_mask']
+            # active_src_loss = src_mask.view(-1) == 1
+            # active_src_logits = src_logits.view(-1, self.num_labels)[active_src_loss]
+            # active_src_labels = gold_labels.view(-1)[active_src_loss]
+            active_src_logits = src_logits
+            active_src_labels = gold_labels[gold_labels != -1]
+            loss = self.loss_fct(active_src_logits, active_src_labels)
+            # active_loss = attention_mask.view(-1) == 1
+            # active_logits = logits.view(-1, self.num_labels)[active_loss]
+            active_logits = logits
+            p = f.softmax(active_logits, dim=-1)
+            _mi_loss = self.mi_loss(p)
+            loss += self.alpha * _mi_loss
+        else:
+            loss = None
+            input_ids = batch_tgt['input_ids']
+            attention_mask = batch_tgt['attention_mask']
+            token_type_ids = batch_tgt['token_type_ids']
+            sequence_output = self.bert(input_ids,
+                                        attention_mask=attention_mask,
+                                        token_type_ids=token_type_ids)[0]
+            deprel_graph = batch_tgt['deprel_graph']
+            subtoken_ids = batch_tgt['subtoken_ids']
+            deprel_graph.edata['ex'] = self.dep_embeddings(deprel_graph.edata['ex'])
+            # sign = torch.as_tensor([1, -1] * int(len(deprel_graph.edata['ex']) / 2),
+            #                        device=deprel_graph.edata['ex'].device).unsqueeze(-1)
+            # deprel_graph.edata['ex'] = deprel_graph.edata['ex'] * sign
+            sequences = []
+            for subtoken_id, sequence in zip(subtoken_ids, sequence_output):
+                span_len = 1
+                span = []
+                for i in range(len(subtoken_id)):
+                    if subtoken_id[i] != -1 and subtoken_id[i] != 0:
+                        span.append(sequence[i])
+                        if subtoken_id[i] == subtoken_id[i + 1]:
+                            span_len += 1
+                        else:
+                            if span_len == 1:
+                                sequences.append(span[0])
+                            else:
+                                sequences.append(torch.stack(span).mean(0))
+                            span = []
+                            span_len = 1
+            gat_output = self.gat(deprel_graph, torch.stack(sequences))
+            tgt_logits: Tensor = self.classifier(gat_output)
+        return TokenClassifierOutput(logits=tgt_logits, loss=loss, hidden_states=sequence_output)
+
+
+class BertClassifer(BertPreTrainedModel):
+
+    def __init__(self, config):
+        super(BertClassifer, self).__init__(config)
         self.num_labels = config.num_labels
         self.bert = BertModel(config)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
@@ -102,7 +251,7 @@ class BertForTokenClassification(BertPreTrainedModel):
                 active_loss = attention_mask.view(-1) == 1
                 active_logits = logits.view(-1, self.num_labels)[active_loss]
                 active_labels = gold_labels.view(-1)[active_loss]
-                loss = self.loss_fct(active_logits, active_labels)
+                loss = self.loss_fct(active_logits, active_labels).nan_to_num(0)
             else:
                 loss = self.loss_fct(logits.view(-1, self.num_labels), gold_labels.view(-1))
         return TokenClassifierOutput(logits=logits, loss=loss, hidden_states=sequence_output)
@@ -118,13 +267,14 @@ class PretrainedBertForTokenClassification(BertPreTrainedModel):
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
         self.classifier = nn.Linear(config.hidden_size, config.num_labels)
         self.loss_fct = nn.CrossEntropyLoss(ignore_index=-1)
-        self.pos = [(tag, float(weight)) for item in open("./ann/rest_pos.txt").read().splitlines()
+        self.pos = [(tag, float(weight))
+                    for item in open("./ann/laptop_pos.txt").read().splitlines()
                     for tag, weight in (item.split(), )]
         self.deprel = [(tag, float(weight))
-                       for item in open("./ann/rest_deprel.txt").read().splitlines()
+                       for item in open("./ann/laptop_deprel.txt").read().splitlines()
                        for tag, weight in (item.split(), )]
         self.pos_project = nn.Linear(config.hidden_size, len(self.pos))
-        self.deprel_project = nn.Linear(config.hidden_size, len(self.deprel))
+        # self.deprel_project = nn.Linear(config.hidden_size, len(self.deprel))
 
     def forward(self,
                 input_ids: Tensor,
@@ -153,19 +303,21 @@ class PretrainedBertForTokenClassification(BertPreTrainedModel):
                 # active_logits.add_(
                 #     torch.log(torch.Tensor([weight
                 #                             for _, weight in self.pos]).pow(2.0).add(1e-12)).cuda())
+                pos_labels = torch.where(
+                    torch.rand(pos_labels.shape, device=pos_labels.device) > 0.25, pos_labels, -1)
                 active_labels = pos_labels.view(-1)[active_loss]
                 pos_loss = self.loss_fct(active_logits, active_labels)
-                deprel_logits = self.deprel_project(sequence_output)
-                active_logits = deprel_logits.view(-1, len(self.deprel))[active_loss]
-                # active_logits.add_(
-                #     torch.log(
-                #         torch.Tensor([weight
-                #                       for _, weight in self.deprel]).pow(2.0).add(1e-12)).cuda())
-                active_labels = deprel_labels.view(-1)[active_loss]
-                deprel_loss = self.loss_fct(active_logits, active_labels)
-                aux_loss = pos_loss + deprel_loss
-                logger.debug(f"{main_loss}, {pos_loss}, {deprel_loss}")
-                loss = 0.0 * aux_loss
+                # deprel_logits = self.deprel_project(sequence_output)
+                # active_logits = deprel_logits.view(-1, len(self.deprel))[active_loss]
+                # # active_logits.add_(
+                # #     torch.log(
+                # #         torch.Tensor([weight
+                # #                       for _, weight in self.deprel]).pow(2.0).add(1e-12)).cuda())
+                # active_labels = deprel_labels.view(-1)[active_loss]
+                # deprel_loss = self.loss_fct(active_logits, active_labels)
+                aux_loss = pos_loss  #+ deprel_loss
+                # logger.debug(f"{main_loss}, {pos_loss}, {deprel_loss}")
+                loss = main_loss + 0.5 * aux_loss
             else:
                 loss = self.loss_fct(logits.view(-1, self.num_labels), gold_labels.view(-1))
         return TokenClassifierOutput(logits=logits, loss=loss, hidden_states=sequence_output)
@@ -176,10 +328,10 @@ class ContrastModel(nn.Module):
     def __init__(self,
                  model_1: BertForTokenClassification,
                  model_2: BertForTokenClassification,
-                 K=256,
+                 K=65535,
                  m: float = 0.999,
                  dim: int = 128):
-        super(MMTModel, self).__init__()
+        super(ContrastModel, self).__init__()
         self.model_1 = model_1
         self.model_2 = model_2
         self.ce_loss = nn.CrossEntropyLoss(ignore_index=-1)
@@ -196,7 +348,7 @@ class ContrastModel(nn.Module):
             param_k.requires_grad = False  # not update by gradient
 
         # create the queue
-        self.register_buffer("queue", torch.randn(dim, K))
+        self.register_buffer("queue", torch.randn(self.model_1.config.hidden_size, K))
         self.queue = nn.functional.normalize(self.queue, dim=0)
 
         self.register_buffer("queue_ptr", torch.zeros(1, dtype=torch.long))
@@ -215,7 +367,7 @@ class ContrastModel(nn.Module):
         outputs2: TokenClassifierOutput = self.model_2(input_ids_2, token_type_ids_2,
                                                        attention_mask_2)
         # encode the sentence representation
-        q = self.encoder_q(torch.mean(outputs1.hidden_states, dim=1))
+        q = torch.mean(outputs1.hidden_states, dim=1)
         q = nn.functional.normalize(q, dim=1)  # NxC
         # compute key features
         with torch.no_grad():  # no gradient to keys
@@ -223,7 +375,7 @@ class ContrastModel(nn.Module):
             # # shuffle for making use of BN
             # im_k, idx_unshuffle = self._batch_shuffle_ddp(im_k)
             # encode the disturbance/augmented sencente representation
-            k = self.encoder_k(torch.mean(outputs2.hidden_states, dim=1))  # keys: NxC
+            k = torch.mean(outputs2.hidden_states, dim=1)  # keys: NxC
             k = nn.functional.normalize(k, dim=1)
             # k = self._batch_unshuffle_ddp(k, idx_unshuffle)
         # positive logits: Nx1
@@ -325,7 +477,7 @@ class MMTModel(nn.Module):
                  model_2: BertForTokenClassification,
                  model_2_ema: BertForTokenClassification,
                  alpha: float = 0.999,
-                 soft_loss_weight: float = 1,
+                 soft_loss_weight: float = 0.5,
                  domain_loss_weight: float = 0.1):
         super(MMTModel, self).__init__()
         self.model_1 = model_1
@@ -382,19 +534,34 @@ class MMTModel(nn.Module):
             labels_1, labels_2 = None, None
             pos_labels_1, pos_labels_2 = None, None
             deprel_labels_1, deprel_labels_2 = None, None
+        _labels_1, _labels_2 = labels_1, labels_2
+        _pos_labels_1, _pos_labels_2 = pos_labels_1, pos_labels_2
+        p = 0.25
+        if labels_1 is not None:
+            _labels_1 = torch.where(
+                torch.rand(labels_1.shape, device=labels_1.device) > p, labels_1, -1)
+            for idx, label in enumerate(_labels_1):
+                if all((label == 0) + (label == -1)):
+                    _labels_1[idx] = -torch.ones(_labels_1.size(-1), device=_labels_1.device)
+        if labels_2 is not None:
+            _labels_2 = torch.where(
+                torch.rand(labels_2.shape, device=labels_2.device) > p, labels_2, -1)
+            for idx, label in enumerate(_labels_2):
+                if all((label == 0) + (label == -1)):
+                    _labels_2[idx] = -torch.ones(_labels_2.size(-1), device=_labels_2.device)
         outputs1: TokenClassifierOutput = self.model_1(input_ids_1,
                                                        token_type_ids_1,
                                                        attention_mask_1,
-                                                       gold_labels=labels_1,
-                                                       pos_labels=pos_labels_1,
+                                                       gold_labels=_labels_1,
+                                                       pos_labels=_pos_labels_1,
                                                        deprel_labels=deprel_labels_1)
         outputs1_ema: TokenClassifierOutput = self.model_ema_1(input_ids_2, token_type_ids_2,
                                                                attention_mask_2)
         outputs2: TokenClassifierOutput = self.model_2(input_ids_2,
                                                        token_type_ids_2,
                                                        attention_mask_2,
-                                                       gold_labels=labels_2,
-                                                       pos_labels=pos_labels_2,
+                                                       gold_labels=_labels_2,
+                                                       pos_labels=_pos_labels_2,
                                                        deprel_labels=deprel_labels_2)
         outputs2_ema: TokenClassifierOutput = self.model_ema_2(input_ids_1, token_type_ids_1,
                                                                attention_mask_1)
@@ -407,7 +574,7 @@ class MMTModel(nn.Module):
                 outputs1.logits, outputs2_ema.logits, attention_mask_1) + self.ce_soft_loss(
                     outputs2.logits, outputs1_ema.logits, attention_mask_2)
             # total loss
-            loss = loss_ce + loss_ce_soft * self.soft_loss_weight  # + d_loss * self.domain_loss_weight
+            loss = loss_ce_soft * self.soft_loss_weight  # + d_loss * self.domain_loss_weight
             logger.debug("loss_ce: %f, loss_ce_soft: %f, loss: %f", loss_ce.item(),
                          loss_ce_soft.item(), loss.item())
         return TokenClassifierOutput(logits=torch.cat([outputs1.logits, outputs2.logits]),
@@ -432,14 +599,3 @@ def concat_all_gather(tensor):
 
     output = torch.cat(tensors_gather, dim=0)
     return output
-
-    # domain loss for target domain and source domain
-    # hidden_states = self.model_1(input_ids_1, token_type_ids_1,
-    #                              attention_mask_1).hidden_states
-    # domain_pre_1, _ = self.dom_model(hidden_states)
-    # d_loss_1 = self.domain_loss(domain_pre_1, domains_mask_1[:, 0].float())
-    # hidden_states = self.model_1(input_ids_2, token_type_ids_2,
-    #                              attention_mask_2).hidden_states
-    # domain_pre_2, _ = self.dom_model(hidden_states)
-    # d_loss_2 = self.domain_loss(domain_pre_2, domains_mask_2[:, 0].float())
-    # d_loss = (d_loss_1 + d_loss_2) / 2
