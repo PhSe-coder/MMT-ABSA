@@ -11,7 +11,7 @@ class ModelArguments(TrainingArguments):
     """
     init_1: str = field(default=None, metadata={"help": "pretrained model used to initialize the mmt model 1"})
     init_2: str = field(default=None, metadata={"help": "pretrained model used to initialize the mmt model 2"})
-
+    
     model_name: Optional[str] = field(default="bert",
                                       metadata={"help": "The name of the model (ner, pos...)."})
     pretrained_model: Optional[str] = field(
@@ -31,7 +31,7 @@ class ModelArguments(TrainingArguments):
              "than this will be truncated, sequences shorter will be padded.")
         },
     )
-    train_file: Optional[str] = field(
+    train_file: Optional[List[str]] = field(
         default=None, metadata={"help": "The input training data files (txt file)."})
     validation_file: Optional[str] = field(
         default=None,
@@ -57,31 +57,20 @@ class ModelArguments(TrainingArguments):
     logging_steps: Optional[int] = field(
         default=10, metadata={"help": "Number of update steps between two logs"})
     patience: Optional[int] = field(default=5, metadata={"help": 'early stopping rounds'})
-    device: Optional[str] = field(default="cpu", metadata={"help": 'device for training'})
 
     def __post_init__(self):
         if self.model_name == 'mmt' and (self.init_1 is None or self.init_2 is None):
             raise ValueError("init_1 and init_2 arguments are needed.")
         if self.model_name not in SUPPORTED_MODELS:
-            raise ValueError(f"Model name {self.model_name} is not supported.")
+            raise ValueError(f"Model name `{self.model_name}` is not supported.")
         if self.do_train and self.train_file is None:
             raise ValueError("Need training file when `do_train` is set.")
         if self.do_eval and self.validation_file is None:
             raise ValueError("Need validation file when `do_eval` is set.")
         if self.do_predict and self.test_file is None:
             raise ValueError("Need test file when `do_eval` is set.")
-        if self.train_file is None or self.test_file is None:
-            raise ValueError("Need training or test file.")
-        else:
-            if self.train_file is not None:
-                extension = self.train_file.split(".")[-1]
-                assert extension in ["txt"], "`train_file` should be a txt file."
-                if self.do_eval:
-                    extension = self.validation_file.split(".")[-1]
-                    assert extension in ["txt"], "`validation_file` should be a txt file."
-            if self.test_file is not None:
-                extension = self.test_file.split(".")[-1]
-                assert extension in ["txt"], "`test_file` should be a txt file."
+        if self.train_file is None:
+            raise ValueError("Need train file.")
         if self.best_model_path is None and self.do_predict and not self.do_train:
             raise ValueError(
                 "Argument `best_model_path` is needed when `do_eval` is True and `do_train` is False"
