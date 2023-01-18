@@ -6,7 +6,7 @@ export CUDA_LAUNCH_BLOCKING=1
 export TRANSFORMERS_OFFLINE=0
 export DGLBACKEND=pytorch
 output='./out/bert_base/'
-train_dir='./processed/dataset/'
+train_dir='./processed/dataset'
 val_dir='./processed/dataset'
 test_dir='./processed/dataset'
 for tgt_domain in ${domains[@]};
