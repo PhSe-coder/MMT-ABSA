@@ -8,9 +8,7 @@ from tqdm import tqdm
 from transformers.tokenization_utils import PreTrainedTokenizer
 from transformers.utils.generic import PaddingStrategy
 from torch.utils.data.dataloader import default_collate
-from allennlp.data.dataset_readers.dataset_utils.span_utils import enumerate_spans, bio_tags_to_spans
 import linecache
-import numpy as np
 from constants import TAGS, POS_DICT, DEPREL_DICT
 from utils.tag_utils import ot2bio_absa
 
