@@ -138,6 +138,3 @@ processed/
 out/
 entities/
 ann/
-*.bin
-*.bin.gz
-wikidata*.txt
