@@ -1,23 +1,24 @@
 import logging
 from collections import ChainMap
-from random import choice
 from typing import Dict, Iterable, List, Set, Tuple, Union
-
+import random
 from .stanza_annotation import annotation
 from stanza.models.common.doc import Sentence
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+random.seed(42)
 MR = ('amod', 'advmod', 'rcmod')
 JJ = ('JJ', 'JJS', 'JJR')
-NN = ('NN', 'NNS', 'NNP')
+NN = ('NN', 'NNS', 'NNP', 'NNPS')
 SENTMENT_MAP = {0: 'NEG', 1: 'NEU', 2: 'POS'}
-
 
 __all__ = ['Rule', 'SENTMENT_MAP']
 
+
 class Rule:
+
     def __init__(self, text: Union[str, Sentence], pos_words: Set[str], neg_words: Set[str]):
         if isinstance(text, str):
             sentence = annotation(text)
@@ -28,8 +29,8 @@ class Rule:
         self.pos_words = pos_words
         self.neg_words = neg_words
 
-    def propagation(self, targets: Set[str], opinions: Set[str]):
-        targ11 = self.R1_1()
+    def propagation(self, targets: Set[str], opinions: Set[str], ents: Set[str]):
+        targ11 = self.R1_1(ents)
         targ12 = self.R1_2()
         op21 = self.R2_1(targets)
         op22 = self.R2_2(targets)
@@ -41,7 +42,12 @@ class Rule:
         op61 = self.R6_1(opinions)
         # if len(tar_dict) == 0:
         #     targ71 = self.R7_1(doc)
-        tar_dict = ChainMap(targ11, targ12, targ31, targ32, targ51)
+        targ8 = self.R8()
+        tar_dict = ChainMap(targ11, targ12, targ31, targ32, targ51, targ8)
+        # if len(tar_dict) == 0:
+        #     if random.random() > 0.5:
+        #         targ9 = self.R9(ents)
+        #         tar_dict.update(targ9)
         op_set = op21 | op22 | op41 | op42 | op61
         targets.update(self.id2text(tar_dict.keys()))
         opinions.update(op_set)
@@ -84,7 +90,7 @@ class Rule:
         else:
             return (res[0]['id'], res[-1]['id'])
 
-    def R1_1(self):
+    def R1_1(self, ents: Set[str]):
         target_dict: Dict[Union[Tuple[int, int], Tuple[int]], str] = {}
         doc = self.doc
         for item in doc:
@@ -95,18 +101,50 @@ class Rule:
                 elif token in self.neg_words:
                     label = 'NEG'
                 else:
-                    label = choice(('POS', 'NEG', 'NEU'))
+                    label = SENTMENT_MAP.get(self.sentence.sentiment)
                 head = item['head']
                 if head == 0:
                     continue
                 if item['deprel'] in MR:
                     # the id of token starts at 1 rather than 0
                     target = doc[head - 1]  # O-->O-dep-->T
-                    _target = self.target_expand(target)
-                    if target['xpos'] in NN and _target not in target_dict:
-                        target_dict[_target] = label
+                    # comments:
+                    # if any noun's head is the target, point to the noun instead.
+                    # example sentence: This is by far the best feature of etrade .
+                    target_heads = tuple(filter(
+                        lambda d: d['head'] == target['id'] and d['deprel'] in ['nmod'] and d[
+                            'xpos'] in NN, doc))
+                    for tok in target_heads:  # O-->O-dep-->H<--T-dep<--T
+                        _tok = self.target_expand(tok)
+                        if _tok not in target_dict:
+                            target_dict[_tok] = label
+                    # if property of something is good, this thing is likely to be aspect terms
+                    # example sentence: The phone has a good screen.
+                    target_heads_1 = tuple(
+                        filter(
+                            lambda d: d['head'] == target['head'] and d['deprel'] in [
+                                'nsubj', 'obj'
+                            ] and d['xpos'] in NN and d['id'] != target['id'] and d['text'] in ents,
+                            doc))
+                    for tok in target_heads_1:  # O-->O-dep-->H<--T-dep<--T
+                        _tok = self.target_expand(tok)
+                        if _tok not in target_dict:
+                            target_dict[_tok] = label
+                    if len(target_heads) + len(target_heads_1) == 0:
+                        _target = self.target_expand(target)
+                        if target['xpos'] in NN and _target not in target_dict:
+                            target_dict[_target] = label
+                        # find conj relationship aspect terms
+                        target_heads = tuple(filter(
+                        lambda d: d['head'] == target['id'] and d['deprel'] in ['conj'] and d[
+                            'xpos'] in NN, doc))
+                        for tok in target_heads:
+                            _tok = self.target_expand(tok)
+                            if _tok not in target_dict:
+                                target_dict[_tok] = label
         return target_dict
 
+    # example sentence: "iPod" is the best mp3 player.
     def R1_2(self):
         target_dict: Dict[Union[Tuple[int, int], Tuple[int]], str] = {}
         doc = self.doc
@@ -118,7 +156,7 @@ class Rule:
                 elif token in self.neg_words:
                     label = 'NEG'
                 else:
-                    label = choice(('POS', 'NEG', 'NEU'))
+                    label = SENTMENT_MAP.get(self.sentence.sentiment)
                 head = item['head']
                 if head == 0:
                     continue
@@ -229,6 +267,8 @@ class Rule:
                     list_opinion.append(opin['text'])
         return set(list_opinion)
 
+    # example sentence: service is good
+    # example sentence: Email lists are alot more convenient than chat rooms .
     def R5_1(self):
         target_dict: Dict[Union[Tuple[int, int], Tuple[int]], str] = {}
         doc = self.doc
@@ -240,11 +280,11 @@ class Rule:
                 elif token in self.neg_words:
                     label = 'NEG'
                 else:
-                    label = choice(('POS', 'NEG', 'NEU'))
+                    label = SENTMENT_MAP.get(self.sentence.sentiment)
                 target_heads = tuple(
                     filter(
-                        lambda d: d['head'] == item['id'] and d['deprel'] in ['nsubj'] and d['xpos']
-                        in NN, doc))
+                        lambda d: d['head'] == item['id'] and d['deprel'] in ['nsubj']
+                        and d['xpos'] in NN, doc))
                 if len(target_heads) > 1:
                     logger.debug(
                         f"{' '.join([token['text'] for token in doc])} has MULTIPLE target heads")
@@ -252,13 +292,22 @@ class Rule:
                     _tok = self.target_expand(tok)
                     if _tok not in target_dict:
                         target_dict[_tok] = label
+                    # find conj relationship aspect terms
+                    # example sentence: The theory and demands are rigorous .
+                    heads = tuple(filter(
+                        lambda d: d['head'] == tok['id'] and d['deprel'] in ['conj'] and d[
+                            'xpos'] in NN, doc))
+                    for tok in heads:
+                        _tok = self.target_expand(tok)
+                        if _tok not in target_dict:
+                            target_dict[_tok] = label
         return target_dict
 
     def R6_1(self, know_opinions: Set[str]):
         list_opinion = []
         doc = self.doc
         for item in doc:
-            if item['deprel'] in ('nsubj') and item['xpos'] in NN \
+            if item['deprel'] in ('nsubj',) and item['xpos'] in NN \
               and doc[item['head']-1]['xpos'] in JJ \
               and doc[item['head']-1]['text'].lower() in know_opinions:
                 assert item['head'] > 0
@@ -274,7 +323,56 @@ class Rule:
                 tok = item
             elif item['deprel'] == 'det' and doc[item['head'] - 1]['xpos'] in NN:
                 tok = doc[item['head'] - 1]
+            if tok is not None:
                 _tok = self.target_expand(tok)
-            if tok is not None and _tok not in target_dict:
-                target_dict[_tok] = 'POS'
+                if _tok not in target_dict:
+                    target_dict[_tok] = SENTMENT_MAP.get(self.sentence.sentiment)
+        return target_dict
+
+    def R8(self):
+        target_dict: Dict[Union[Tuple[int, int], Tuple[int]], str] = {}
+        doc = self.doc
+        for item in doc:
+            if item['deprel'] in ('xcomp', ) and item['xpos'] in JJ:
+                assert item['head'] > 0
+                head = doc[item['head'] - 1]
+                target_heads = tuple(
+                    filter(
+                        lambda d: d['head'] == head['id'] and d['deprel'] in
+                        ('nsubj', ) and d['xpos'] in NN, doc))
+                if len(target_heads) > 1:
+                    logger.debug(f"{self.sentence.text} has MULTIPLE target heads.")
+                for tok in target_heads:  # O-->O-dep-->H<--T-dep<--T
+                    _tok = self.target_expand(tok)
+                    if _tok not in target_dict:
+                        token = item['text'].lower()
+                        if token in self.pos_words:
+                            label = 'POS'
+                        elif token in self.neg_words:
+                            label = 'NEG'
+                        else:
+                            label = SENTMENT_MAP.get(self.sentence.sentiment)
+                        target_dict[_tok] = label
+        return target_dict
+
+    def R9(self, ents: Set[str]):
+        target_dict: Dict[Union[Tuple[int, int], Tuple[int]], str] = {}
+        doc = self.doc
+        for item in doc:
+            tok = None
+            if item['deprel'] in ('obj', 'nsubj',
+                                  'nsubj:pass') and item['xpos'] in NN and item['text'] in ents:
+                tok = item
+            # example: E - Trade customer service
+            # if item['deprel'] in ('compound', ):
+            #     _tok = self.target_expand(item)
+            #     # if _tok not in target_dict:
+            #     #     target_dict[_tok] = SENTMENT_MAP.get(self.sentence.sentiment)
+            #     words = self.id2text((_tok,), False).pop()
+            #     if item['xpos'] in NN and words in ents:
+            #         tok = doc[item['head'] - 1]
+            if tok is not None:
+                _tok = self.target_expand(tok)
+                if _tok not in target_dict:
+                    target_dict[_tok] = SENTMENT_MAP.get(self.sentence.sentiment)
         return target_dict
