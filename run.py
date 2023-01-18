@@ -118,12 +118,6 @@ class Constructor:
             for param in model_2_ema.parameters():
                 param.detach_()
             model = MMTModel(model_1, model_1_ema, model_2, model_2_ema)
-        elif model_name == 'contrast':
-            model_1 = BertForTokenClassification.from_pretrained(args.pretrained_model,
-                                                                 num_labels=num_labels)
-            model_2 = BertForTokenClassification.from_pretrained(args.pretrained_model,
-                                                                 num_labels=num_labels)
-            model = ContrastModel(model_1, model_2)
         device_count = torch.cuda.device_count()
         if device_count >= 1:
             if device_count > 1:
