@@ -22,10 +22,11 @@ parser = ArgumentParser(description='Annotate a absa dataset by Double Propagati
 parser.add_argument("--sep", default="***", type=str, help="data item seperator")
 parser.add_argument("--dataset", required=True, help="Dataset to be annotated")
 parser.add_argument("--output-file", required=True, help="Path where the annotation result should to be saved")
-parser.add_argument("--epoch-nums", type=int, default=3, help="iteration numbers of the algorithm")
+parser.add_argument("--epoch-nums", type=int, default=1, help="iteration numbers of the algorithm")
 parser.add_argument("--batch-size", type=int, default=32, help="annotation batch size")
 parser.add_argument("--opinion-file", type=str, default='./data/Lessico-Opinion.txt', help="opinion file path")
 parser.add_argument("--target-file", type=str, default='./data/Lessico-Target.txt', help="target file path")
+parser.add_argument("--ent-file", type=str, help="entities file")
 parser.add_argument("--schema", type=str, default="t", choices=tagging_schemas, help="annotaion schema for each tag")
 
 class Producer(threading.Thread):
@@ -84,6 +85,8 @@ class Consumer(threading.Thread):
             tars = f.read().splitlines()
         self.target_set = set(tars)
         self.opinion_set = set(ops)
+        with open(args.ent_file) as f:
+            self.ents = set([line.strip() for line in f])
 
     def run(self):
         global step, ready
@@ -92,8 +95,9 @@ class Consumer(threading.Thread):
                 try:
                     sentence, rest = self.data.get(timeout=5)
                     rule = Rule(sentence, self.positive_words, self.negtive_words)
-                    tar_dict, _ = rule.propagation(self.target_set, self.opinion_set)
-                    if step != self.args.epoch_nums - 1:
+                    tar_dict, _ = rule.propagation(self.target_set, self.opinion_set, self.ents)
+                    # can't be !=, must be '<', prevent early stopping
+                    if step < self.args.epoch_nums - 1:
                         continue
                     text = sentence.text
                     tar_senti = sorted(tar_dict.items(), key=lambda d:d[0][0])
