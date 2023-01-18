@@ -7,8 +7,8 @@ from qwikidata.sparql import return_sparql_query_results
 # tagme token
 tagme.GCUBE_TOKEN = "58cf013e-71b9-4d8d-a7c1-396f5e842bec-843339462"
 
-logger = logging.getLogger(__name__)
-logging.basicConfig(format='%(asctime)s: %(levelname)s: %(message)s')
+# logger = logging.getLogger(__name__)
+# logging.basicConfig(format='%(asctime)s: %(levelname)s: %(message)s')
 
 
 def ot2bio_absa(ts_tag_sequence: List[str]):
@@ -26,7 +26,7 @@ def ot2bio_absa(ts_tag_sequence: List[str]):
     return new_ts_sequence
 
 
-def Annotation_mentions(txt):
+def Annotation_mentions(txt, logger=None):
     """
     发现那些文本中可以是维基概念实体的概念
     :param txt: 一段文本对象，str类型
@@ -38,11 +38,14 @@ def Annotation_mentions(txt):
         try:
             dic[str(mention).split(" [")[0]] = str(mention).split("] lp=")[1]
         except:
-            logger.error('error annotation_mention about ' + mention)
+            if logger:
+                logger.error('error annotation_mention about ' + mention)
+            else:
+                print('error annotation_mention about ' + mention)
     return dic
 
 
-def Annotate(txt, language="en", theta=0.1):
+def Annotate(txt, language="en", theta=0.1, logger=None):
     """
     解决文本的概念实体与维基百科概念之间的映射问题
     :param txt: 一段文本对象，str类型
@@ -59,7 +62,11 @@ def Annotate(txt, language="en", theta=0.1):
             dic[(ann.begin, ann.end)] = (ann.score, ann.mention, ann.entity_title, ann.entity_id,
                                          ann.uri())
         except:
-            logger.error('error annotation about ' + ann)
+            if logger:
+                logger.error('error annotation about ' + ann)
+            else:
+                print('error annotation about ' + ann)
+
     return dic
 
 
