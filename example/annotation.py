@@ -12,8 +12,6 @@ logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-tagging_schemas = ['t', 'bio']
-
 parser = ArgumentParser(description='Annotate a absa dataset with dep and pos tag')
 parser.add_argument("--sep", default="***", type=str, help="data item seperator")
 parser.add_argument("--dataset", required=True, help="Dataset to be annotated")
@@ -83,17 +81,17 @@ class Consumer(threading.Thread):
                     gold_labels: List[str] = rest.split()
                     doc: List[dict] = sentence.to_dict()
                     assert len(gold_labels) == len(doc)
-                    pos_labels, deprel_labels = [], []
+                    pos_labels, deprel_labels, heads = [], [], []
                     for word, _ in zip(doc, gold_labels):
-                        pos, deprel = word['xpos'], word['deprel']
-                        pos_label = "T-{}".format(pos)
-                        deprel_label = "T-{}".format(deprel)
-                        pos_labels.append(pos_label)
-                        deprel_labels.append(deprel_label)
+                        pos, deprel, head = word['xpos'], word['deprel'], word['head']
+                        pos_labels.append(pos)
+                        deprel_labels.append(deprel)
+                        heads.append(str(head))
                     assert len(gold_labels) == len(deprel_labels)
                     assert len(gold_labels) == len(pos_labels)
+                    assert len(gold_labels) == len(heads)
                     f.write(
-                        f"{self.sep.join([text, rest.strip(), ' '.join(pos_labels), ' '.join(deprel_labels)])}\n"
+                        f"{self.sep.join([text, rest.strip(), ' '.join(pos_labels), ' '.join(deprel_labels), ' '.join(heads)])}\n"
                     )
                 except Empty:
                     break
