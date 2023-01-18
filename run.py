@@ -8,7 +8,6 @@ from typing import List
 from torch.utils.data.distributed import DistributedSampler
 import torch.distributed as dist
 import torch
-import torch.nn as nn
 from torch.optim.optimizer import Optimizer
 from torch.utils.data import DataLoader
 from torch.nn.parallel import DistributedDataParallel
@@ -19,8 +18,8 @@ from allennlp.data.dataset_readers.dataset_utils.span_utils import bio_tags_to_s
 
 from args import ModelArguments
 from constants import SUPPORTED_MODELS, TAGS
-from dataset import BaseDataset, ContrastDataset, MMTDataset, MyDataset
-from eval import absa_evaluate
+from dataset import MMTDataset, MyDataset
+from eval import absa_evaluate, evaluate
 from model import *
 from optimization import BertAdam
 
@@ -135,8 +134,6 @@ class Constructor:
                 self.train_set1 = MyDataset(args.train_file[1], self.tokenizer)
             elif args.model_name == 'mmt':
                 self.train_set = MMTDataset(args.train_file, self.tokenizer, False)
-            elif args.model_name == 'contrast':
-                self.train_set = ContrastDataset(args.train_file, self.tokenizer)
 
         if args.do_eval:
             self.validation_set = MyDataset(self.args.validation_file, self.tokenizer)
@@ -220,7 +217,8 @@ class Constructor:
                     gold_Y.clear()
                     pred_Y.clear()
             if self.args.do_eval:
-                val_pre, val_rec, val_f1 = self.evaluate(val_data_loader)
+                prediction, gold = self.evaluate(val_data_loader)
+                val_pre, val_rec, val_f1 = absa_evaluate(prediction, gold)
                 logger.info(
                     f'> val_pre: {val_pre:.4f}, val_rec: {val_rec:.4f}, val_f1: {val_f1:.4f}')
                 assert val_f1 > 0
@@ -279,7 +277,7 @@ class Constructor:
             with open(os.path.join(self.args.output_dir, "predict.txt"), "w") as f:
                 for i in range(len(gold_Y)):
                     f.write(f"{text[i]}***{' '.join(pred_Y[i])}***{' '.join(gold_Y[i])}\n")
-        return absa_evaluate(pred_Y, gold_Y)
+        return pred_Y, gold_Y
 
     def span2label(self, predict: List[List[int]], gold: List[List[int]]):
         gold_Y: List[List[tuple]] = []
@@ -310,9 +308,10 @@ class Constructor:
             gold_Y.append(gold_list)
         idx = 0
         for item in gold_Y:
-            pred_Y.append([TAGS[pred] for pred in predict[idx: idx+len(item)]])
+            pred_Y.append([TAGS[pred] for pred in predict[idx:idx + len(item)]])
             idx += len(item)
         return pred_Y, gold_Y
+
     def reset_params(self):
         for child in self.model.module.children():
             if type(child) != BertModel:  # skip bert params
@@ -430,11 +429,15 @@ class Constructor:
             logger.info(f">> load best model: {best_model_path.split('/')[-1]}")
             if not self.args.do_train:
                 self.model.load_state_dict(torch.load(best_model_path))
-            test_pre, test_rec, test_f1 = self.evaluate(test_data_loader, True)
-            content = f'test_pre: {test_pre:.4f}, test_rec: {test_rec:.4f}, test_f1: {test_f1:.4f}'
-            logger.info(f'>> {content}')
-            with open(os.path.join(self.args.output_dir, "absa_prediction.txt"), "w") as f:
-                f.write(content)
+            prediction, gold = self.evaluate(val_data_loader, True)
+            items = (absa_evaluate, "absa_prediction.txt"), (evaluate, "ae_prediction.txt")
+            for func, filename in (items):
+                test_pre, test_rec, test_f1 = func(prediction, gold)
+                content = f'test_pre: {test_pre:.4f}, test_rec: {test_rec:.4f}, test_f1: {test_f1:.4f}'
+                logger.info(f'>> {content}')
+                with open(os.path.join(self.args.output_dir, filename), "w") as f:
+                    f.write(content)
+
         dest_path = os.path.join(self.args.output_dir, best_model_path.split("/")[-1])
         if self.args.local_rank == 0:
             shutil.move(best_model_path, dest_path)
