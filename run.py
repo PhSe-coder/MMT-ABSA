@@ -8,6 +8,8 @@ from typing import List
 from torch.utils.data.distributed import DistributedSampler
 import torch.distributed as dist
 import torch
+import random
+import numpy
 from torch.optim.optimizer import Optimizer
 from torch.utils.data import DataLoader
 from torch.nn.parallel import DistributedDataParallel
@@ -328,6 +330,10 @@ class Constructor:
         if self.args.do_train:
             if best_model_path is not None:
                 self.model.load_state_dict(torch.load(best_model_path))
+            def seed_worker(worker_id):
+                worker_seed = torch.initial_seed() % 2**32
+                numpy.random.seed(worker_seed)
+                random.seed(worker_seed)
             datasampler0 = DistributedSampler(self.train_set0,
                                               num_replicas=dist.get_world_size(),
                                               rank=self.args.local_rank)
@@ -342,7 +348,8 @@ class Constructor:
                     getattr(self.train_set0, "collate_fn", None)) else None,
                 drop_last=True,
                 num_workers=self.args.num_workers,
-                sampler=datasampler0)
+                sampler=datasampler0,
+                worker_init_fn=seed_worker)
             train_data_loader1 = DataLoader(
                 dataset=self.train_set1,
                 batch_size=self.args.batch_size,
@@ -351,7 +358,8 @@ class Constructor:
                     getattr(self.train_set1, "collate_fn", None)) else None,
                 drop_last=True,
                 num_workers=self.args.num_workers,
-                sampler=datasampler1)
+                sampler=datasampler1,
+                worker_init_fn=seed_worker)
             param_optimizer = [(k, v) for k, v in self.model.named_parameters()
                                if v.requires_grad == True and 'pooler' not in k]
             pretrained_param_optimizer = [n for n in param_optimizer
@@ -429,7 +437,7 @@ class Constructor:
             logger.info(f">> load best model: {best_model_path.split('/')[-1]}")
             if not self.args.do_train:
                 self.model.load_state_dict(torch.load(best_model_path))
-            prediction, gold = self.evaluate(val_data_loader, True)
+            prediction, gold = self.evaluate(test_data_loader, True)
             items = (absa_evaluate, "absa_prediction.txt"), (evaluate, "ae_prediction.txt")
             for func, filename in (items):
                 test_pre, test_rec, test_f1 = func(prediction, gold)
