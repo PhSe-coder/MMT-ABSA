@@ -45,6 +45,8 @@ def gen_eda(args):
     with open(args.input, 'r') as dataset, open(output_file, 'w') as writer:
         for _, line in tqdm(enumerate(dataset), total=count):
             items = line.strip().split(args.sep)
+            if len(items[0].split(" ")) == 1:
+                continue
             words = tuple(Word(*item) for item in zip(*(item.split() for item in items)))
             aug_sentences = eda(words, args.alpha_sr, args.alpha_ri, args.alpha_rs, args.alpha_rd,
                                 args.num_aug)
