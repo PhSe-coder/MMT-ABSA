@@ -14,7 +14,7 @@ from torch.nn.parallel import DistributedDataParallel
 from tqdm import tqdm
 from transformers import BertModel, BertTokenizer, HfArgumentParser, set_seed, get_cosine_schedule_with_warmup
 from transformers.modeling_outputs import TokenClassifierOutput
-from allennlp.data.dataset_readers.dataset_utils.span_utils import bio_tags_to_spans
+from utils.tag_utils import bio_tags_to_spans
 
 from args import ModelArguments
 from constants import SUPPORTED_MODELS, TAGS
