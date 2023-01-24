@@ -134,7 +134,8 @@ class BertForTokenClassification(BertPreTrainedModel):
         self.mi_loss = MILoss()
         self.classifier = nn.Linear(config.hidden_size, config.num_labels)
         self.dep_embeddings = nn.Embedding(len(DEPREL_DICT), self.dep_embeddings_num, 0)
-        self.gat = HGAT(config.hidden_size, config.hidden_size, self.dep_embeddings_num, self.num_heads)
+        self.gat = nn.Sequential(
+            *[HGAT(config.hidden_size, config.hidden_size, self.dep_embeddings_num, self.num_heads)]*1)
 
     def forward(
         self,
@@ -170,7 +171,7 @@ class BertForTokenClassification(BertPreTrainedModel):
                                 sequences.append(torch.stack(span).mean(0))
                             span = []
                             span_len = 1
-            gat_output = self.gat(deprel_graph, torch.stack(sequences))
+            gat_output = self.gat((deprel_graph, torch.stack(sequences)))[1]
             gat_output = self.dropout(gat_output)
             logits: Tensor = self.classifier(gat_output)
             src_logits = logits[:batch_src['subtoken_ids'].max(-1)[0].sum()]
@@ -186,9 +187,10 @@ class BertForTokenClassification(BertPreTrainedModel):
             # active_loss = attention_mask.view(-1) == 1
             # active_logits = logits.view(-1, self.num_labels)[active_loss]
             active_logits = logits
-            p = f.softmax(active_logits, dim=-1)
+            p = f.softmax(active_logits/0.4, dim=-1)
             _mi_loss = self.mi_loss(p)
             loss += self.alpha * _mi_loss
+            assert loss.isnan().item() == False
         else:
             loss = None
             input_ids = batch_tgt['input_ids']
@@ -219,7 +221,7 @@ class BertForTokenClassification(BertPreTrainedModel):
                                 sequences.append(torch.stack(span).mean(0))
                             span = []
                             span_len = 1
-            gat_output = self.gat(deprel_graph, torch.stack(sequences))
+            gat_output = self.gat((deprel_graph, torch.stack(sequences)))[1]
             tgt_logits: Tensor = self.classifier(gat_output)
         return TokenClassifierOutput(logits=tgt_logits, loss=loss, hidden_states=sequence_output)
 
