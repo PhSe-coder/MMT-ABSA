@@ -4,6 +4,7 @@ import torch.nn.functional as F
 from dgl.nn import GATv2Conv
 from dgl.ops import edge_softmax
 
+
 class EGRETLayer(nn.Module):
 
     def __init__(self, in_dim, out_dim, edge_dim, use_bias, config_dict=None):
@@ -110,9 +111,9 @@ class EGRETLayer(nn.Module):
     def message_func(self, edges):
         # message UDF for equation (3) & (4)
         if self.aggregate_edge:
-            return {'z': edges.src['z'], 'e': edges.data['e'], 'ez': edges.data['ez']}
+            return {'z': edges.src['z'], 'a': edges.data['a'], 'ez': edges.data['ez']}
         else:
-            return {'z': edges.src['z'], 'e': edges.data['e']}
+            return {'z': edges.src['z'], 'a': edges.data['a']}
 
     def reduce_func(self, nodes):
         # reduce UDF for equation (3) & (4)
@@ -121,16 +122,13 @@ class EGRETLayer(nn.Module):
         if not self.apply_attention:
             h = torch.sum(nodes.mailbox['z'], dim=1)
         else:
-            alpha = self.attn_drop(edge_softmax(nodes._graph, nodes.mailbox['e']))
-            # equation (4)
-            h = torch.sum(alpha * nodes.mailbox['z'], dim=1)
+            h = torch.sum(nodes.mailbox['a'] * nodes.mailbox['z'], dim=1)
         if self.aggregate_edge:
             if self.apply_attention_on_edge:
-                h = h + torch.sum(alpha * nodes.mailbox['ez'], dim=1)
+                h = h + torch.sum(nodes.mailbox['a'] * nodes.mailbox['ez'], dim=1)
             else:
                 h = h + torch.sum(nodes.mailbox['ez'], dim=1)
-        # print('h', h.shape, 'alpha', alpha.shape)
-        return {'h': h, 'alpha': alpha}
+        return {'h': h}
 
     def forward(self, g, nfeatures):
         # equation (1)
@@ -141,6 +139,7 @@ class EGRETLayer(nn.Module):
 
         # equation (2)
         g.apply_edges(self.edge_attention)
+        g.edata['a'] = self.attn_drop(edge_softmax(g, g.edata['e']))
         # equation (3) & (4)
         g.update_all(self.message_func, self.reduce_func)
         # print('g.ndata.keys():', g.ndata.keys())
@@ -154,7 +153,7 @@ class EGRETLayer(nn.Module):
         if self.activation is not None:
             g.ndata['h'] = self.activation(g.ndata['h'])
 
-        return g.ndata.pop('h'), g.ndata.pop('alpha')
+        return g.ndata.pop('h'), g.edata.pop('a')
 
 
 class MultiHeadEGRETLayer(nn.Module):
@@ -200,22 +199,30 @@ class HGAT(nn.Module):
                                         edge_features,
                                         num_heads,
                                         config_dict=config_dict)
-        self.gatconv = GATv2Conv(in_features, out_features, num_heads=num_heads, allow_zero_in_degree=True)
-        self.fc = nn.Sequential(nn.Linear(6 * out_features + in_features, in_features), nn.ReLU())
+        self.gatconv = GATv2Conv(in_features,
+                                 out_features,
+                                 num_heads=num_heads,
+                                 share_weights=True,
+                                 feat_drop=0.4, 
+                                 attn_drop=0.4,
+                                 allow_zero_in_degree=True)
+        self.fc = nn.Sequential(nn.Linear(2 * num_heads * out_features, in_features), nn.ReLU())
 
-    def forward(self, g, feat):
+    def forward(self, input):
+        g, feat = input
         out1 = self.gatconv(g, feat)
         out1 = out1.reshape(out1.size(0), -1)
         out2 = self.egat(g, feat.view(-1, feat.size(-1)))[0]
-        h = self.fc(torch.cat([out1, out2, feat], dim=-1))
-        return h
+        h = self.fc(torch.cat([out1, out2], dim=-1))
+        h = h + feat
+        return g, h
 
 
 config_dict = {
     'use_batch_norm': False,
-    'feat_drop': 0.0,
-    'attn_drop': 0.0,
-    'edge_feat_drop': 0.0,
+    'feat_drop': 0.4,
+    'attn_drop': 0.4,
+    'edge_feat_drop': 0.4,
     # 'edge_attn_drop': 0.0,
     'hidden_dim': 32,
     'out_dim': 32,  #512
