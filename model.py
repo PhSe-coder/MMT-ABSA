@@ -19,8 +19,8 @@ class MILoss(nn.Module):
         super(MILoss, self).__init__()
         self.mi_threshold = threshold
 
-    def forward(self, p: Tensor):
-        condi_entropy = -torch.sum(p * torch.log(p), dim=-1).mean()
+    def forward(self, p: Tensor, log_p: Tensor):
+        condi_entropy = -torch.sum(p * log_p, dim=-1).mean()
         y_dis = torch.mean(p, dim=0)
         y_entropy = -torch.sum(y_dis * torch.log(y_dis), dim=-1)
         if y_entropy.item() < self.mi_threshold:
@@ -188,9 +188,9 @@ class BertForTokenClassification(BertPreTrainedModel):
             # active_logits = logits.view(-1, self.num_labels)[active_loss]
             active_logits = logits
             p = f.softmax(active_logits/0.4, dim=-1)
-            _mi_loss = self.mi_loss(p)
+            log_p = f.log_softmax(active_logits/0.4, dim=-1)
+            _mi_loss = self.mi_loss(p, log_p)
             loss += self.alpha * _mi_loss
-            assert loss.isnan().item() == False
         else:
             loss = None
             input_ids = batch_tgt['input_ids']

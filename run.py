@@ -395,9 +395,9 @@ class Constructor:
                     "lr":
                     self.args.lr,
                     "alpha":
-                    0.9,
+                    0.99,
                     "eps":
-                    1e-06,
+                    1e-12,
                     'weight_decay':
                     1e-2
                 }, {
@@ -406,9 +406,9 @@ class Constructor:
                     "lr":
                     self.args.lr,
                     "alpha":
-                    0.9,
+                    0.99,
                     "eps":
-                    1e-06,
+                    1e-12,
                     'weight_decay':
                     0.0
                 }]))
@@ -438,7 +438,7 @@ class Constructor:
             if not self.args.do_train:
                 self.model.load_state_dict(torch.load(best_model_path))
             prediction, gold = self.evaluate(test_data_loader, True)
-            items = (absa_evaluate, "ab sa_prediction.txt"), (evaluate, "ae_prediction.txt")
+            items = (absa_evaluate, "absa_prediction.txt"), (evaluate, "ae_prediction.txt")
             for func, filename in (items):
                 test_pre, test_rec, test_f1 = func(prediction, gold)
                 content = f'test_pre: {test_pre:.4f}, test_rec: {test_rec:.4f}, test_f1: {test_f1:.4f}'
