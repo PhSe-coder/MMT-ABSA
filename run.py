@@ -397,7 +397,7 @@ class Constructor:
                     "alpha":
                     0.99,
                     "eps":
-                    1e-12,
+                    1e-8,
                     'weight_decay':
                     1e-2
                 }, {
@@ -408,7 +408,7 @@ class Constructor:
                     "alpha":
                     0.99,
                     "eps":
-                    1e-12,
+                    1e-8,
                     'weight_decay':
                     0.0
                 }]))
@@ -434,8 +434,8 @@ class Constructor:
                                           shuffle=False,
                                           collate_fn=self.test_set.collate_fn if callable(
                                               getattr(self.test_set, "collate_fn", None)) else None)
-            logger.info(f">> load best model: {best_model_path.split('/')[-1]}")
             if not self.args.do_train:
+                logger.info(f">> load best model: {best_model_path.split('/')[-1]}")
                 self.model.load_state_dict(torch.load(best_model_path))
             prediction, gold = self.evaluate(test_data_loader, True)
             items = (absa_evaluate, "absa_prediction.txt"), (evaluate, "ae_prediction.txt")
