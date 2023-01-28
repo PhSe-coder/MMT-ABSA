@@ -122,13 +122,13 @@ class MeanPooling(nn.Module):
 
 class BertForTokenClassification(BertPreTrainedModel):
 
-    def __init__(self, config):
+    def __init__(self, config, alpha):
         super(BertForTokenClassification, self).__init__(config)
         self.num_labels = config.num_labels
         self.dep_embeddings_num = 300
         self.bert = BertModel(config)
         self.num_heads = 3
-        self.alpha = 0.015
+        self.alpha = alpha
         self.dropout = nn.Dropout(0.1)
         self.loss_fct = nn.CrossEntropyLoss(ignore_index=-1)
         self.mi_loss = MILoss()
