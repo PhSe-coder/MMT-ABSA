@@ -99,7 +99,7 @@ class Constructor:
         num_labels = len(TAGS)
         assert model_name in SUPPORTED_MODELS, f'Model {model_name} is not supported'
         if model_name == 'bert':
-            model = BertForTokenClassification.from_pretrained(args.pretrained_model, 0.02,
+            model = BertForTokenClassification.from_pretrained(args.pretrained_model, self.args.alpha,
                                                                num_labels=num_labels)
         elif model_name == 'mmt':
             model_1 = BertForTokenClassification.from_pretrained(args.pretrained_model,
