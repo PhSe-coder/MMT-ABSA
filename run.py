@@ -99,7 +99,7 @@ class Constructor:
         num_labels = len(TAGS)
         assert model_name in SUPPORTED_MODELS, f'Model {model_name} is not supported'
         if model_name == 'bert':
-            model = BertForTokenClassification.from_pretrained(args.pretrained_model,
+            model = BertForTokenClassification.from_pretrained(args.pretrained_model, 0.02,
                                                                num_labels=num_labels)
         elif model_name == 'mmt':
             model_1 = BertForTokenClassification.from_pretrained(args.pretrained_model,
@@ -413,7 +413,7 @@ class Constructor:
                     0.0
                 }]))
             scheduler = get_cosine_schedule_with_warmup(optimizers[-1],
-                                                        0.1 * total_steps,
+                                                        self.args.warmup * total_steps,
                                                         num_training_steps=total_steps)
             if self.args.model_name == 'bert':
                 self.reset_params()
@@ -434,9 +434,8 @@ class Constructor:
                                           shuffle=False,
                                           collate_fn=self.test_set.collate_fn if callable(
                                               getattr(self.test_set, "collate_fn", None)) else None)
-            if not self.args.do_train:
-                logger.info(f">> load best model: {best_model_path.split('/')[-1]}")
-                self.model.load_state_dict(torch.load(best_model_path))
+            logger.info(f">> load best model: {best_model_path.split('/')[-1]}")
+            self.model.load_state_dict(torch.load(best_model_path))
             prediction, gold = self.evaluate(test_data_loader, True)
             items = (absa_evaluate, "absa_prediction.txt"), (evaluate, "ae_prediction.txt")
             for func, filename in (items):
