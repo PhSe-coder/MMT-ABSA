@@ -124,11 +124,10 @@ class BertForTokenClassification(BertPreTrainedModel):
 
     def __init__(self, config, alpha):
         super(BertForTokenClassification, self).__init__(config)
-        self.num_labels = config.num_labels
-        self.dep_embeddings_num = 300
         self.bert = BertModel(config)
-        self.num_heads = 3
-        self.alpha = alpha
+        self.register_buffer("dep_embeddings_num", torch.tensor(300))
+        self.register_buffer("num_heads", torch.tensor(3))
+        self.register_buffer("alpha", torch.tensor(alpha))
         self.dropout = nn.Dropout(0.1)
         self.loss_fct = nn.CrossEntropyLoss(ignore_index=-1)
         self.mi_loss = MILoss()
@@ -153,8 +152,6 @@ class BertForTokenClassification(BertPreTrainedModel):
                                         attention_mask=attention_mask)[0]
             sequence_output = self.dropout(sequence_output)
             deprel_graph.edata['ex'] = self.dep_embeddings(deprel_graph.edata['ex'])
-            # sign = torch.as_tensor([1, -1] * int(len(deprel_graph.edata['ex']) / 2), device=deprel_graph.edata['ex'].device).unsqueeze(-1)
-            # deprel_graph.edata['ex'] = deprel_graph.edata['ex'] * sign
             sequences = []
             for subtoken_id, sequence in zip(subtoken_ids, sequence_output):
                 span_len = 1
@@ -177,18 +174,12 @@ class BertForTokenClassification(BertPreTrainedModel):
             src_logits = logits[:batch_src['subtoken_ids'].max(-1)[0].sum()]
             tgt_logits = logits[batch_src['subtoken_ids'].max(-1)[0].sum():]
             gold_labels = batch_src['gold_labels']
-            # src_mask = batch_src['attention_mask']
-            # active_src_loss = src_mask.view(-1) == 1
-            # active_src_logits = src_logits.view(-1, self.num_labels)[active_src_loss]
-            # active_src_labels = gold_labels.view(-1)[active_src_loss]
             active_src_logits = src_logits
             active_src_labels = gold_labels[gold_labels != -1]
             loss = self.loss_fct(active_src_logits, active_src_labels)
-            # active_loss = attention_mask.view(-1) == 1
-            # active_logits = logits.view(-1, self.num_labels)[active_loss]
-            active_logits = logits
-            p = f.softmax(active_logits/0.4, dim=-1)
-            log_p = f.log_softmax(active_logits/0.4, dim=-1)
+            active_logits = logits/0.4
+            p = f.softmax(active_logits, dim=-1)
+            log_p = f.log_softmax(active_logits, dim=-1)
             _mi_loss = self.mi_loss(p, log_p)
             loss += self.alpha * _mi_loss
         else:
@@ -202,9 +193,6 @@ class BertForTokenClassification(BertPreTrainedModel):
             deprel_graph = batch_tgt['deprel_graph']
             subtoken_ids = batch_tgt['subtoken_ids']
             deprel_graph.edata['ex'] = self.dep_embeddings(deprel_graph.edata['ex'])
-            # sign = torch.as_tensor([1, -1] * int(len(deprel_graph.edata['ex']) / 2),
-            #                        device=deprel_graph.edata['ex'].device).unsqueeze(-1)
-            # deprel_graph.edata['ex'] = deprel_graph.edata['ex'] * sign
             sequences = []
             for subtoken_id, sequence in zip(subtoken_ids, sequence_output):
                 span_len = 1
