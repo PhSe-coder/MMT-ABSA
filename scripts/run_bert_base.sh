@@ -28,7 +28,7 @@ do
             --model_name "bert" \
             --output_dir "${output}/${src_domain}-${tgt_domain}"  \
             --train_file "${train_dir}/${src_domain}.train.txt" "${train_dir}/${tgt_domain}.train.txt" \
-            --validation_file "${test_dir}/${tgt_domain}.validation.txt"
+            --validation_file "${test_dir}/${tgt_domain}.validation.txt" \
             --test_file "${test_dir}/${tgt_domain}.test.txt" \
             --do_train \
             --do_predict \
