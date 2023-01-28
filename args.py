@@ -9,9 +9,11 @@ class ModelArguments(TrainingArguments):
     """
     Arguments pertaining to what data we are going to input our model for training and eval.
     """
-    init_1: str = field(default=None, metadata={"help": "pretrained model used to initialize the mmt model 1"})
-    init_2: str = field(default=None, metadata={"help": "pretrained model used to initialize the mmt model 2"})
-    
+    init_1: str = field(default=None,
+                        metadata={"help": "pretrained model used to initialize the mmt model 1"})
+    init_2: str = field(default=None,
+                        metadata={"help": "pretrained model used to initialize the mmt model 2"})
+
     model_name: Optional[str] = field(default="bert",
                                       metadata={"help": "The name of the model (ner, pos...)."})
     pretrained_model: Optional[str] = field(
@@ -43,6 +45,8 @@ class ModelArguments(TrainingArguments):
     )
     batch_size: Optional[int] = field(default=16, metadata={"help": 'training batch size'})
     dropout: Optional[float] = field(default=0.1)
+    alpha: Optional[float] = field(
+        default=0.02, metadata={"help": 'the weight parameter of the Mutual Information loss'})
     bert_lr: Optional[float] = field(default=2e-5,
                                      metadata={"help": "learning rate for pretrained model"})
     lr: Optional[float] = field(default=1e-3, metadata={"help": "learning rate for custom modules"})
