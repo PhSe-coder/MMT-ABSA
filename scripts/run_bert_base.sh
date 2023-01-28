@@ -28,19 +28,22 @@ do
             --model_name "bert" \
             --output_dir "${output}/${src_domain}-${tgt_domain}"  \
             --train_file "${train_dir}/${src_domain}.train.txt" "${train_dir}/${tgt_domain}.train.txt" \
+            --validation_file "${test_dir}/${tgt_domain}.validation.txt"
             --test_file "${test_dir}/${tgt_domain}.test.txt" \
             --do_train \
             --do_predict \
+            --do_eval \
             --optimizer "adamW" \
             --l2reg 0.1 \
-            --warmup 0.3 \
+            --warmup 0.1 \
+            --alpha $1 \
             --lr "3e-5" \
             --bert_lr "3e-5" \
             --batch_size 16 \
             --num_workers 16 \
             --num_train_epochs 3 \
             --seed 1 \
-            --initializer xavier_uniform_
+            --initializer kaiming_uniform_
         fi
     done
 done

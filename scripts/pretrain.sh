@@ -14,12 +14,15 @@ run.py \
 --model_name "bert" \
 --output_dir "${output}/${src_domain}-${tgt_domain}"  \
 --train_file "${train_dir}/${src_domain}.train.txt" "${train_dir}/${tgt_domain}.train.txt" \
+--validation_file "${test_dir}/${tgt_domain}.validation.txt" \
 --test_file "${test_dir}/${tgt_domain}.test.txt" \
 --do_train \
+--do_eval \
 --do_predict \
 --optimizer "adamW" \
 --l2reg 0.1 \
---warmup 0.3 \
+--warmup 0.1 \
+--alpha 0.02 \
 --lr "3e-5" \
 --bert_lr "3e-5" \
 --batch_size 16 \
