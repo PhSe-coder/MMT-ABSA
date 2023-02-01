@@ -5,7 +5,7 @@
 export PYTHONPATH=$PYTHONPATH:$(pwd)
 # python ./preprocess/get_entity.py --src ./data
 # # python ./preprocess/ent_replace.py --src ./data --dest ./processed/ent_tmp --max-workers 128
-python ./preprocess/split.py --src ./data --dest ./processed/tmp
+python ./preprocess/split.py --src ./data --dest ./processed/tmp --split-rate 0.7
 # python ./preprocess/ann.py --src ./data --dest ./processed/ann_tmp
 # python ./preprocess/ent_link.py --src ./processed/ann_tmp --dest ./processed/ent_tmp
 # python ./preprocess/dp.py --src ./processed/ann_tmp --dest ./processed/dp_tmp
