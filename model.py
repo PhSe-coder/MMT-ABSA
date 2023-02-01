@@ -4,11 +4,12 @@ import dgl
 import torch
 import torch.nn as nn
 import torch.nn.functional as f
-from constants import DEPREL_DICT
+from constants import DEPREL_DICT, POS_DICT
 from transformers import BertModel, BertPreTrainedModel
 from torch import Tensor
 from transformers.modeling_outputs import TokenClassifierOutput
 from gat import HGAT
+from bert_adapter import add_bert_adapters, AdapterConfig
 logger = logging.getLogger(__name__)
 
 
@@ -124,7 +125,11 @@ class BertForTokenClassification(BertPreTrainedModel):
 
     def __init__(self, config, alpha):
         super(BertForTokenClassification, self).__init__(config)
-        self.bert = BertModel(config)
+        self.register_buffer("pos_embeddings_num", torch.tensor(300))
+        self.pos_embeddings = nn.Embedding(len(POS_DICT), self.pos_embeddings_num, 0)
+        adapter_config = AdapterConfig(config.hidden_size, 256, 'relu', 1e-3)
+        self.bert = add_bert_adapters(BertModel(config), adapter_config)
+        # self.bert = BertModel(config)
         self.register_buffer("dep_embeddings_num", torch.tensor(300))
         self.register_buffer("num_heads", torch.tensor(3))
         self.register_buffer("alpha", torch.tensor(alpha))
