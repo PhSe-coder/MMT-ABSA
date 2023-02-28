@@ -1,16 +1,14 @@
-from typing import List, Dict
+from typing import List, Dict, Union
 
-from torch import as_tensor, cat, tensor
+from torch import as_tensor, cat
 from torch import Tensor
-import dgl
 from torch.utils.data import Dataset
 from tqdm import tqdm
 from transformers.tokenization_utils import PreTrainedTokenizer
 from transformers.utils.generic import PaddingStrategy
 from torch.utils.data.dataloader import default_collate
 import linecache
-from constants import TAGS, POS_DICT, DEPREL_DICT
-from utils.tag_utils import ot2bio_absa
+from constants import TAGS
 
 def transform(
     text: str,
@@ -114,109 +112,155 @@ class BaseDataset(Dataset):
         return len(self.dataset)
 
 
+# class MyDataset(Dataset):
+
+#     def __init__(self, filename: str, tokenizer: PreTrainedTokenizer):
+#         self.datafile = filename
+#         self.total_lines = sum(1 for _ in open(filename, "rb"))
+#         self.tokenizer = tokenizer
+
+#     def __getitem__(self, index):
+#         try:
+#             line = linecache.getline(self.datafile,
+#                                      index + 1)  # `getline` method start from index 1 rather than 0
+#             line = line.strip()
+#             text, gold_labels, pos_labels, deprel_labels, head_labels = line.rsplit("***")
+#             tok_dict: Dict[str, List[int]] = self.tokenizer(text,
+#                                                             padding=PaddingStrategy.MAX_LENGTH,
+#                                                             truncation=True)
+#             wordpiece_tokens = self.tokenizer.convert_ids_to_tokens(tok_dict.input_ids)
+#             special_tokens = self.tokenizer.all_special_tokens
+#             glod_wordpiece_labels = transform(text, gold_labels, wordpiece_tokens, special_tokens)
+#             labels = [-1]
+#             subtoken_ids = [0]
+#             gold_labels = ot2bio_absa(gold_labels.split(" "))
+#             for i, token in enumerate(text.split()):
+#                 labels.append(TAGS.index(gold_labels[i]))
+#                 length = len(self.tokenizer.tokenize(token))
+#                 for _ in range(length):
+#                     subtoken_ids.append(i+1)
+#                     if len(subtoken_ids) + 1 == self.tokenizer.model_max_length:
+#                         break
+#                 if len(subtoken_ids) + 1 == self.tokenizer.model_max_length:
+#                     break
+#             while len(subtoken_ids) < len(glod_wordpiece_labels):
+#                 subtoken_ids.append(-1)
+#             while len(labels) < len(glod_wordpiece_labels):
+#                 labels.append(-1)
+#             assert len(subtoken_ids) == len(labels) == self.tokenizer.model_max_length
+#             # labels = [TAGS.index(label) if label in TAGS else -1 for label in glod_wordpiece_labels]
+#             data = {
+#                 "input_ids": as_tensor(tok_dict.input_ids),
+#                 "gold_labels": as_tensor(labels),
+#                 "subtoken_ids": as_tensor(subtoken_ids),
+#                 "attention_mask": as_tensor(tok_dict.attention_mask),
+#                 "token_type_ids": as_tensor(tok_dict.token_type_ids),
+#             }
+#             assert max(subtoken_ids) == (data["gold_labels"] != -1).sum()
+#             if pos_labels is not None:
+#                 pos_labels = pos_labels.split()
+#                 pos_label_ids = []
+#                 for i, token in enumerate(text.split()):
+#                     length = len(self.tokenizer.tokenize(token))
+#                     for _ in range(length):
+#                         pos_label_ids.append(POS_DICT.get(pos_labels[i], POS_DICT.get('O')))
+#                 pos_label_ids.insert(0, POS_DICT.get('[CLS]'))
+#                 pos_label_ids.append(POS_DICT.get('[SEP]'))
+#                 while len(pos_label_ids) > len(glod_wordpiece_labels):
+#                     pos_label_ids.pop(-2)
+#                 while len(pos_label_ids) < len(glod_wordpiece_labels):
+#                     pos_label_ids.append(POS_DICT.get('[PAD]'))
+#                 assert len(glod_wordpiece_labels) == len(pos_label_ids)
+#                 data['pos_label_ids'] = as_tensor(pos_label_ids)
+#             if deprel_labels is not None:
+#                 deprel_labels = deprel_labels.split()
+#                 head_labels = [int(label) for label in head_labels.split()]
+#                 head_label_ids = [0]
+#                 idx = 0
+#                 deprel_label_ids = [DEPREL_DICT.get('[CLS]')]
+#                 for i, token in enumerate(text.split()):
+#                     head_label_ids.append(head_labels[i])
+#                     deprel_label_ids.append(DEPREL_DICT.get(deprel_labels[i], DEPREL_DICT.get('O')))
+#                     length = len(self.tokenizer.tokenize(token))
+#                     for _ in range(length):
+#                         idx += 1
+#                         if idx + 1 == self.tokenizer.model_max_length:
+#                             break
+#                     if idx + 1 == self.tokenizer.model_max_length:
+#                         break
+#                 edge_src, edge_dst, edge_features = [], [], []
+#                 for i, head_label in enumerate(head_label_ids):
+#                     if head_label != 0 and head_label <= max(subtoken_ids) and i <= max(subtoken_ids):
+#                         edge_src.append(head_label-1)
+#                         edge_dst.append(i-1)
+#                         edge_features.append(deprel_label_ids[i])
+#                 g = dgl.graph((tensor(edge_src), tensor(edge_dst)), num_nodes=max(subtoken_ids))
+#                 assert g.num_nodes() == (data['gold_labels'] != -1).sum()
+#                 g.edata['ex'] = tensor(edge_features)
+#                 data['deprel_graph'] = g
+#         except Exception as e:
+#             print(e)
+#         return data
+
+#     def __len__(self):
+#         return self.total_lines
+
+#     @staticmethod
+#     def collate_fn(batch):
+#         batch_dict = {}
+#         try:
+#             deprel_graph = [item.pop('deprel_graph') for item in batch]
+#             batch_dict: Dict[str, List[Tensor]] = default_collate(batch)
+#             batch_dict['deprel_graph'] = dgl.batch(deprel_graph)
+#         except Exception as e:
+#             print(e)
+#         return batch_dict
+
+
 class MyDataset(Dataset):
 
-    def __init__(self, filename: str, tokenizer: PreTrainedTokenizer):
-        self.datafile = filename
-        self.total_lines = sum(1 for _ in open(filename, "rb"))
+    def __init__(self, filenames: Union[List[str], str], tokenizer: PreTrainedTokenizer):
+        if isinstance(filenames, str):
+            filenames = [filenames]
+        self.datafiles = filenames
+        self.total_lines = [sum(1 for _ in open(filename, "rb")) for filename in filenames]
         self.tokenizer = tokenizer
 
     def __getitem__(self, index):
+        data = []
         try:
-            line = linecache.getline(self.datafile,
-                                     index + 1)  # `getline` method start from index 1 rather than 0
-            line = line.strip()
-            text, gold_labels, pos_labels, deprel_labels, head_labels = line.rsplit("***")
-            tok_dict: Dict[str, List[int]] = self.tokenizer(text,
-                                                            padding=PaddingStrategy.MAX_LENGTH,
-                                                            truncation=True)
-            wordpiece_tokens = self.tokenizer.convert_ids_to_tokens(tok_dict.input_ids)
-            special_tokens = self.tokenizer.all_special_tokens
-            glod_wordpiece_labels = transform(text, gold_labels, wordpiece_tokens, special_tokens)
-            labels = [-1]
-            subtoken_ids = [0]
-            gold_labels = ot2bio_absa(gold_labels.split(" "))
-            for i, token in enumerate(text.split()):
-                labels.append(TAGS.index(gold_labels[i]))
-                length = len(self.tokenizer.tokenize(token))
-                for _ in range(length):
-                    subtoken_ids.append(i+1)
-                    if len(subtoken_ids) + 1 == self.tokenizer.model_max_length:
-                        break
-                if len(subtoken_ids) + 1 == self.tokenizer.model_max_length:
-                    break
-            while len(subtoken_ids) < len(glod_wordpiece_labels):
-                subtoken_ids.append(-1)
-            while len(labels) < len(glod_wordpiece_labels):
-                labels.append(-1)
-            assert len(subtoken_ids) == len(labels) == self.tokenizer.model_max_length
-            # labels = [TAGS.index(label) if label in TAGS else -1 for label in glod_wordpiece_labels]
-            data = {
-                "input_ids": as_tensor(tok_dict.input_ids),
-                "gold_labels": as_tensor(labels),
-                "subtoken_ids": as_tensor(subtoken_ids),
-                "attention_mask": as_tensor(tok_dict.attention_mask),
-                "token_type_ids": as_tensor(tok_dict.token_type_ids),
-            }
-            assert max(subtoken_ids) == (data["gold_labels"] != -1).sum()
-            if pos_labels is not None:
-                pos_labels = pos_labels.split()
-                pos_label_ids = []
-                for i, token in enumerate(text.split()):
-                    length = len(self.tokenizer.tokenize(token))
-                    for _ in range(length):
-                        pos_label_ids.append(POS_DICT.get(pos_labels[i], POS_DICT.get('O')))
-                pos_label_ids.insert(0, POS_DICT.get('[CLS]'))
-                pos_label_ids.append(POS_DICT.get('[SEP]'))
-                while len(pos_label_ids) > len(glod_wordpiece_labels):
-                    pos_label_ids.pop(-2)
-                while len(pos_label_ids) < len(glod_wordpiece_labels):
-                    pos_label_ids.append(POS_DICT.get('[PAD]'))
-                assert len(glod_wordpiece_labels) == len(pos_label_ids)
-                data['pos_label_ids'] = as_tensor(pos_label_ids)
-            if deprel_labels is not None:
-                deprel_labels = deprel_labels.split()
-                head_labels = [int(label) for label in head_labels.split()]
-                head_label_ids = [0]
-                idx = 0
-                deprel_label_ids = [DEPREL_DICT.get('[CLS]')]
-                for i, token in enumerate(text.split()):
-                    head_label_ids.append(head_labels[i])
-                    deprel_label_ids.append(DEPREL_DICT.get(deprel_labels[i], DEPREL_DICT.get('O')))
-                    length = len(self.tokenizer.tokenize(token))
-                    for _ in range(length):
-                        idx += 1
-                        if idx + 1 == self.tokenizer.model_max_length:
-                            break
-                    if idx + 1 == self.tokenizer.model_max_length:
-                        break
-                edge_src, edge_dst, edge_features = [], [], []
-                for i, head_label in enumerate(head_label_ids):
-                    if head_label != 0 and head_label <= max(subtoken_ids) and i <= max(subtoken_ids):
-                        edge_src.append(head_label-1)
-                        edge_dst.append(i-1)
-                        edge_features.append(deprel_label_ids[i])
-                g = dgl.graph((tensor(edge_src), tensor(edge_dst)), num_nodes=max(subtoken_ids))
-                assert g.num_nodes() == (data['gold_labels'] != -1).sum()
-                g.edata['ex'] = tensor(edge_features)
-                data['deprel_graph'] = g
+            for idx, datafile in enumerate(self.datafiles):
+                # `getline` method start from index 1 rather than 0
+                if index >= self.total_lines[idx]:
+                    index = index % self.total_lines[idx]
+                line = linecache.getline(datafile, index + 1)
+                line = line.strip()
+                text, gold_labels = line.rsplit("***")
+                tok_dict: Dict[str, List[int]] = self.tokenizer(text,
+                                                                padding=PaddingStrategy.MAX_LENGTH,
+                                                                truncation=True)
+                wordpiece_tokens = self.tokenizer.convert_ids_to_tokens(tok_dict.input_ids)
+                special_tokens = self.tokenizer.all_special_tokens
+                glod_wordpiece_labels = transform(text, gold_labels, wordpiece_tokens, special_tokens)
+                labels = [
+                    TAGS.index(label) if label in TAGS else -1 for label in glod_wordpiece_labels
+                ]
+                valid_mask = tok_dict.attention_mask.copy()
+                valid_mask[0] = 0
+                valid_mask[len(valid_mask) - valid_mask[::-1].index(1) - 1] = 0
+                data.append({
+                    "input_ids": as_tensor(tok_dict.input_ids),
+                    "gold_labels": as_tensor(labels),
+                    "attention_mask": as_tensor(tok_dict.attention_mask),
+                    "token_type_ids": as_tensor(tok_dict.token_type_ids),
+                    "valid_mask": as_tensor(valid_mask),
+                })
         except Exception as e:
             print(e)
         return data
 
     def __len__(self):
-        return self.total_lines
-
-    @staticmethod
-    def collate_fn(batch):
-        batch_dict = {}
-        try:
-            deprel_graph = [item.pop('deprel_graph') for item in batch]
-            batch_dict: Dict[str, List[Tensor]] = default_collate(batch)
-            batch_dict['deprel_graph'] = dgl.batch(deprel_graph)
-        except Exception as e:
-            print(e)
-        return batch_dict
+        return self.total_lines[0]
 
 
 # class MMTDataset(Dataset):
