@@ -1,15 +1,11 @@
 from typing import List
 import torch
 import torch.nn as nn
-from torch import Tensor
-import torch.nn.functional as f
-from transformers import BertModel, BertConfig
-from transformers.optimization import get_linear_schedule_with_warmup
 from transformers.modeling_outputs import TokenClassifierOutput
 import pytorch_lightning as pl
 from mi_estimators import InfoNCE
 from constants import TAGS
-from torch.optim import AdamW, SGD
+from torch.optim import AdamW
 from eval import absa_evaluate, evaluate
 from model import BertForTokenClassification, MIBert
 from model import SoftEntropy
@@ -98,10 +94,8 @@ class MMTModel(pl.LightningModule):
             'params': [p for _, p in mi_loss_optimizer],
             'lr': 3e-5
         }]
-        # custom_opt = AdamW(params, amsgrad=True, weight_decay=0.1)
-        custom_opt = SGD(params, momentum=0.9, weight_decay=0.01)
-        return [bert_opt,
-                custom_opt]
+        custom_opt = AdamW(params, amsgrad=True, weight_decay=0.1)
+        return [bert_opt, custom_opt]
 
     def training_step(self, train_batch, batch_idx):
         opts = self.optimizers()
@@ -169,12 +163,6 @@ class MMTModel(pl.LightningModule):
                            help='the weight parameter of the Mutual Information loss')
         group.add_argument("--theta", type=float, default=0.999, help='the weight of the ema')
         group.add_argument("--soft_loss_weight", type=float, default=0.01)
-        # group.add_argument("--init_1",
-        #                    type=str,
-        #                    help="pretrained model checkpoint for initializing the mmt model 1")
-        # group.add_argument("--init_2",
-        #                    type=str,
-        #                    help="pretrained model checkpoint for initializing the mmt model 2")
         return parent_parser
 
 
