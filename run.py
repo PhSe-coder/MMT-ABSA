@@ -20,7 +20,7 @@ from utils.tag_utils import bio_tags_to_spans
 
 from args import ModelArguments
 from constants import SUPPORTED_MODELS, TAGS
-from dataset import MMTDataset, MyDataset
+from dataset import MyDataset
 from eval import absa_evaluate, evaluate
 from model import *
 from optimization import BertAdam
@@ -99,21 +99,22 @@ class Constructor:
         num_labels = len(TAGS)
         assert model_name in SUPPORTED_MODELS, f'Model {model_name} is not supported'
         if model_name == 'bert':
-            model = BertForTokenClassification.from_pretrained(args.pretrained_model, self.args.alpha,
-                                                               num_labels=num_labels)
+            model = MIBert.from_pretrained(args.pretrained_model,
+                                           self.args.alpha,
+                                           num_labels=num_labels)
         elif model_name == 'mmt':
-            model_1 = BertForTokenClassification.from_pretrained(args.pretrained_model,
-                                                                 num_labels=num_labels)
-            model_1_ema = BertForTokenClassification.from_pretrained(args.pretrained_model,
-                                                                     num_labels=num_labels)
-            model_2 = BertForTokenClassification.from_pretrained(args.pretrained_model,
-                                                                 num_labels=num_labels)
-            model_2_ema = BertForTokenClassification.from_pretrained(args.pretrained_model,
-                                                                     num_labels=num_labels)
-            model_1.load_state_dict(torch.load(self.args.init_1), strict=False)
-            model_1_ema.load_state_dict(torch.load(self.args.init_1), strict=False)
-            model_2.load_state_dict(torch.load(self.args.init_2), strict=False)
-            model_2_ema.load_state_dict(torch.load(self.args.init_2), strict=False)
+            model_1 = MIBert.from_pretrained(args.pretrained_model,
+                                             self.args.alpha,
+                                             num_labels=num_labels)
+            model_1_ema = MIBert.from_pretrained(args.pretrained_model,
+                                                 self.args.alpha,
+                                                 num_labels=num_labels)
+            model_2 = MIBert.from_pretrained(args.pretrained_model,
+                                             self.args.alpha,
+                                             num_labels=num_labels)
+            model_2_ema = MIBert.from_pretrained(args.pretrained_model,
+                                                 self.args.alpha,
+                                                 num_labels=num_labels)
             for param in model_1_ema.parameters():
                 param.detach_()
             for param in model_2_ema.parameters():
@@ -132,11 +133,9 @@ class Constructor:
         if args.do_train:
             if args.model_name == 'bert':
                 # self.train_set = BaseDataset(args.train_file, self.tokenizer, True)
-                self.train_set0 = MyDataset(args.train_file[0], self.tokenizer)
-                self.train_set1 = MyDataset(args.train_file[1], self.tokenizer)
+                self.train_set = MyDataset(args.train_file[0], self.tokenizer)
             elif args.model_name == 'mmt':
-                self.train_set = MMTDataset(args.train_file, self.tokenizer, False)
-
+                self.train_set = MyDataset(args.train_file, self.tokenizer)
         if args.do_eval:
             self.validation_set = MyDataset(self.args.validation_file, self.tokenizer)
         if args.do_predict:
@@ -162,31 +161,24 @@ class Constructor:
     def train(self,
               optimizers: List[Optimizer],
               scheduler,
-              train_data_loader0: DataLoader,
-              train_data_loader1: DataLoader,
+              train_data_loader: DataLoader,
               val_data_loader: DataLoader = None):
-        from itertools import cycle
         global_step = 0
         n_total, loss_total = 0, 0
-        max_val_f1, max_val_epoch = 0, 0
+        max_val_f1, max_val_epoch, max_val_rec = 0, 0, 0
         gold_Y, pred_Y = [], []
         self.model.train()
         for epoch in range(int(self.args.num_train_epochs)):
             logger.info('>' * 100)
             logger.info('> epoch: {}'.format(epoch))
-            for i, batch in tqdm(enumerate(zip(train_data_loader0, cycle(train_data_loader1))),
-                                 f'epoch: {epoch}', len(train_data_loader0)):
-                train_data_loader0.sampler.set_epoch(epoch)
+            for i, batch in tqdm(enumerate(train_data_loader), f'epoch: {epoch}',
+                                 len(train_data_loader)):
+                train_data_loader.sampler.set_epoch(epoch)
                 [optimizer.zero_grad() for optimizer in optimizers]
-                batch_src = {k: v.to(self.args.local_rank) for k, v in batch[0].items()}
-                batch_tgt = {k: v.to(self.args.local_rank) for k, v in batch[1].items()}
-                targets0 = batch_src.get("gold_labels")
-                targets1 = batch_tgt.pop("gold_labels")
-                # targets = torch.cat([targets0, targets1])
-                targets = targets1
-                outputs: TokenClassifierOutput = self.model(batch_tgt, batch_src)
+                batch = [{k: v.to(self.args.local_rank) for k, v in b.items()} for b in batch]
+                targets = torch.cat([batch[2].pop("gold_labels"), batch[3].pop("gold_labels")])
+                outputs: TokenClassifierOutput = self.model(batch)
                 loss = outputs.loss
-                # logits = torch.cat([outputs0.logits, outputs1.logits])
                 logits = outputs.logits
                 assert loss is not None
                 loss.backward()
@@ -201,7 +193,7 @@ class Constructor:
                 n_total += l
                 loss_total += loss.item() * l
                 global_step += 1
-                if global_step % self.args.logging_steps == 0 or i == len(train_data_loader0) - 1:
+                if global_step % self.args.logging_steps == 0 or i == len(train_data_loader) - 1:
                     if targets is not None:
                         p, r, f1 = absa_evaluate(pred_Y, gold_Y)
                     else:
@@ -261,8 +253,8 @@ class Constructor:
         self.model.eval()
         text, gold_Y, pred_Y = [], [], []
         for _, batch in enumerate(data_loader):
-            batch = {k: v.to(self.args.local_rank) for k, v in batch.items()}
-            targets = batch.pop("gold_labels")
+            batch = [{k: v.to(self.args.local_rank) for k, v in b.items()} for b in batch]
+            targets = batch[0].pop("gold_labels")
             with torch.no_grad():
                 outputs: TokenClassifierOutput = self.model(batch)
                 logits = outputs.logits
@@ -273,7 +265,8 @@ class Constructor:
             gold_Y.extend(gold_list)
             if to_file:
                 text.extend(
-                    self.tokenizer.batch_decode(batch.get("input_ids"), skip_special_tokens=True))
+                    self.tokenizer.batch_decode(batch[0].get("input_ids"),
+                                                skip_special_tokens=True))
         self.model.train()
         if to_file:
             with open(os.path.join(self.args.output_dir, "predict.txt"), "w") as f:
@@ -312,6 +305,7 @@ class Constructor:
         for item in gold_Y:
             pred_Y.append([TAGS[pred] for pred in predict[idx:idx + len(item)]])
             idx += len(item)
+        assert idx == len(predict)
         return pred_Y, gold_Y
 
     def reset_params(self):
@@ -330,44 +324,32 @@ class Constructor:
         if self.args.do_train:
             if best_model_path is not None:
                 self.model.load_state_dict(torch.load(best_model_path))
+
             def seed_worker(worker_id):
                 worker_seed = torch.initial_seed() % 2**32
                 numpy.random.seed(worker_seed)
                 random.seed(worker_seed)
-            datasampler0 = DistributedSampler(self.train_set0,
-                                              num_replicas=dist.get_world_size(),
-                                              rank=self.args.local_rank)
-            datasampler1 = DistributedSampler(self.train_set1,
-                                              num_replicas=dist.get_world_size(),
-                                              rank=self.args.local_rank)
-            train_data_loader0 = DataLoader(
-                dataset=self.train_set0,
+
+            datasampler = DistributedSampler(self.train_set,
+                                             num_replicas=dist.get_world_size(),
+                                             rank=self.args.local_rank)
+            train_data_loader = DataLoader(
+                dataset=self.train_set,
                 batch_size=self.args.batch_size,
                 shuffle=False,
-                collate_fn=self.train_set0.collate_fn if callable(
-                    getattr(self.train_set0, "collate_fn", None)) else None,
+                collate_fn=self.train_set.collate_fn if callable(
+                    getattr(self.train_set, "collate_fn", None)) else None,
                 drop_last=True,
                 num_workers=self.args.num_workers,
-                sampler=datasampler0,
-                worker_init_fn=seed_worker)
-            train_data_loader1 = DataLoader(
-                dataset=self.train_set1,
-                batch_size=self.args.batch_size,
-                shuffle=False,
-                collate_fn=self.train_set1.collate_fn if callable(
-                    getattr(self.train_set1, "collate_fn", None)) else None,
-                drop_last=True,
-                num_workers=self.args.num_workers,
-                sampler=datasampler1,
+                sampler=datasampler,
                 worker_init_fn=seed_worker)
             param_optimizer = [(k, v) for k, v in self.model.named_parameters()
                                if v.requires_grad == True and 'pooler' not in k]
-            pretrained_param_optimizer = [n for n in param_optimizer
-                                          if 'bert' in n[0]]  #  and 'pos_embeddings' not in n[0]
+            pretrained_param_optimizer = [n for n in param_optimizer if 'bert' in n[0]]
             custom_param_optimizer = [
-                n for n in param_optimizer
-                if 'bert' not in n[0]  # and 'domain_model' not in n[0]  or 'pos_embeddings' in n[0]
+                n for n in param_optimizer if 'bert' not in n[0] and 'mi_loss' not in n[0]
             ]
+            mi_loss_optimizer = [n for n in param_optimizer if 'mi_loss' in n[0]]
             # domain_model_param_optimizer = [n for n in param_optimizer if 'domain_model' in n[0]]
             no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
             optimizer_grouped_parameters = [{
@@ -381,7 +363,7 @@ class Constructor:
                 'weight_decay':
                 0.0
             }]
-            total_steps = self.args.num_train_epochs * len(train_data_loader0)
+            total_steps = self.args.num_train_epochs * len(train_data_loader)
             optimizers = [
                 BertAdam(optimizer_grouped_parameters,
                          lr=self.args.bert_lr,
@@ -394,23 +376,20 @@ class Constructor:
                     [p for n, p in custom_param_optimizer if not any(nd in n for nd in no_decay)],
                     "lr":
                     self.args.lr,
-                    "alpha":
-                    0.99,
-                    "eps":
-                    1e-8,
-                    'weight_decay':
-                    1e-2
                 }, {
                     'params':
                     [p for n, p in custom_param_optimizer if any(nd in n for nd in no_decay)],
                     "lr":
                     self.args.lr,
-                    "alpha":
-                    0.99,
-                    "eps":
-                    1e-8,
-                    'weight_decay':
-                    0.0
+                }, {
+                    "params":
+                    [p for n, p in mi_loss_optimizer if not any(nd in n for nd in no_decay)],
+                    "lr":
+                    1.5e-4
+                }, {
+                    "params": [p for n, p in mi_loss_optimizer if any(nd in n for nd in no_decay)],
+                    "lr":
+                    1.5e-4,
                 }]))
             scheduler = get_cosine_schedule_with_warmup(optimizers[-1],
                                                         self.args.warmup * total_steps,
@@ -425,10 +404,9 @@ class Constructor:
                     shuffle=False,
                     collate_fn=self.validation_set.collate_fn if callable(
                         getattr(self.validation_set, "collate_fn", None)) else None)
-            best_model_path = self.train(optimizers, scheduler, train_data_loader0,
-                                         train_data_loader1, val_data_loader)
+            best_model_path = self.train(optimizers, scheduler, train_data_loader, val_data_loader)
         logger.info(f">> best model path: {best_model_path}")
-        if self.args.do_predict:
+        if self.args.do_predict and self.args.local_rank == 0:
             test_data_loader = DataLoader(dataset=self.test_set,
                                           batch_size=self.args.batch_size,
                                           shuffle=False,
