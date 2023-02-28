@@ -12,7 +12,7 @@ __all__ = ['eda', 'Word']
 
 # for the first time you should download wordnet
 nltk.download('wordnet')
-random.seed(1)
+
 
 
 class Word(NamedTuple):
