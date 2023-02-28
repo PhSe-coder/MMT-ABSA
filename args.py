@@ -63,8 +63,8 @@ class ModelArguments(TrainingArguments):
     patience: Optional[int] = field(default=5, metadata={"help": 'early stopping rounds'})
 
     def __post_init__(self):
-        if self.model_name == 'mmt' and (self.init_1 is None or self.init_2 is None):
-            raise ValueError("init_1 and init_2 arguments are needed.")
+        # if self.model_name == 'mmt' and (self.init_1 is None or self.init_2 is None):
+        #     raise ValueError("init_1 and init_2 arguments are needed.")
         if self.model_name not in SUPPORTED_MODELS:
             raise ValueError(f"Model name `{self.model_name}` is not supported.")
         if self.do_train and self.train_file is None:
