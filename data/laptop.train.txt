@@ -1180,7 +1180,7 @@ It 's so bad that I ' m thinking I only got half a battery or something .***O O 
 Good keyboard , long battery life , largest hard drive and windows 7 .***O T-POS O O T-POS T-POS O O T-POS T-POS O T-POS T-POS O
 I think it was seventy nine plus tax .***O O O O O O O O O
 In summary , take your money elsewhere .***O O O O O O O O
-The processor is very quick and effective as I load webpages and applications .***O T-POS O O O O O O O T-POS T-NEU O T-NEU O
+The processor is very quick and effective as I load webpages and applications .***O T-POS O O O O O O O O T-NEU O T-NEU O
 My battery went bad about a year and a half after having it and it cost around eighty to a hundred dollars !***O T-NEG O O O O O O O O O O O O O O O O O O O O O
 I will NEVER buy Refurbished again , I do n't cae how cheap it is .***O O O O O O O O O O O O O O O O
 It pretty much does everything we could ever need , and looks great to boot .***O O O O O O O O O O O O O O T-POS O
@@ -2779,7 +2779,7 @@ Did n't work when shipped from Walmartcom but went into a store and exchanged fo
 It is SO much fun to play with .***O O O O O O O O O
 If this is an improvement in Customer Service then I would hate too see what it was before !***O O O O O O T-NEG T-NEG O O O O O O O O O O O
 * 6th week*-They are not responding to my emails asking when they expect to dispatch the new unit .***O O O O O O O O O O O O O O O O O O O
-All of the programs Keynote , Pages , Numbers have an option to save your documents as Microsoft compatible , which really eliminates the need for the actual .***O O O T-POS T-NEU O T-NEU O T-NEU O O O O O O O O O O O O O O O O O O O O
+All of the programs ( Keynote , Pages , Numbers ) have an option to save your documents as Microsoft compatible , which really eliminates the need for the actual .***O O O T-POS O T-NEU O T-NEU O T-NEU O O O O O O O O O O O O O O O O O O O O O
 Sure , the initial out of pocket expense is greater , but that should not dissuade anyone from the fact that these machines run like none other on the planet , and when I factor in all the money in that I wasted on Geek Squad and the latest patches to de - corrupt my infested PCs , it probably comes out about even anyhow .***O O O O O O O T-NEG O O O O O O O O O O O O O O O T-POS O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O
 The best thing to do is build your own computer , but if u ca n't company 's like dell who allow you to choose the components are better and for the same price you can get a computer who compares to one of apple $ 2000 systems and if you google dell coupons you can find codes that take a signifant amount off the price .***O O O O O O O O O O O O O O O O O O O O O O O O O O T-POS O O O O O O T-POS O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O T-POS O
 There is no cd drive on the computer , which defeats the purpose of keeping files on a cd .***O O O T-NEG T-NEG O O O O O O O O O O O O O O O

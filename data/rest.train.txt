@@ -931,7 +931,7 @@ Really .***O O
 I really loved the different and inovated touch that 's the cheff gives to the food .***O O O O O O O O O O O T-POS O O O T-POS O
 Our friends have not arrived yet .***O O O O O O O
 They came out over cooked and the cheese was almost non existant .***O O O O O O O T-NEG O O O O O
-I had a terrific meal , and our server guided us toward a very nice wine in our price range , instead of allowing us to purchase a similarly priced wine that was n't as good .***O O O O T-POS O O O T-POS O O O O O O T-POS O O T-POS T-POS O O O O O O O O O T-NEU T-POS O O O O O O
+I had a terrific meal , and our server guided us toward a very nice wine in our price range , instead of allowing us to purchase a similarly priced wine that was n't as good .***O O O O T-POS O O O T-POS O O O O O O T-POS O O T-POS T-POS O O O O O O O O O T-NEG T-NEG O O O O O O
 The svc can be a bit rude at times , esp if you have big group , but overall the restaurant is a must !***O T-NEG O O O O O O O O O O O O O O O O O O O O O O O
 My husband and I thougt it would be great to go to the Jekyll and Hyde Pub for our anniversary , and to our surprise it was fantastic .***O O O O O O O O O O O O O O O O O O O O O O O O O O O O O
 Never once did I leave feeling unwelcome or impressed .***O O O O O O O O O O
@@ -1295,7 +1295,7 @@ It saves walking in and waiting for a table in the often noisy , crowded bar at 
 I have to say I have never had a disapointing meal here .***O O O O O O O O O O T-POS O O
 It 's one of our favorite places to eat in NY .***O O O O O O O O O O O O
 The place does get crowded , so I recommend going between 4 - 5 PM .***O O O O O O O O O O O O O O O O
-Mine was a little burnt but still delicious with goat cheese and panchetta raddichio was kind of bitter though .***O O O O O O O O O T-POS T-POS O T-POS T-NEG O O O O O O
+Mine was a little burnt but still delicious with goat cheese and panchetta raddichio was kind of bitter though .***O O O O O O O O O T-POS T-POS O T-POS T-POS O O O O O O
 Disappointing food , lousy service .***O T-NEG O O T-NEG O
 I ' m from sichuan , this is the restaurant I recommend going .***O O O O O O O O O O O O O O
 This lovely French - Asian fusion restaurant stands out amongst other great restaurants on Smith Street .***O O O O O O O O O O O O O O O O O
@@ -2240,7 +2240,7 @@ Best drumsticks over rice and sour spicy soup in town !***O T-POS T-POS T-POS O 
 Some of the finest latin women you 'll see in your life hang out at Jimmy 's .***O O O O O O O O O O O O O O O O O O
 Slightly above average wines start at $ 70 + with only one selection listed at $ 30 + .***O O O T-NEG O O O O O O O O O O O O O O O
 Their whitefish salad is excellent -- all whitefish with a little mayo .***O T-POS T-POS O O O O T-POS O O O T-POS O
-And it all comes at a very reasonable price congee , noodles , and rice dishes are no more than $ 3 - 6 each .***O O O O O O O O T-POS T-NEU O T-NEU O O T-NEU T-NEU O O O O O O O O O O
+And it all comes at a very reasonable price ( congee , noodles , and rice dishes are no more than $ 3 - 6 each ) .***O O O O O O O O T-POS O T-NEU O T-NEU O O T-NEU T-NEU O O O O O O O O O O O
 Nobody at this restaurant will give firm answers about anything and in the end , not one person takes responsibility for anything .***O O O O O O O O O O O O O O O O O O O O O O O
 I had a great experience .***O O O O O O
 The chicken parm was edible but had canned tomato sauce and boxed pasta and the chicken with portobello mushrooms consisted of dry , inedible chicken with terrible sauce .***O T-NEG O O O O O O T-NEG T-NEG O O T-NEG O O T-NEG T-NEG T-NEG T-NEG O O O O O T-NEG O O T-NEG O
@@ -2744,7 +2744,7 @@ I took my girlfriend there for her birthday last night and we had a relaxing , r
 I would not have been so disappointed with the portions if the qualities were good enough to make up for it , but they were not !***O O O O O O O O O T-NEG O O T-NEG O O O O O O O O O O O O O O
 They 're rude at times , and not very friendly .***O O O O O O O O O O O
 I ' m happy to have Nosh in the neighborhood and the food is very comforting .***O O O O O O O O O O O O T-POS O O O O
-Good atmosphere , combination of all the hottest music dress cod is relatively strict except on Fridays .***O T-POS O O O O O O T-POS T-NEG T-NEG O O O O O O O
+Good atmosphere , combination of all the hottest music , dress cod is relatively strict except on Fridays .***O T-POS O O O O O O T-POS O T-NEG T-NEG O O O O O O O
 They kindly brought us more to see if it was better , but it was not !***O O O O O O O O O O O O O O O O O
 love the food .***O O T-POS O
 I would highly recommend Nina 's to anyone who wants to have a romantic dinner in a heart warming surrounding filled with candles and family pictures .***O O O O O O O O O O O O O O T-POS O O O O T-POS O O T-POS O O T-POS O
