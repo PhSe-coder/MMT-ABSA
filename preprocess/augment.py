@@ -3,7 +3,7 @@ import os.path as osp
 from argparse import ArgumentParser
 from os import listdir, makedirs
 from shutil import copy
-
+import random
 import example.augment as ag
 
 logging.basicConfig(level=logging.INFO,
@@ -32,16 +32,19 @@ parser.add_argument("--alpha-rd",
                     type=float,
                     default=0,
                     help="percent of words in each sentence to be deleted")
+parser.add_argument("--seed",
+                    type=int,
+                    default=1)
 args = parser.parse_args()
 src = args.src
 dest = args.dest
 num_aug = args.num
-assert num_aug % 2 == 0
+# assert num_aug % 2 == 0
 alpha_sr = args.alpha_sr
 alpha_rd = args.alpha_rd
 alpha_ri = args.alpha_ri
 alpha_rs = args.alpha_rs
-
+random.seed(args.seed)
 makedirs(dest, exist_ok=True)
 for file in listdir(src):
     input_file = osp.join(src, file)
