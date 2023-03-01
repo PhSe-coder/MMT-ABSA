@@ -7,6 +7,7 @@ from transformers import BertModel, BertPreTrainedModel
 from torch import Tensor
 from transformers.modeling_outputs import TokenClassifierOutput
 from mi_estimators import InfoNCE
+import torch.utils.checkpoint as cp
 
 logger = logging.getLogger(__name__)
 
@@ -149,9 +150,13 @@ class MIBert(BertPreTrainedModel):
                 gold_labels = batch_src['gold_labels']
                 loss = self.loss_fct(src_logits.view(-1, src_logits.size(-1)), gold_labels.view(-1))
                 active_logits = logits.view(-1, logits.size(-1))[valid_mask.view(-1) == 1]
-                _mi_loss = self.mi_loss.learning_loss(
-                    sequence_output.view(-1, sequence_output.size(-1))[valid_mask.view(-1) == 1],
-                    f.softmax(active_logits, dim=-1))
+                # use checkpoint to avoid cuda out of memory although making the running slower.
+                _mi_loss = cp.checkpoint(self.mi_loss.learning_loss,
+                   sequence_output.view(-1, sequence_output.size(-1))[valid_mask.view(-1) == 1],
+                   f.softmax(active_logits, dim=-1))
+                # _mi_loss = self.mi_loss.learning_loss(
+                #     sequence_output.view(-1, sequence_output.size(-1))[valid_mask.view(-1) == 1],
+                #     f.softmax(active_logits, dim=-1))
                 loss += (self.alpha * _mi_loss)
         else:
             input_ids = batch_tgt['input_ids']
