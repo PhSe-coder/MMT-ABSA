@@ -1,25 +1,33 @@
 #!/bin/bash
 export CUDA_VISIBLE_DEVICES=0
 export TRANSFORMERS_OFFLINE=0
-output='./out/mmt_base/'
-src_train_dir='./processed/dataset'
-tar_train_dir='./processed/dataset'
-val_dir='./processed/dataset'
-test_dir='./processed/dataset'
+output='/root/autodl-tmp/out/mmt/'
 src_domain=$1
 tar_domain=$2
-python run.py -m torch.distributed.launch --nproc_per_node=1 --local_rank 0 \
+python trainers.py \
+--accelerator "gpu" \
+--devices 1 \
+--log_every_n_steps 10 \
 --model_name "mmt" \
 --output_dir "${output}${src_domain}-${tar_domain}"  \
---train_file "${tar_train_dir}/${tar_domain}.train.txt" \
---test_file "${test_dir}/${tar_domain}.test.txt" \
---validation_file "${val_dir}/${tar_domain}.validation.txt" \
+--train_file "/root/graduation/processed/dataset/${src_domain}.train.txt" \
+"/root/graduation/processed/dataset/${tar_domain}.train.txt" \
+"/root/graduation/processed/cont_dataset/${src_domain}.train.txt" \
+"/root/graduation/processed/cont_dataset/${tar_domain}.train.txt" \
+--test_file "/root/graduation/processed/dataset/${tar_domain}.test.txt" \
+--validation_file "/root/graduation/processed/dataset/${tar_domain}.validation.txt" \
 --do_train \
 --do_predict \
 --do_eval \
---device "cuda:0" \
---optimizer "rmsprop" \
---lr "1e-3" \
---bert_lr "2e-5" \
+--enable_progress_bar False \
+--num_workers 16 \
+--lr "2e-5" \
+--tau 1 \
+--alpha 0.08 \
+--soft_loss_weight 0.01 \
+--theta 0.999 \
 --batch_size 16 \
---num_train_epochs 4
+--max_epochs 5 \
+--default_root_dir "/root/autodl-tmp" \
+--seed 42 \
+--tune
