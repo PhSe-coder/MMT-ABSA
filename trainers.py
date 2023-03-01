@@ -1,4 +1,5 @@
 import torch
+import os
 from torch.utils.data import DataLoader
 from transformers import BertTokenizer
 from constants import TAGS
@@ -8,6 +9,9 @@ import pytorch_lightning as pl
 from argparse import ArgumentParser
 from models import MIBertClassifier, MMTModel, BertClassifier
 from pytorch_lightning.callbacks import ModelCheckpoint
+from ray import air, tune
+from ray.tune import CLIReporter
+from ray.tune.integration.pytorch_lightning import TuneReportCallback
 
 parser = ArgumentParser()
 # add all the available trainer options to argparse
@@ -24,6 +28,10 @@ parser.add_argument("--output_dir", type=str)
 parser.add_argument("--do_train", default=True, action='store_true')
 parser.add_argument("--do_eval", default=True, action='store_true')
 parser.add_argument("--do_predict", default=True, action='store_true')
+parser.add_argument("--tune",
+                    default=False,
+                    action='store_true',
+                    help='Whether tune hyperparameters with the Ray.')
 parser.add_argument("--lr", type=float, default=3e-5)
 parser.add_argument("--batch_size", type=int, default=16)
 parser.add_argument("--num_workers", type=int, default=0)
@@ -51,74 +59,65 @@ def dataloader_init(args):
     return train_loader, val_loader, test_loader, tokenizer
 
 
-def mmt_model_trainer(args):
-    pm = args.pretrained_model
-    alpha = args.alpha
-    tau = args.tau
-    num_labels = len(TAGS)
+def mmt_model_trainer(config: dict, args):
+    torch.set_float32_matmul_precision('high')
+    pl.seed_everything(args.seed, True)
     train_loader, val_loader, test_loader, tokenizer = dataloader_init(args)
-    # model
-    model_1 = MIBert.from_pretrained(pm, alpha, tau, num_labels=num_labels)
-    model_1_ema = MIBert.from_pretrained(pm, alpha, tau, num_labels=num_labels)
-    model_2 = MIBert.from_pretrained(pm, alpha, tau, num_labels=num_labels)
-    model_2_ema = MIBert.from_pretrained(pm, alpha, tau, num_labels=num_labels)
-    for param in model_1_ema.parameters():
-        param.detach_()
-    for param in model_2_ema.parameters():
-        param.detach_()
     dict_args = vars(args)
     dict_args['tokenizer'] = tokenizer
-    dict_args['model_1'] = model_1
-    dict_args['model_1_ema'] = model_1_ema
-    dict_args['model_2'] = model_2
-    dict_args['model_2_ema'] = model_2_ema
+    dict_args['num_labels'] = len(TAGS)
+    dict_args.update(config)
     model = MMTModel(**dict_args)
-
-    # training
     checkpoint_callback = ModelCheckpoint(monitor="val_f1",
                                           mode='max',
                                           filename='mmt-absa-{epoch:02d}-{val_f1:.2f}')
-    trainer = pl.Trainer.from_argparse_args(args, callbacks=[checkpoint_callback])
+    tune_report_callback = TuneReportCallback(['absa_test_f1', 'ae_test_f1'], on="test_epoch_end")
+    trainer = pl.Trainer.from_argparse_args(args,
+                                            callbacks=[checkpoint_callback, tune_report_callback])
     trainer.fit(model, train_loader, val_loader)
     trainer.test(model, test_loader, ckpt_path='best')
 
 
-def mi_bert_trainer(args):
+def mi_bert_trainer(config: dict, args):
+    torch.set_float32_matmul_precision('high')
+    pl.seed_everything(args.seed, True)
     train_loader, val_loader, test_loader, tokenizer = dataloader_init(args)
-    # model
     dict_args = vars(args)
     dict_args['tokenizer'] = tokenizer
+    dict_args['num_labels'] = len(TAGS)
+    dict_args.update(config)
     model = MIBertClassifier(**dict_args)
-
-    # training
     checkpoint_callback = ModelCheckpoint(monitor="val_f1",
                                           mode='max',
                                           filename='mi-absa-{epoch:02d}-{val_f1:.2f}')
-    trainer = pl.Trainer.from_argparse_args(args, callbacks=[checkpoint_callback])
+    tune_report_callback = TuneReportCallback(['absa_test_f1', 'ae_test_f1'], on="test_epoch_end")
+    trainer = pl.Trainer.from_argparse_args(args,
+                                            callbacks=[checkpoint_callback, tune_report_callback])
     trainer.fit(model, train_loader, val_loader)
     trainer.test(model, test_loader, ckpt_path='best')
 
 
-def bert_trainer(args):
+def bert_trainer(config: dict, args):
+    torch.set_float32_matmul_precision('high')
+    pl.seed_everything(args.seed, True)
     train_loader, val_loader, test_loader, tokenizer = dataloader_init(args)
-    # model
     dict_args = vars(args)
     dict_args['num_labels'] = len(TAGS)
     dict_args['tokenizer'] = tokenizer
+    dict_args.update(config)
     model = BertClassifier(**dict_args)
-
-    # training
     checkpoint_callback = ModelCheckpoint(monitor="val_f1",
                                           mode='max',
                                           filename='bert-absa-{epoch:02d}-{val_f1:.2f}',
                                           save_weights_only=True)
-    trainer = pl.Trainer.from_argparse_args(args, callbacks=[checkpoint_callback])
+    tune_report_callback = TuneReportCallback(['absa_test_f1', 'ae_test_f1'], on="test_epoch_end")
+    trainer = pl.Trainer.from_argparse_args(args,
+                                            callbacks=[checkpoint_callback, tune_report_callback])
     trainer.fit(model, train_loader, val_loader)
     trainer.test(model, test_loader, ckpt_path='best')
 
 
 if __name__ == '__main__':
-    torch.set_float32_matmul_precision('high')
     temp_args, _ = parser.parse_known_args()
     model_name = temp_args.model_name
     trainers = {
@@ -127,9 +126,26 @@ if __name__ == '__main__':
         "bert": bert_trainer,
     }
     models = {"mmt": MMTModel, "mi_bert": MIBert, "bert": BertClassifier}
-    # add model specific args
     parser = models[model_name].add_model_specific_args(parser)
     trainer = trainers[model_name]
     arguments = parser.parse_args()
-    pl.seed_everything(arguments.seed, True)
-    trainer(arguments)
+    if temp_args.tune:
+        train_fn_with_parameters = tune.with_parameters(trainer, args=arguments)
+        resources_per_trial = {"gpu": int(arguments.devices)}
+        reporter = CLIReporter(metric_columns=["absa_test_f1", "ae_test_f1"])
+        tuner = tune.Tuner(
+            tune.with_resources(train_fn_with_parameters, resources=resources_per_trial),
+            param_space={
+                "tau": tune.grid_search([0.8, 1, 1.2]),
+                "alpha": tune.grid_search([0.02, 0.04, 0.06, 0.08, 0.1, 0.12])
+            },
+            run_config=air.RunConfig(
+                name=model_name,
+                progress_reporter=reporter,
+            ),
+        )
+        results = tuner.fit()
+        print("Best hyperparameters found were: ",
+              results.get_best_result("absa_test_f1", "min").config)
+    else:
+        trainer({}, arguments)
