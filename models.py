@@ -1,6 +1,7 @@
 from typing import List
 import torch
 import torch.nn as nn
+import os
 from transformers.modeling_outputs import TokenClassifierOutput
 import pytorch_lightning as pl
 from mi_estimators import InfoNCE
@@ -14,28 +15,30 @@ from optimization import BertAdam
 
 class MMTModel(pl.LightningModule):
 
-    def __init__(self,
-                 model_1: MIBert,
-                 model_1_ema: MIBert,
-                 model_2: MIBert,
-                 model_2_ema: MIBert,
-                 theta: float = 0.999,
-                 soft_loss_weight: float = 0.01,
-                 **kwargs):
+    def __init__(self, **kwargs):
         super().__init__()
-        self.save_hyperparameters(ignore=['model_1', 'model_1_ema', 'model_2', 'model_2_ema'])
         self.automatic_optimization = False
-        self.model_1 = model_1
-        self.model_ema_1 = model_1_ema
-        self.model_2 = model_2
-        self.model_ema_2 = model_2_ema
-        self.theta = theta
-        self.soft_loss_weight = soft_loss_weight
+        self.save_hyperparameters()
+        pm = kwargs.get("pretrained_model")
+        alpha = kwargs.get("alpha")
+        tau = kwargs.get("tau")
+        num_labels = kwargs.get("num_labels")
+        self.model_1 = MIBert.from_pretrained(pm, alpha, tau, num_labels=num_labels)
+        self.model_ema_1 = MIBert.from_pretrained(pm, alpha, tau, num_labels=num_labels)
+        self.model_2 = MIBert.from_pretrained(pm, alpha, tau, num_labels=num_labels)
+        self.model_ema_2 = MIBert.from_pretrained(pm, alpha, tau, num_labels=num_labels)
+        for param in self.model_ema_1.parameters():
+            param.detach_()
+        for param in self.model_ema_2.parameters():
+            param.detach_()
+        self.theta = kwargs.get("theta")
+        self.soft_loss_weight = kwargs.get("soft_loss_weight")
         self.ce_soft_loss = SoftEntropy()
         self.lr = kwargs.get('lr')
         self.tokenizer = kwargs.get('tokenizer')
-        hidden_size = model_1.classifier.in_features
-        out_size = model_1.classifier.out_features
+        self.output_dir: str = kwargs.get("output_dir")
+        hidden_size = self.model_1.classifier.in_features
+        out_size = self.model_1.classifier.out_features
         self.mi = InfoNCE(hidden_size, out_size)
         self.softmax = nn.Softmax(-1)
 
@@ -58,9 +61,9 @@ class MMTModel(pl.LightningModule):
             loss += self.soft_loss_weight * loss_ce_soft
         else:
             outputs1: TokenClassifierOutput = self.model_1(batch[0])
-            outputs2: TokenClassifierOutput = self.model_2(batch[0])
-            ins = (outputs1.logits + outputs2.logits) / 2
-            # ins = outputs1.logits
+            # outputs2: TokenClassifierOutput = self.model_2(batch[0])
+            # ins = (outputs1.logits + outputs2.logits) / 2
+            ins = outputs1.logits
         return TokenClassifierOutput(logits=ins, loss=loss)
 
     @torch.no_grad()
@@ -105,7 +108,7 @@ class MMTModel(pl.LightningModule):
         for opt in opts:
             opt.step()
             opt.zero_grad()
-        self.log('train_loss', loss)
+        self.log('train_loss', loss.item())
         return loss
 
     def validation_step(self, batch, batch_idx):
@@ -137,23 +140,34 @@ class MMTModel(pl.LightningModule):
             pred_Y.extend(pred_list)
             gold_Y.extend(gold_list)
             text.extend(sentence)
-        test_pre, test_rec, test_f1 = absa_evaluate(pred_Y, gold_Y)
+        absa_test_pre, absa_test_rec, absa_test_f1 = absa_evaluate(pred_Y, gold_Y)
         self.log_dict({
-            "absa_test_pre": round(test_pre, 4),
-            "absa_test_rec": round(test_rec, 4),
-            "absa_test_f1": round(test_f1, 4)
+            "absa_test_pre": round(absa_test_pre, 4),
+            "absa_test_rec": round(absa_test_rec, 4),
+            "absa_test_f1": round(absa_test_f1, 4)
         })
-        test_pre, test_rec, test_f1 = evaluate(pred_Y, gold_Y)
+        ae_test_pre, ae_test_rec, ae_test_f1 = evaluate(pred_Y, gold_Y)
         self.log_dict({
-            "ae_test_pre": round(test_pre, 4),
-            "ae_test_rec": round(test_rec, 4),
-            "ae_test_f1": round(test_f1, 4)
+            "ae_test_pre": round(ae_test_pre, 4),
+            "ae_test_rec": round(ae_test_rec, 4),
+            "ae_test_f1": round(ae_test_f1, 4)
         })
-        #     with open(os.path.join(self.args.output_dir, filename), "w") as f:
-        #         f.write(content)
-        # with open(os.path.join(self.args.output_dir, "predict.txt"), "w") as f:
-        #     for i in range(len(gold_Y)):
-        #         f.write(f"{text[i]}***{' '.join(pred_Y[i])}***{' '.join(gold_Y[i])}\n")
+        if self.local_rank == 0:
+            version = 0
+            path = os.path.join(self.output_dir, str(version))
+            while os.path.exists(path):
+                version += 1
+                path = os.path.join(self.output_dir, str(version))
+            os.makedirs(path, exist_ok=True)
+            with open(os.path.join(path, "predict.txt"), "w") as f:
+                for i in range(len(gold_Y)):
+                    f.write(f"{text[i]}***{' '.join(pred_Y[i])}***{' '.join(gold_Y[i])}\n")
+            with open(os.path.join(path, "absa_prediction.txt"), "w") as f:
+                content = f'test_pre: {absa_test_pre:.4f}, test_rec: {absa_test_rec:.4f}, test_f1: {absa_test_f1:.4f}'
+                f.write(content)
+            with open(os.path.join(path, "ae_prediction.txt"), "w") as f:
+                content = f'test_pre: {ae_test_pre:.4f}, test_rec: {ae_test_rec:.4f}, test_f1: {ae_test_f1:.4f}'
+                f.write(content)
 
     @staticmethod
     def add_model_specific_args(parent_parser):
@@ -172,8 +186,12 @@ class MIBertClassifier(pl.LightningModule):
         super().__init__()
         self.save_hyperparameters()
         self.automatic_optimization = False
-        self.model = MIBert.from_pretrained(pretrained_model, alpha, tau, num_labels=len(TAGS))
+        self.model = MIBert.from_pretrained(pretrained_model,
+                                            alpha,
+                                            tau,
+                                            num_labels=kwargs.get("num_labels"))
         self.lr = kwargs.get('lr')
+        self.output_dir: str = kwargs.get("output_dir")
         self.tokenizer = kwargs.get('tokenizer')
 
     # Using custom or multiple metrics (default_hp_metric=False)
@@ -253,18 +271,34 @@ class MIBertClassifier(pl.LightningModule):
             pred_Y.extend(pred_list)
             gold_Y.extend(gold_list)
             text.extend(sentence)
-        test_pre, test_rec, test_f1 = absa_evaluate(pred_Y, gold_Y)
+        absa_test_pre, absa_test_rec, absa_test_f1 = absa_evaluate(pred_Y, gold_Y)
         self.log_dict({
-            "absa_test_pre": round(test_pre, 4),
-            "absa_test_rec": round(test_rec, 4),
-            "absa_test_f1": round(test_f1, 4)
+            "absa_test_pre": round(absa_test_pre, 4),
+            "absa_test_rec": round(absa_test_rec, 4),
+            "absa_test_f1": round(absa_test_f1, 4)
         })
-        test_pre, test_rec, test_f1 = evaluate(pred_Y, gold_Y)
+        ae_test_pre, ae_test_rec, ae_test_f1 = evaluate(pred_Y, gold_Y)
         self.log_dict({
-            "ae_test_pre": round(test_pre, 4),
-            "ae_test_rec": round(test_rec, 4),
-            "ae_test_f1": round(test_f1, 4)
+            "ae_test_pre": round(ae_test_pre, 4),
+            "ae_test_rec": round(ae_test_rec, 4),
+            "ae_test_f1": round(ae_test_f1, 4)
         })
+        if self.local_rank == 0:
+            version = 0
+            path = os.path.join(self.output_dir, str(version))
+            while os.path.exists(path):
+                version += 1
+                path = os.path.join(self.output_dir, str(version))
+            os.makedirs(path, exist_ok=True)
+            with open(os.path.join(path, "predict.txt"), "w") as f:
+                for i in range(len(gold_Y)):
+                    f.write(f"{text[i]}***{' '.join(pred_Y[i])}***{' '.join(gold_Y[i])}\n")
+            with open(os.path.join(path, "absa_prediction.txt"), "w") as f:
+                content = f'test_pre: {absa_test_pre:.4f}, test_rec: {absa_test_rec:.4f}, test_f1: {absa_test_f1:.4f}'
+                f.write(content)
+            with open(os.path.join(path, "ae_prediction.txt"), "w") as f:
+                content = f'test_pre: {ae_test_pre:.4f}, test_rec: {ae_test_rec:.4f}, test_f1: {ae_test_f1:.4f}'
+                f.write(content)
 
     @staticmethod
     def add_model_specific_args(parent_parser):
@@ -280,6 +314,7 @@ class BertClassifier(pl.LightningModule):
     def __init__(self, pretrained_model: str, num_labels: int, **kwargs):
         super().__init__()
         self.save_hyperparameters()
+        self.output_dir: str = kwargs.get("output_dir")
         self.automatic_optimization = False
         self.model = BertForTokenClassification.from_pretrained(pretrained_model,
                                                                 num_labels=num_labels)
@@ -348,18 +383,34 @@ class BertClassifier(pl.LightningModule):
             pred_Y.extend(pred_list)
             gold_Y.extend(gold_list)
             text.extend(sentence)
-        test_pre, test_rec, test_f1 = absa_evaluate(pred_Y, gold_Y)
+        absa_test_pre, absa_test_rec, absa_test_f1 = absa_evaluate(pred_Y, gold_Y)
         self.log_dict({
-            "absa_test_pre": round(test_pre, 4),
-            "absa_test_rec": round(test_rec, 4),
-            "absa_test_f1": round(test_f1, 4)
+            "absa_test_pre": round(absa_test_pre, 4),
+            "absa_test_rec": round(absa_test_rec, 4),
+            "absa_test_f1": round(absa_test_f1, 4)
         })
-        test_pre, test_rec, test_f1 = evaluate(pred_Y, gold_Y)
+        ae_test_pre, ae_test_rec, ae_test_f1 = evaluate(pred_Y, gold_Y)
         self.log_dict({
-            "ae_test_pre": round(test_pre, 4),
-            "ae_test_rec": round(test_rec, 4),
-            "ae_test_f1": round(test_f1, 4)
+            "ae_test_pre": round(ae_test_pre, 4),
+            "ae_test_rec": round(ae_test_rec, 4),
+            "ae_test_f1": round(ae_test_f1, 4)
         })
+        if self.local_rank == 0:
+            version = 0
+            path = os.path.join(self.output_dir, str(version))
+            while os.path.exists(path):
+                version += 1
+                path = os.path.join(self.output_dir, str(version))
+            os.makedirs(path, exist_ok=True)
+            with open(os.path.join(path, "predict.txt"), "w") as f:
+                for i in range(len(gold_Y)):
+                    f.write(f"{text[i]}***{' '.join(pred_Y[i])}***{' '.join(gold_Y[i])}\n")
+            with open(os.path.join(path, "absa_prediction.txt"), "w") as f:
+                content = f'test_pre: {absa_test_pre:.4f}, test_rec: {absa_test_rec:.4f}, test_f1: {absa_test_f1:.4f}'
+                f.write(content)
+            with open(os.path.join(path, "ae_prediction.txt"), "w") as f:
+                content = f'test_pre: {ae_test_pre:.4f}, test_rec: {ae_test_rec:.4f}, test_f1: {ae_test_f1:.4f}'
+                f.write(content)
 
     @staticmethod
     def add_model_specific_args(parent_parser):
