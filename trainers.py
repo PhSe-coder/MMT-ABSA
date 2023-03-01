@@ -136,8 +136,8 @@ if __name__ == '__main__':
         tuner = tune.Tuner(
             tune.with_resources(train_fn_with_parameters, resources=resources_per_trial),
             param_space={
-                "tau": tune.grid_search([0.8, 1, 1.2]),
-                "alpha": tune.grid_search([0.02, 0.04, 0.06, 0.08, 0.1, 0.12])
+                "tau": tune.grid_search([0.6, 0.8, 1, 1.2, 1.4]),
+                "alpha": tune.grid_search([0.04, 0.06, 0.08, 0.1, 0.12])
             },
             run_config=air.RunConfig(
                 name=model_name,
@@ -146,6 +146,6 @@ if __name__ == '__main__':
         )
         results = tuner.fit()
         print("Best hyperparameters found were: ",
-              results.get_best_result("absa_test_f1", "min").config)
+              results.get_best_result("absa_test_f1", "max").config)
     else:
         trainer({}, arguments)
