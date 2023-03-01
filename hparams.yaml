@@ -1,0 +1,11 @@
+service-rest:
+  alpha: 0.08
+  tau: 1.2
+# absa: 51.33, ae: 6154
+laptop-rest:
+  alpha: 0.04
+  tau: 0.8
+# 
+device-rest:
+  alpha: 
+  tau:
