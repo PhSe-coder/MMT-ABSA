@@ -68,12 +68,15 @@ def mmt_model_trainer(config: dict, args):
     dict_args['num_labels'] = len(TAGS)
     dict_args.update(config)
     model = MMTModel(**dict_args)
+    callbacks = []
     checkpoint_callback = ModelCheckpoint(monitor="val_f1",
                                           mode='max',
                                           filename='mmt-absa-{epoch:02d}-{val_f1:.2f}')
-    tune_report_callback = TuneReportCallback(['absa_test_f1', 'ae_test_f1'], on="test_epoch_end")
-    trainer = pl.Trainer.from_argparse_args(args,
-                                            callbacks=[checkpoint_callback, tune_report_callback])
+    callbacks.append(checkpoint_callback)
+    if config:
+        tune_report_callback = TuneReportCallback(['absa_test_f1', 'ae_test_f1'], on="test_epoch_end")
+        callbacks.append(tune_report_callback)
+    trainer = pl.Trainer.from_argparse_args(args, callbacks=callbacks)
     trainer.fit(model, train_loader, val_loader)
     trainer.test(model, test_loader, ckpt_path='best')
 
@@ -87,12 +90,16 @@ def mi_bert_trainer(config: dict, args):
     dict_args['num_labels'] = len(TAGS)
     dict_args.update(config)
     model = MIBertClassifier(**dict_args)
+    callbacks = []
     checkpoint_callback = ModelCheckpoint(monitor="val_f1",
                                           mode='max',
                                           filename='mi-absa-{epoch:02d}-{val_f1:.2f}')
-    tune_report_callback = TuneReportCallback(['absa_test_f1', 'ae_test_f1'], on="test_epoch_end")
-    trainer = pl.Trainer.from_argparse_args(args,
-                                            callbacks=[checkpoint_callback, tune_report_callback])
+    callbacks.append(checkpoint_callback)
+    if config:
+        tune_report_callback = TuneReportCallback(['absa_test_f1', 'ae_test_f1'],
+                                                  on="test_epoch_end")
+        callbacks.append(tune_report_callback)
+    trainer = pl.Trainer.from_argparse_args(args, callbacks=callbacks)
     trainer.fit(model, train_loader, val_loader)
     trainer.test(model, test_loader, ckpt_path='best')
 
@@ -106,13 +113,17 @@ def bert_trainer(config: dict, args):
     dict_args['tokenizer'] = tokenizer
     dict_args.update(config)
     model = BertClassifier(**dict_args)
+    callbacks = []
     checkpoint_callback = ModelCheckpoint(monitor="val_f1",
                                           mode='max',
                                           filename='bert-absa-{epoch:02d}-{val_f1:.2f}',
                                           save_weights_only=True)
-    tune_report_callback = TuneReportCallback(['absa_test_f1', 'ae_test_f1'], on="test_epoch_end")
-    trainer = pl.Trainer.from_argparse_args(args,
-                                            callbacks=[checkpoint_callback, tune_report_callback])
+    callbacks.append(checkpoint_callback)
+    if config:
+        tune_report_callback = TuneReportCallback(['absa_test_f1', 'ae_test_f1'],
+                                                  on="test_epoch_end")
+        callbacks.append(tune_report_callback)
+    trainer = pl.Trainer.from_argparse_args(args, callbacks=callbacks)
     trainer.fit(model, train_loader, val_loader)
     trainer.test(model, test_loader, ckpt_path='best')
 
