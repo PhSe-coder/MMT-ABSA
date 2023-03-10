@@ -52,7 +52,8 @@ class MMTModel(pl.LightningModule):
             # exponential moving average
             self.__update_ema_variables(self.model_1, self.model_ema_1, self.theta)
             self.__update_ema_variables(self.model_2, self.model_ema_2, self.theta)
-            loss = outputs1.loss + outputs2.loss
+            loss = outputs1.loss[0] + outputs2.loss[0]
+            self.log("rate", (outputs1.loss[1] + outputs2.loss[1])/(outputs1.loss[2] + outputs2.loss[2]).item())
             # soft label loss
             ins = torch.cat([outputs1.logits, outputs2.logits])
             outs = torch.cat([outputs2_ema.logits, outputs1_ema.logits])
