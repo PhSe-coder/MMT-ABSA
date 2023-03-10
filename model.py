@@ -127,7 +127,7 @@ class MIBert(BertPreTrainedModel):
                 batch_tgt: Dict[str, Tensor],
                 batch_src: Dict[str, Tensor] = None,
                 student: bool = True):
-        loss = None
+        loss, ce_loss, _mi_loss = None, None, 0
         if self.training:
             input_ids = torch.cat([batch_src['input_ids'], batch_tgt['input_ids']])
             token_type_ids = torch.cat([batch_src['token_type_ids'], batch_tgt['token_type_ids']])
@@ -148,7 +148,7 @@ class MIBert(BertPreTrainedModel):
             hidden_states = tgt_outputs.view(-1, tgt_outputs.size(-1))[active_mask]
             if student:
                 gold_labels = batch_src['gold_labels']
-                loss = self.loss_fct(src_logits.view(-1, src_logits.size(-1)), gold_labels.view(-1))
+                ce_loss = self.loss_fct(src_logits.view(-1, src_logits.size(-1)), gold_labels.view(-1))
                 active_logits = logits.view(-1, logits.size(-1))[valid_mask.view(-1) == 1]
                 # use checkpoint to avoid cuda out of memory although making the running slower.
                 _mi_loss = cp.checkpoint(self.mi_loss.learning_loss,
@@ -157,7 +157,7 @@ class MIBert(BertPreTrainedModel):
                 # _mi_loss = self.mi_loss.learning_loss(
                 #     sequence_output.view(-1, sequence_output.size(-1))[valid_mask.view(-1) == 1],
                 #     f.softmax(active_logits, dim=-1))
-                loss += (self.alpha * _mi_loss)
+                loss = ce_loss + self.alpha * _mi_loss
         else:
             input_ids = batch_tgt['input_ids']
             attention_mask = batch_tgt['attention_mask']
@@ -171,7 +171,7 @@ class MIBert(BertPreTrainedModel):
             active_tgt_logits = tgt_logits.view(-1, self.num_labels)[active_mask]
             hidden_states = sequence_output.view(-1, sequence_output.size(-1))[active_mask]
         return TokenClassifierOutput(logits=active_tgt_logits,
-                                     loss=loss,
+                                     loss=(loss, ce_loss, self.alpha * _mi_loss),
                                      hidden_states=hidden_states)
 
 
