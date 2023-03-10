@@ -35,6 +35,9 @@ parser.add_argument("--alpha-rd",
 parser.add_argument("--seed",
                     type=int,
                     default=1)
+parser.add_argument("--shuffle",
+                    default=False,
+                    action='store_true')
 args = parser.parse_args()
 src = args.src
 dest = args.dest
@@ -63,4 +66,8 @@ for file in listdir(src):
             str(alpha_ri), "--alpha_rs",
             str(alpha_rs)
         ]))
+    if args.shuffle:
+        lines = open(output_file, "r").read().splitlines(True)
+        random.shuffle(lines)
+        open(output_file, "w").writelines(lines)
 logging.info("Augment Ready.")
