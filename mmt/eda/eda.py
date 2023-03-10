@@ -219,8 +219,6 @@ def eda(words: Tuple[Word],
                 augmented_sentences.append(text)
                 i += 1
                 iters = 0
-        if len(augmented_sentences) % 2 != 0:
-            augmented_sentences.pop()
 
 # ri
     if (alpha_ri > 0):
@@ -264,6 +262,6 @@ def eda(words: Tuple[Word],
     root_text = sep.join(' '.join(
                     getattr(word, field) for word in words)
                                      for field in Word._fields)
-    if root_text not in augmented_sentences:
-        augmented_sentences.append(root_text)
+    # if root_text not in augmented_sentences:
+    #     augmented_sentences.append(root_text)
     return augmented_sentences
