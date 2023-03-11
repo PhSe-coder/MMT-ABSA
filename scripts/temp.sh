@@ -10,12 +10,12 @@ python trainers.py \
 --log_every_n_steps 10 \
 --model_name "mmt" \
 --output_dir "${output}${src_domain}-${tar_domain}"  \
---train_file "/root/graduation/processed/dataset/${src_domain}.train.txt" \
-"/root/graduation/processed/dataset/${tar_domain}.train.txt" \
-"/root/graduation/processed/cont_dataset/${src_domain}.train.txt" \
-"/root/graduation/processed/cont_dataset/${tar_domain}.train.txt" \
+--train_file "/root/graduation/processed/tmp/${src_domain}.train.txt" \
+"/root/graduation/processed/tmp/${tar_domain}.train.txt" \
+"/root/graduation/processed/cont/${src_domain}.train.txt" \
+"/root/graduation/processed/cont/${tar_domain}.train.txt" \
 --test_file "/root/graduation/processed/dataset/${tar_domain}.test.txt" \
---validation_file "/root/graduation/processed/dataset/${tar_domain}.validation.txt" \
+--validation_file "/root/graduation/processed/dataset/${src_domain}.validation.txt" \
 --do_train \
 --do_predict \
 --do_eval \
