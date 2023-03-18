@@ -4,7 +4,6 @@ import torch.nn as nn
 import os
 from transformers.modeling_outputs import TokenClassifierOutput
 import pytorch_lightning as pl
-from mi_estimators import InfoNCE
 from constants import TAGS
 from torch.optim import AdamW
 from eval import absa_evaluate, evaluate
@@ -35,11 +34,9 @@ class MMTModel(pl.LightningModule):
         self.soft_loss_weight = kwargs.get("soft_loss_weight")
         self.ce_soft_loss = SoftEntropy()
         self.lr = kwargs.get('lr')
+        self.alpha = alpha
         self.tokenizer = kwargs.get('tokenizer')
         self.output_dir: str = kwargs.get("output_dir")
-        hidden_size = self.model_1.classifier.in_features
-        out_size = self.model_1.classifier.out_features
-        self.mi = InfoNCE(hidden_size, out_size)
         self.softmax = nn.Softmax(-1)
 
     def forward(self, batch):
@@ -53,17 +50,23 @@ class MMTModel(pl.LightningModule):
             self.__update_ema_variables(self.model_1, self.model_ema_1, self.theta)
             self.__update_ema_variables(self.model_2, self.model_ema_2, self.theta)
             loss = outputs1.loss[0] + outputs2.loss[0]
-            self.log("rate", (outputs1.loss[1] + outputs2.loss[1])/(outputs1.loss[2] + outputs2.loss[2]).item())
+            mi_loss = outputs1.loss[1] + outputs2.loss[1]
+            ce_loss = outputs1.loss[2] + outputs2.loss[2]
+            self.log("mi_loss", mi_loss.item())
+            self.log("ce_loss", ce_loss.item())
             # soft label loss
             ins = torch.cat([outputs1.logits, outputs2.logits])
             outs = torch.cat([outputs2_ema.logits, outputs1_ema.logits])
             loss_ce_soft = self.ce_soft_loss(ins, outs)
             # total loss
             loss += self.soft_loss_weight * loss_ce_soft
+            self.log("soft_loss", loss_ce_soft.item())
         else:
             outputs1: TokenClassifierOutput = self.model_1(batch[0])
+            outputs2_ema: TokenClassifierOutput = self.model_ema_2(batch[0], False)
             # outputs2: TokenClassifierOutput = self.model_2(batch[0])
             # ins = (outputs1.logits + outputs2.logits) / 2
+            loss = self.ce_soft_loss(outputs1.logits, outputs2_ema.logits)
             ins = outputs1.logits
         return TokenClassifierOutput(logits=ins, loss=loss)
 
@@ -83,7 +86,7 @@ class MMTModel(pl.LightningModule):
             'params':
             [p for n, p in pretrained_param_optimizer if not any(nd in n for nd in no_decay)],
             'weight_decay':
-            1e-2
+            1e-1
         }, {
             'params': [p for n, p in pretrained_param_optimizer if any(nd in n for nd in no_decay)],
             'weight_decay':
@@ -93,12 +96,11 @@ class MMTModel(pl.LightningModule):
         bert_opt = BertAdam(pretrained_params, self.lr)
         params = [{
             'params': [p for _, p in custom_param_optimizer],
-            'lr': self.lr
         }, {
             'params': [p for _, p in mi_loss_optimizer],
-            'lr': 3e-5
+            "lr": 3e-5
         }]
-        custom_opt = AdamW(params, amsgrad=True, weight_decay=0.1)
+        custom_opt = AdamW(params, lr=self.lr, weight_decay=0.1, amsgrad=True)
         return [bert_opt, custom_opt]
 
     def training_step(self, train_batch, batch_idx):
@@ -113,7 +115,7 @@ class MMTModel(pl.LightningModule):
         return loss
 
     def validation_step(self, batch, batch_idx):
-        targets = batch[0].pop("gold_labels")
+        targets = batch[0].get("gold_labels")
         outputs: TokenClassifierOutput = self.forward(batch)
         logits = outputs.logits
         pred_list, gold_list = id2label(logits.detach().argmax(dim=-1).tolist(), targets.tolist())
@@ -128,7 +130,7 @@ class MMTModel(pl.LightningModule):
         self.log_dict({"val_pre": val_pre, "val_rec": val_rec, "val_f1": val_f1})
 
     def test_step(self, batch, batch_idx):
-        targets = batch[0].pop("gold_labels")
+        targets = batch[0].get("gold_labels")
         outputs: TokenClassifierOutput = self.forward(batch)
         logits = outputs.logits
         pred_list, gold_list = id2label(logits.detach().argmax(dim=-1).tolist(), targets.tolist())
