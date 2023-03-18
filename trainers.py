@@ -1,5 +1,4 @@
 import torch
-import os
 from torch.utils.data import DataLoader
 from transformers import BertTokenizer
 from constants import TAGS
@@ -40,7 +39,7 @@ parser.add_argument("--num_workers", type=int, default=0)
 def dataloader_init(args):
     pretrained_model = args.pretrained_model
     batch_size = args.batch_size
-    tokenizer = BertTokenizer.from_pretrained(pretrained_model, model_max_length=100)
+    tokenizer = BertTokenizer.from_pretrained(pretrained_model, model_max_length=128)
     train_set = MyDataset(args.train_file, tokenizer)
     validation_set = MyDataset(args.validation_file, tokenizer)
     test_set = MyDataset(args.test_file, tokenizer)
@@ -147,8 +146,8 @@ if __name__ == '__main__':
         tuner = tune.Tuner(
             tune.with_resources(train_fn_with_parameters, resources=resources_per_trial),
             param_space={
-                "tau": tune.grid_search([0.2, 0.4, 0.6, 0.8, 1, 1.2]),
-                "alpha": tune.grid_search([0.04, 0.06, 0.08, 0.1, 0.12])
+                "tau": tune.grid_search([1]),
+                "alpha": tune.grid_search([0.01 * i for i in range(4, 16)])
             },
             run_config=air.RunConfig(
                 name=model_name,
