@@ -270,8 +270,11 @@ class InfoNCE(nn.Module):
         super(InfoNCE, self).__init__()
         if hidden_size is None:
             hidden_size = (x_dim + y_dim) // 2
-        self.F_func = nn.Sequential(nn.Linear(x_dim + y_dim, hidden_size), nn.ReLU(),
-                                    nn.Linear(hidden_size, 1))
+        self.down_p = nn.Sequential(nn.Linear(x_dim, y_dim), nn.ReLU())
+        self.bilinear = nn.Bilinear(y_dim, y_dim, 1, False)
+        # self.w = nn.parameter.Parameter(torch.randn(1, x_dim, y_dim))
+        # self.F_func = nn.Sequential(nn.Linear(x_dim + y_dim, hidden_size), nn.ReLU(),
+        #                             nn.Linear(hidden_size, 1))
 
     def forward(self, x_samples, y_samples):  # samples have shape [sample_size, dim]
         # shuffle and concatenate
@@ -279,9 +282,12 @@ class InfoNCE(nn.Module):
 
         x_tile = x_samples.unsqueeze(0).repeat((sample_size, 1, 1))
         y_tile = y_samples.unsqueeze(1).repeat((1, sample_size, 1))
-
-        T0 = self.F_func(torch.cat([x_samples, y_samples], dim=-1))
-        T1 = self.F_func(torch.cat([x_tile, y_tile], dim=-1))  #[sample_size, sample_size, 1]
+        T0 = self.bilinear(self.down_p(x_samples), y_samples)
+        T1 = self.bilinear(self.down_p(x_tile), y_tile)
+        # T0 = torch.einsum("ij,mjk,ik->im", [x_samples, self.w, y_samples])
+        # T1 = torch.einsum("bij,mjk,bik->bim", [x_tile, self.w, y_tile])
+        # T0 = self.F_func(torch.cat([x_samples, y_samples], dim=-1))
+        # T1 = self.F_func(torch.cat([x_tile, y_tile], dim=-1))  #[sample_size, sample_size, 1]
 
         lower_bound = T0.mean() - (T1.logsumexp(dim=1).mean() - np.log(sample_size))
         return lower_bound
