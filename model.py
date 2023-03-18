@@ -132,28 +132,32 @@ class MIBert(BertPreTrainedModel):
             input_ids = torch.cat([batch_src['input_ids'], batch_tgt['input_ids']])
             token_type_ids = torch.cat([batch_src['token_type_ids'], batch_tgt['token_type_ids']])
             attention_mask = torch.cat([batch_src['attention_mask'], batch_tgt['attention_mask']])
-            valid_mask = torch.cat([batch_src['valid_mask'], batch_tgt['valid_mask']])
+            # valid_mask = torch.cat([batch_src['valid_mask'], batch_tgt['valid_mask']])
             sequence_output = self.bert(input_ids,
                                         token_type_ids=token_type_ids,
                                         attention_mask=attention_mask)[0]
             sequence_output = self.dropout(sequence_output)
-            logits: Tensor = self.classifier(sequence_output) / self.tau
+            logits: Tensor = self.classifier(sequence_output)
             src_logits, tgt_logits = torch.chunk(logits, 2)
             _, tgt_outputs = torch.chunk(sequence_output, 2)
             # p = f.softmax(active_logits, dim=-1)
             # log_p = f.log_softmax(active_logits, dim=-1)
             # _mi_loss = self.mi_loss(p, log_p)
-            active_mask = batch_tgt['valid_mask'].view(-1) == 1
+            # active_mask = batch_tgt['valid_mask'].view(-1) == 1
+            active_mask = batch_tgt['attention_mask'].view(-1) == 1
             active_tgt_logits = tgt_logits.view(-1, self.num_labels)[active_mask]
             hidden_states = tgt_outputs.view(-1, tgt_outputs.size(-1))[active_mask]
             if student:
                 gold_labels = batch_src['gold_labels']
-                ce_loss = self.loss_fct(src_logits.view(-1, src_logits.size(-1)), gold_labels.view(-1))
-                active_logits = logits.view(-1, logits.size(-1))[valid_mask.view(-1) == 1]
+                ce_loss = self.loss_fct(src_logits.view(-1, src_logits.size(-1)),
+                                        gold_labels.view(-1))
+                active_logits = logits.view(-1, logits.size(-1))[attention_mask.view(-1) == 1]
                 # use checkpoint to avoid cuda out of memory although making the running slower.
-                _mi_loss = cp.checkpoint(self.mi_loss.learning_loss,
-                   sequence_output.view(-1, sequence_output.size(-1))[valid_mask.view(-1) == 1],
-                   f.softmax(active_logits, dim=-1))
+                _mi_loss = cp.checkpoint(
+                    self.mi_loss.learning_loss,
+                    sequence_output.view(-1,
+                                         sequence_output.size(-1))[attention_mask.view(-1) == 1],
+                    f.softmax(active_logits, dim=-1))
                 # _mi_loss = self.mi_loss.learning_loss(
                 #     sequence_output.view(-1, sequence_output.size(-1))[valid_mask.view(-1) == 1],
                 #     f.softmax(active_logits, dim=-1))
@@ -170,8 +174,17 @@ class MIBert(BertPreTrainedModel):
             tgt_logits: Tensor = self.classifier(sequence_output)
             active_tgt_logits = tgt_logits.view(-1, self.num_labels)[active_mask]
             hidden_states = sequence_output.view(-1, sequence_output.size(-1))[active_mask]
+            gold_labels = batch_tgt['gold_labels']
+            ce_loss = self.loss_fct(tgt_logits.view(-1, tgt_logits.size(-1)), gold_labels.view(-1))
+            # use checkpoint to avoid cuda out of memory although making the running slower.
+            _mi_loss = cp.checkpoint(self.mi_loss.learning_loss, hidden_states,
+                                     f.softmax(active_tgt_logits, dim=-1))
+            # _mi_loss = self.mi_loss.learning_loss(
+            #     sequence_output.view(-1, sequence_output.size(-1))[valid_mask.view(-1) == 1],
+            #     f.softmax(active_tgt_logits, dim=-1))
+            loss = ce_loss + self.alpha * _mi_loss
         return TokenClassifierOutput(logits=active_tgt_logits,
-                                     loss=(loss, ce_loss, self.alpha * _mi_loss),
+                                     loss=(loss, self.alpha * _mi_loss, ce_loss),
                                      hidden_states=hidden_states)
 
 
@@ -273,12 +286,7 @@ class PretrainedBertForTokenClassification(BertPreTrainedModel):
 
 class ContrastModel(nn.Module):
 
-    def __init__(self,
-                 model_1: MIBert,
-                 model_2: MIBert,
-                 K=65535,
-                 m: float = 0.999,
-                 dim: int = 128):
+    def __init__(self, model_1: MIBert, model_2: MIBert, K=65535, m: float = 0.999, dim: int = 128):
         super(ContrastModel, self).__init__()
         self.model_1 = model_1
         self.model_2 = model_2
