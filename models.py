@@ -21,10 +21,11 @@ class MMTModel(pl.LightningModule):
         pm = kwargs.get("pretrained_model")
         alpha = kwargs.get("alpha")
         num_labels = kwargs.get("num_labels")
-        self.model_1 = MIBert.from_pretrained(pm, alpha, num_labels=num_labels)
-        self.model_ema_1 = MIBert.from_pretrained(pm, alpha, num_labels=num_labels)
-        self.model_2 = MIBert.from_pretrained(pm, alpha, num_labels=num_labels)
-        self.model_ema_2 = MIBert.from_pretrained(pm, alpha, num_labels=num_labels)
+        tau = kwargs.get("tau")
+        self.model_1 = MIBert.from_pretrained(pm, alpha, tau, num_labels=num_labels)
+        self.model_ema_1 = MIBert.from_pretrained(pm, alpha, tau, num_labels=num_labels)
+        self.model_2 = MIBert.from_pretrained(pm, alpha, tau, num_labels=num_labels)
+        self.model_ema_2 = MIBert.from_pretrained(pm, alpha, tau, num_labels=num_labels)
         for param in self.model_ema_1.parameters():
             param.detach_()
         for param in self.model_ema_2.parameters():
