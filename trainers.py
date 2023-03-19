@@ -146,8 +146,8 @@ if __name__ == '__main__':
         tuner = tune.Tuner(
             tune.with_resources(train_fn_with_parameters, resources=resources_per_trial),
             param_space={
-                "eta": tune.grid_search([0.5, 0.6, 0.7, 0.8]),
-                "alpha": tune.grid_search([0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.04])
+                "alpha": tune.grid_search([0.015, 0.025, 0.04, 0.06, 0.08, 0.1, 0.12]),
+                "tau": tune.grid_search([0.4, 0.6, 0.8, 1, 1.2])
             },
             run_config=air.RunConfig(
                 name=model_name,
