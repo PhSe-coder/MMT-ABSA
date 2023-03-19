@@ -22,7 +22,8 @@ python trainers.py \
 --enable_progress_bar False \
 --num_workers 16 \
 --lr "2e-5" \
---eta 1 \
+--tau 1 \
+--eta 0.6 \
 --alpha 0.02 \
 --soft_loss_weight 0.01 \
 --theta 0.99 \
