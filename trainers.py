@@ -39,7 +39,7 @@ parser.add_argument("--num_workers", type=int, default=0)
 def dataloader_init(args):
     pretrained_model = args.pretrained_model
     batch_size = args.batch_size
-    tokenizer = BertTokenizer.from_pretrained(pretrained_model, model_max_length=128)
+    tokenizer = BertTokenizer.from_pretrained(pretrained_model, model_max_length=100)
     train_set = MyDataset(args.train_file, tokenizer)
     validation_set = MyDataset(args.validation_file, tokenizer)
     test_set = MyDataset(args.test_file, tokenizer)
@@ -147,7 +147,8 @@ if __name__ == '__main__':
             tune.with_resources(train_fn_with_parameters, resources=resources_per_trial),
             param_space={
                 "tau": tune.grid_search([1]),
-                "alpha": tune.grid_search([0.01 * i for i in range(4, 16)])
+                # 0, 0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08
+                "alpha": tune.grid_search([0.005, 0.01, 0.015, 0.02, 0.025, 0.03])
             },
             run_config=air.RunConfig(
                 name=model_name,
