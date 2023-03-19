@@ -4,7 +4,7 @@ import math
 import torch
 import torch.nn as nn
 from abc import ABC, abstractmethod
-
+from torch.nn.parameter import Parameter
 SMALL = 1e-08
 
 
@@ -270,9 +270,9 @@ class InfoNCE(nn.Module):
         super(InfoNCE, self).__init__()
         if hidden_size is None:
             hidden_size = (x_dim + y_dim) // 2
-        self.down_p = nn.Sequential(nn.Linear(x_dim, y_dim), nn.ReLU())
-        self.bilinear = nn.Bilinear(y_dim, y_dim, 1, False)
-        # self.w = nn.parameter.Parameter(torch.randn(1, x_dim, y_dim))
+        # self.down_p = nn.Sequential(nn.Linear(x_dim, y_dim), nn.ReLU())
+        # self.bilinear = nn.Bilinear(y_dim, y_dim, 1, False)
+        self.w = Parameter(nn.init.kaiming_uniform_(torch.randn(1, x_dim, y_dim)))
         # self.F_func = nn.Sequential(nn.Linear(x_dim + y_dim, hidden_size), nn.ReLU(),
         #                             nn.Linear(hidden_size, 1))
 
@@ -282,10 +282,10 @@ class InfoNCE(nn.Module):
 
         x_tile = x_samples.unsqueeze(0).repeat((sample_size, 1, 1))
         y_tile = y_samples.unsqueeze(1).repeat((1, sample_size, 1))
-        T0 = self.bilinear(self.down_p(x_samples), y_samples)
-        T1 = self.bilinear(self.down_p(x_tile), y_tile)
-        # T0 = torch.einsum("ij,mjk,ik->im", [x_samples, self.w, y_samples])
-        # T1 = torch.einsum("bij,mjk,bik->bim", [x_tile, self.w, y_tile])
+        # T0 = self.bilinear(self.down_p(x_samples), y_samples)
+        # T1 = self.bilinear(self.down_p(x_tile), y_tile)
+        T0 = torch.einsum("ij,mjk,ik->im", [x_samples, self.w, y_samples])
+        T1 = torch.einsum("bij,mjk,bik->bim", [x_tile, self.w, y_tile])
         # T0 = self.F_func(torch.cat([x_samples, y_samples], dim=-1))
         # T1 = self.F_func(torch.cat([x_tile, y_tile], dim=-1))  #[sample_size, sample_size, 1]
 
