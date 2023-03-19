@@ -20,12 +20,11 @@ class MMTModel(pl.LightningModule):
         self.save_hyperparameters()
         pm = kwargs.get("pretrained_model")
         alpha = kwargs.get("alpha")
-        tau = kwargs.get("tau")
         num_labels = kwargs.get("num_labels")
-        self.model_1 = MIBert.from_pretrained(pm, alpha, tau, num_labels=num_labels)
-        self.model_ema_1 = MIBert.from_pretrained(pm, alpha, tau, num_labels=num_labels)
-        self.model_2 = MIBert.from_pretrained(pm, alpha, tau, num_labels=num_labels)
-        self.model_ema_2 = MIBert.from_pretrained(pm, alpha, tau, num_labels=num_labels)
+        self.model_1 = MIBert.from_pretrained(pm, alpha, num_labels=num_labels)
+        self.model_ema_1 = MIBert.from_pretrained(pm, alpha, num_labels=num_labels)
+        self.model_2 = MIBert.from_pretrained(pm, alpha, num_labels=num_labels)
+        self.model_ema_2 = MIBert.from_pretrained(pm, alpha, num_labels=num_labels)
         for param in self.model_ema_1.parameters():
             param.detach_()
         for param in self.model_ema_2.parameters():
@@ -35,6 +34,7 @@ class MMTModel(pl.LightningModule):
         self.ce_soft_loss = SoftEntropy()
         self.lr = kwargs.get('lr')
         self.alpha = alpha
+        self.eta = kwargs.get("eta")
         self.tokenizer = kwargs.get('tokenizer')
         self.output_dir: str = kwargs.get("output_dir")
         self.softmax = nn.Softmax(-1)
@@ -59,7 +59,7 @@ class MMTModel(pl.LightningModule):
             outs = torch.cat([outputs2_ema.logits, outputs1_ema.logits])
             loss_ce_soft = self.ce_soft_loss(ins, outs)
             # total loss
-            if batch_idx / self.trainer.estimated_stepping_batches >= 0.7:
+            if batch_idx / self.trainer.estimated_stepping_batches >= self.eta:
                 loss += self.soft_loss_weight * loss_ce_soft
             self.log("soft_loss", loss_ce_soft.item())
         else:
