@@ -25,7 +25,7 @@ python trainers.py \
 --tau 1 \
 --alpha 0.08 \
 --soft_loss_weight 0.01 \
---theta 0.999 \
+--theta 0.99 \
 --batch_size 16 \
 --max_epochs 15 \
 --default_root_dir "/root/autodl-tmp" \
