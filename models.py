@@ -178,6 +178,7 @@ class MMTModel(pl.LightningModule):
                            help='the weight parameter of the Mutual Information loss')
         group.add_argument("--theta", type=float, default=0.999, help='the weight of the ema')
         group.add_argument("--soft_loss_weight", type=float, default=0.01)
+        group.add_argument("--eta", type=float, default=0, help='teaching delay factor')
         return parent_parser
 
 
