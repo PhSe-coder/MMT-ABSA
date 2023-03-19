@@ -39,7 +39,7 @@ class MMTModel(pl.LightningModule):
         self.output_dir: str = kwargs.get("output_dir")
         self.softmax = nn.Softmax(-1)
 
-    def forward(self, batch):
+    def forward(self, batch, batch_idx=0):
         loss = None
         if self.training:
             outputs1: TokenClassifierOutput = self.model_1(batch[1], batch[0])
@@ -59,15 +59,16 @@ class MMTModel(pl.LightningModule):
             outs = torch.cat([outputs2_ema.logits, outputs1_ema.logits])
             loss_ce_soft = self.ce_soft_loss(ins, outs)
             # total loss
-            loss += self.soft_loss_weight * loss_ce_soft
+            if batch_idx / self.trainer.estimated_stepping_batches >= 0.7:
+                loss += self.soft_loss_weight * loss_ce_soft
             self.log("soft_loss", loss_ce_soft.item())
         else:
             outputs1: TokenClassifierOutput = self.model_1(batch[0])
-            outputs2_ema: TokenClassifierOutput = self.model_ema_2(batch[0], False)
-            # outputs2: TokenClassifierOutput = self.model_2(batch[0])
-            # ins = (outputs1.logits + outputs2.logits) / 2
-            loss = self.ce_soft_loss(outputs1.logits, outputs2_ema.logits)
             ins = outputs1.logits
+            # outputs2_ema: TokenClassifierOutput = self.model_ema_2(batch[0], False)
+            # outputs2: TokenClassifierOutput = self.model_2(batch[0])
+            # ins = (outputs1.logits + outputs2.logits) / 2   
+            # loss = self.ce_soft_loss(outputs1.logits, outputs2_ema.logits)
         return TokenClassifierOutput(logits=ins, loss=loss)
 
     @torch.no_grad()
@@ -105,7 +106,7 @@ class MMTModel(pl.LightningModule):
 
     def training_step(self, train_batch, batch_idx):
         opts = self.optimizers()
-        outputs = self.forward(train_batch)
+        outputs = self.forward(train_batch, batch_idx)
         loss = outputs.loss
         self.manual_backward(loss)
         for opt in opts:
