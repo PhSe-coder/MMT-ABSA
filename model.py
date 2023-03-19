@@ -111,10 +111,11 @@ class MeanPooling(nn.Module):
 
 class MIBert(BertPreTrainedModel):
 
-    def __init__(self, config, alpha):
+    def __init__(self, config, alpha, tau):
         super(MIBert, self).__init__(config)
         self.bert = BertModel(config)
         self.register_buffer("alpha", torch.tensor(alpha))
+        self.register_buffer("tau", torch.tensor(tau))
         self.num_labels = config.num_labels
         self.dropout = nn.Dropout(0.1)
         self.loss_fct = nn.CrossEntropyLoss(ignore_index=-1)
@@ -136,7 +137,7 @@ class MIBert(BertPreTrainedModel):
                                         token_type_ids=token_type_ids,
                                         attention_mask=attention_mask)[0]
             sequence_output = self.dropout(sequence_output)
-            logits: Tensor = self.classifier(sequence_output)
+            logits: Tensor = self.classifier(sequence_output) / self.tau
             src_logits, tgt_logits = torch.chunk(logits, 2)
             _, tgt_outputs = torch.chunk(sequence_output, 2)
             # p = f.softmax(active_logits, dim=-1)
