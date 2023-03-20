@@ -23,7 +23,7 @@ python trainers.py \
 --num_workers 16 \
 --lr "2e-5" \
 --tau 1 \
---eta 0.2 \
+--eta 0.0 \
 --alpha 0.02 \
 --soft_loss_weight 0.01 \
 --theta 0.99 \
