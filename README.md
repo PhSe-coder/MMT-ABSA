@@ -24,6 +24,7 @@ Training on one transfer pair dataset:
 ```shell
 ./scripts/temp.sh [source_domain] [target_domain]
 # source domain can be rest, laptop, service, device, the same for target domain.
+# eg: ./scripts/temp.sh rest laptop
 ```
 <i>Please insure the parameters in the scripts are proper in you machine before training.</i> Our code is based on the pytorch-lightning, thus the command line parameters are compatible with all the parameters in pytorch-lightning. For the specific model/training parameters, we write the code as the pattern in [HYPERPARAMETERS via commmand-line](https://lightning.ai/docs/pytorch/1.6.0/common/hyperparameters.html)
 
