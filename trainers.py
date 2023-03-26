@@ -145,9 +145,9 @@ if __name__ == '__main__':
         reporter = CLIReporter(metric_columns=["absa_test_f1", "ae_test_f1"])
         tuner = tune.Tuner(
             tune.with_resources(train_fn_with_parameters, resources=resources_per_trial),
-            param_space={
-                "alpha": tune.grid_search([0.005, 0.01, 0.015, 0.02, 0.025, 0.03]),
-                "tau": tune.grid_search([0.2, 0.4, 0.6, 0.8, 1, 1.2])
+            param_space={ # 0.005, 0.01, 0.015, 0.02, 0.025, 0.03
+                "alpha": tune.grid_search([0.016]),
+                "tau": tune.grid_search([0.1, 0.2, 0.4, 0.6, 0.8, 1, 1.2])
             },
             run_config=air.RunConfig(
                 name=model_name,
