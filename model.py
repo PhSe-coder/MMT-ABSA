@@ -8,6 +8,7 @@ from torch import Tensor
 from transformers.modeling_outputs import TokenClassifierOutput
 from mi_estimators import InfoNCE
 import torch.utils.checkpoint as cp
+from torchcrf import CRF
 
 logger = logging.getLogger(__name__)
 
@@ -54,6 +55,7 @@ class MIBert(BertPreTrainedModel):
         # self.mi_loss = MILoss()
         self.mi_loss = InfoNCE(config.hidden_size, config.num_labels)
         self.classifier = nn.Linear(config.hidden_size, config.num_labels)
+        self.crf = CRF(config.num_labels, True)
 
     def forward(self,
                 batch_tgt: Dict[str, Tensor],
@@ -84,6 +86,7 @@ class MIBert(BertPreTrainedModel):
                 ce_loss = self.loss_fct(src_logits.view(-1, src_logits.size(-1)),
                                         gold_labels.view(-1))
                 active_logits = logits.view(-1, logits.size(-1))[attention_mask.view(-1) == 1]
+                score = -self.crf(src_logits, gold_labels, mask=batch_src['valid_mask'], reduction='mean')
                 # use checkpoint to avoid cuda out of memory although making the running slower.
                 _mi_loss = cp.checkpoint(
                     self.mi_loss.learning_loss,
@@ -93,7 +96,7 @@ class MIBert(BertPreTrainedModel):
                 # _mi_loss = self.mi_loss.learning_loss(
                 #     sequence_output.view(-1, sequence_output.size(-1))[valid_mask.view(-1) == 1],
                 #     f.softmax(active_logits, dim=-1))
-                loss = ce_loss + self.alpha * _mi_loss
+                loss = ce_loss + self.alpha * _mi_loss + score
         else:
             input_ids = batch_tgt['input_ids']
             attention_mask = batch_tgt['attention_mask']
