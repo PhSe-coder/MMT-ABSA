@@ -8,7 +8,6 @@ from torch import Tensor
 from transformers.modeling_outputs import TokenClassifierOutput
 from mi_estimators import InfoNCE
 import torch.utils.checkpoint as cp
-from torchcrf import CRF
 
 logger = logging.getLogger(__name__)
 
