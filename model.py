@@ -55,7 +55,6 @@ class MIBert(BertPreTrainedModel):
         # self.mi_loss = MILoss()
         self.mi_loss = InfoNCE(config.hidden_size, config.num_labels)
         self.classifier = nn.Linear(config.hidden_size, config.num_labels)
-        self.crf = CRF(config.num_labels, True)
 
     def forward(self,
                 batch_tgt: Dict[str, Tensor],
@@ -86,7 +85,6 @@ class MIBert(BertPreTrainedModel):
                 ce_loss = self.loss_fct(src_logits.view(-1, src_logits.size(-1)),
                                         gold_labels.view(-1))
                 active_logits = logits.view(-1, logits.size(-1))[attention_mask.view(-1) == 1]
-                score = -self.crf(src_logits, gold_labels, mask=batch_src['valid_mask'], reduction='mean')
                 # use checkpoint to avoid cuda out of memory although making the running slower.
                 _mi_loss = cp.checkpoint(
                     self.mi_loss.learning_loss,
@@ -96,7 +94,7 @@ class MIBert(BertPreTrainedModel):
                 # _mi_loss = self.mi_loss.learning_loss(
                 #     sequence_output.view(-1, sequence_output.size(-1))[valid_mask.view(-1) == 1],
                 #     f.softmax(active_logits, dim=-1))
-                loss = ce_loss + self.alpha * _mi_loss + score
+                loss = ce_loss + self.alpha * _mi_loss
         else:
             input_ids = batch_tgt['input_ids']
             attention_mask = batch_tgt['attention_mask']
@@ -109,15 +107,15 @@ class MIBert(BertPreTrainedModel):
             tgt_logits: Tensor = self.classifier(sequence_output)
             active_tgt_logits = tgt_logits.view(-1, self.num_labels)[active_mask]
             hidden_states = sequence_output.view(-1, sequence_output.size(-1))[active_mask]
-            gold_labels = batch_tgt['gold_labels']
-            ce_loss = self.loss_fct(tgt_logits.view(-1, tgt_logits.size(-1)), gold_labels.view(-1))
-            # use checkpoint to avoid cuda out of memory although making the running slower.
-            _mi_loss = cp.checkpoint(self.mi_loss.learning_loss, hidden_states,
-                                     f.softmax(active_tgt_logits, dim=-1))
-            # _mi_loss = self.mi_loss.learning_loss(
-            #     sequence_output.view(-1, sequence_output.size(-1))[valid_mask.view(-1) == 1],
-            #     f.softmax(active_tgt_logits, dim=-1))
-            loss = ce_loss + self.alpha * _mi_loss
+            # gold_labels = batch_tgt['gold_labels']
+            # ce_loss = self.loss_fct(tgt_logits.view(-1, tgt_logits.size(-1)), gold_labels.view(-1))
+            # # use checkpoint to avoid cuda out of memory although making the running slower.
+            # _mi_loss = cp.checkpoint(self.mi_loss.learning_loss, hidden_states,
+            #                          f.softmax(active_tgt_logits, dim=-1))
+            # # _mi_loss = self.mi_loss.learning_loss(
+            # #     sequence_output.view(-1, sequence_output.size(-1))[valid_mask.view(-1) == 1],
+            # #     f.softmax(active_tgt_logits, dim=-1))
+            # loss = ce_loss + self.alpha * _mi_loss
         return TokenClassifierOutput(logits=active_tgt_logits,
                                      loss=(loss, self.alpha * _mi_loss, ce_loss),
                                      hidden_states=hidden_states)
