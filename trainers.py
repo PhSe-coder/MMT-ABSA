@@ -135,7 +135,7 @@ if __name__ == '__main__':
         "mi_bert": mi_bert_trainer,
         "bert": bert_trainer,
     }
-    models = {"mmt": MMTModel, "mi_bert": MIBert, "bert": BertClassifier}
+    models = {"mmt": MMTModel, "mi_bert": MIBertClassifier, "bert": BertClassifier}
     parser = models[model_name].add_model_specific_args(parser)
     trainer = trainers[model_name]
     arguments = parser.parse_args()
@@ -145,9 +145,9 @@ if __name__ == '__main__':
         reporter = CLIReporter(metric_columns=["absa_test_f1", "ae_test_f1"])
         tuner = tune.Tuner(
             tune.with_resources(train_fn_with_parameters, resources=resources_per_trial),
-            param_space={# 0.1, 0.2, 0.4, 0.6, 0.8, 1, 1.2
+            param_space={
                 "alpha": tune.grid_search([0.005, 0.01, 0.015, 0.02, 0.025, 0.03]),
-                "tau": tune.grid_search([0.001, 0.005, 0.15, 0.5, 0.7, 0.9])
+                "tau": tune.grid_search([0.1, 0.2, 0.4, 0.6, 0.8, 1, 1.2])
             },
             run_config=air.RunConfig(
                 name=model_name,
