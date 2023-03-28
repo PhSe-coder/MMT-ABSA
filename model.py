@@ -15,7 +15,7 @@ __all__ = ['PretrainedBertForTokenClassification', 'MIBert', 'MMTModel']
 
 class MILoss(nn.Module):
 
-    def __init__(self, threshold=0.7):
+    def __init__(self, threshold=0.5):
         super(MILoss, self).__init__()
         self.mi_threshold = threshold
 
@@ -72,10 +72,6 @@ class MIBert(BertPreTrainedModel):
             logits: Tensor = self.classifier(sequence_output) / self.tau
             src_logits, tgt_logits = torch.chunk(logits, 2)
             _, tgt_outputs = torch.chunk(sequence_output, 2)
-            # p = f.softmax(active_logits, dim=-1)
-            # log_p = f.log_softmax(active_logits, dim=-1)
-            # _mi_loss = self.mi_loss(p, log_p)
-            # active_mask = batch_tgt['valid_mask'].view(-1) == 1
             active_mask = batch_tgt['attention_mask'].view(-1) == 1
             active_tgt_logits = tgt_logits.view(-1, self.num_labels)[active_mask]
             hidden_states = tgt_outputs.view(-1, tgt_outputs.size(-1))[active_mask]
@@ -90,6 +86,9 @@ class MIBert(BertPreTrainedModel):
                     sequence_output.view(-1,
                                          sequence_output.size(-1))[attention_mask.view(-1) == 1],
                     f.softmax(active_logits, dim=-1))
+                # p = f.softmax(active_logits, dim=-1)
+                # log_p = f.log_softmax(active_logits, dim=-1)
+                # _mi_loss = self.mi_loss(p, log_p)
                 # _mi_loss = self.mi_loss.learning_loss(
                 #     sequence_output.view(-1, sequence_output.size(-1))[valid_mask.view(-1) == 1],
                 #     f.softmax(active_logits, dim=-1))
