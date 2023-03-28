@@ -238,11 +238,11 @@ class MIBertClassifier(pl.LightningModule):
         for opt in opts:
             opt.zero_grad()
         outputs = self.forward(train_batch)
-        loss = outputs.loss
+        loss = outputs.loss[0]
         self.manual_backward(loss)
         for opt in opts:
             opt.step()
-        self.log('train_loss', loss)
+        self.log('train_loss', loss.item())
         return loss
 
     def validation_step(self, batch, batch_idx):
@@ -309,7 +309,7 @@ class MIBertClassifier(pl.LightningModule):
         parser.add_argument("--alpha",
                             type=float,
                             help='the weight parameter of the Mutual Information loss')
-        return parser
+        return parent_parser
 
 
 class BertClassifier(pl.LightningModule):
