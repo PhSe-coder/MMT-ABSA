@@ -65,8 +65,9 @@ class MMTModel(pl.LightningModule):
             self.log("soft_loss", loss_ce_soft.item())
         else:
             outputs1: TokenClassifierOutput = self.model_1(batch[0])
-            outputs2: TokenClassifierOutput = self.model_2(batch[0])
-            ins = (outputs1.logits + outputs2.logits) / 2
+            ins = outputs1.logits
+            # outputs2: TokenClassifierOutput = self.model_2(batch[0])
+            # ins = (outputs1.logits + outputs2.logits) / 2
         return TokenClassifierOutput(logits=ins, loss=loss)
 
     @torch.no_grad()
