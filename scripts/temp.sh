@@ -22,9 +22,9 @@ python trainers.py \
 --enable_progress_bar False \
 --num_workers 16 \
 --lr "2e-5" \
---tau 1 \
+--tau 0.2 \
 --eta 0.0 \
---alpha 0.02 \
+--alpha 0.015 \
 --soft_loss_weight 0.01 \
 --theta 0.99 \
 --batch_size 16 \
