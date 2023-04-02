@@ -3,11 +3,10 @@ from torch.utils.data import DataLoader
 from transformers import BertTokenizer
 from constants import TAGS
 from dataset import MyDataset
-from model import MIBert
 import pytorch_lightning as pl
 from argparse import ArgumentParser
 from models import MIBertClassifier, MMTModel, BertClassifier
-from pytorch_lightning.callbacks import ModelCheckpoint
+from pytorch_lightning.callbacks import ModelCheckpoint 
 from ray import air, tune
 from ray.tune import CLIReporter
 from ray.tune.integration.pytorch_lightning import TuneReportCallback
