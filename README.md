@@ -9,7 +9,7 @@ hand, we integrate InfoNCE to better estimate the mutual information between rep
 
 Before running our code, please conduct following environment settings.
 ```shell
-conda env create -f conda_env.yaml
+conda env create -f env.yaml
 ```
 ## 1. Data preprocess
 We use the orginal dataset from [BERT-UDA](https://github.com/NUSTM/BERT-UDA).The pos tags or dependency relations are not required in our paper, so we only retain the first two columns in the dataset files, and we have processed them in the `data` directory. 
