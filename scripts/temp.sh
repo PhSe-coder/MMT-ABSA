@@ -31,4 +31,4 @@ python trainers.py \
 --max_epochs 15 \
 --default_root_dir "/root/autodl-tmp" \
 --seed 42 \
---tune
+# --tune # Uncomment this line if you want to perform parameter tuning
