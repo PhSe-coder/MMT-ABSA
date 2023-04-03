@@ -7,7 +7,7 @@ by the peer mean teacher network while its own
 mean teacher network tracks an exponential moving average (EMA) of the student network, which helps generate more robust and reliable pseudo labels for target domain data. On the other
 hand, we integrate InfoNCE to better estimate the mutual information between representations of input tokens and output labels. Extensive experiments shows the effectiveness of our framework.
 
-Before running our code, please conduct following environment settings.
+Before running our code, please conduct following environment settings, this may take a few minutes.
 ```shell
 conda env create -f env.yaml
 ```
@@ -18,7 +18,7 @@ We need to split the original training datafile into train set and validation se
 ```shell
 ./scripts/preprocess.sh
 ```
-
+For simplicity, we have provided the processed dataset in the `processed` directory, you can use it directly.
 ## 2. Running
 Training on one transfer pair dataset:
 ```shell
@@ -26,7 +26,11 @@ Training on one transfer pair dataset:
 # source domain can be rest, laptop, service, device, the same for target domain.
 # eg: ./scripts/temp.sh rest laptop
 ```
-<i>Please insure the parameters in the scripts are proper in you machine before training.</i> Our code is based on the pytorch-lightning, thus the command line parameters are compatible with all the parameters in pytorch-lightning. For the specific model/training parameters, we write the code as the pattern in [HYPERPARAMETERS via commmand-line](https://lightning.ai/docs/pytorch/1.6.0/common/hyperparameters.html)
+To understand the meaning of each parameter in the script, please run:
+```shell
+python trainers.py --help
+```
+<i>Please insure the parameters in the scripts are set properly before training.</i> Our code is based on the pytorch-lightning, thus the command line parameters are compatible with all the parameters in pytorch-lightning. For the specific model/training parameters, we write the code as the pattern in [HYPERPARAMETERS via commmand-line](https://lightning.ai/docs/pytorch/1.6.0/common/hyperparameters.html)
 
 Here are some explainations for files:
 
