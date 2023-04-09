@@ -3,7 +3,7 @@ This repository contains source code to our paper:
 - A Mutual Mean Teacher Framework for Cross-Domain Aspect-Based Sentiment Analysis
 
 In this paper, we propose a mutual mean teacher framework with InfoNCE-based mutual information maximization for both tasks of cross-domain End2End ABSA and cross-domain aspect extraction. To mitigate the error amplification of the mean teacher, we make the student network receive the supervision of pseudo labels given by the peer mean teacher network while its own mean teacher network tracks an exponential moving average (EMA) of the student network, which helps generate more robust and reliable pseudo
-labels for target domain data. On the other hand, we estimate the lower bound of the mutual information between representations of input tokens and output labels with InfoNCE, thus the domaininvariant feature can be learned during training. Extensive experiments on ten different transfer dataset pairs show the effectiveness of our framework.
+labels for target domain data. On the other hand, we estimate the lower bound of the mutual information between representations of input tokens and output labels with InfoNCE, thus the domain-invariant feature can be learned during training. Extensive experiments on ten different transfer dataset pairs show the effectiveness of our framework.
 
 <div align=center><img src="./framework.svg"></div>
 
