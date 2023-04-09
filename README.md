@@ -1,4 +1,4 @@
-# MMT-MI
+# MMT-ABSA
 This repository contains source code to our paper:
 - A Mutual Mean Teacher Framework for Cross-Domain Aspect-Based Sentiment Analysis
 
