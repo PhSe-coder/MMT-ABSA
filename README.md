@@ -6,7 +6,9 @@ In this paper, we propose a mutual mean teacher framework with InfoNCE-based mut
 by the peer mean teacher network while its own
 mean teacher network tracks an exponential moving average (EMA) of the student network, which helps generate more robust and reliable pseudo labels for target domain data. On the other
 hand, we integrate InfoNCE to better estimate the mutual information between representations of input tokens and output labels. Extensive experiments shows the effectiveness of our framework.
+
 <div align=center><img src="./framework.svg"></div>
+
 Before running our code, please conduct following environment settings, this may take a few minutes.
 ```shell
 conda env create -f env.yaml
